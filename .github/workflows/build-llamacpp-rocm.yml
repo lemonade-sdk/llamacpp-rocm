@@ -254,6 +254,13 @@ jobs:
         } else {
           Write-Host "Warning: $hipFile not found"
         }
+
+    - name: Apply rocWMMA patch (non-interactive)
+      shell: bash
+      run: |
+        chmod +x utils/rocwmma_patch.sh
+        # Run non-interactively; keep backups (answer 'n')
+        printf "n\n" | ./utils/rocwmma_patch.sh ./llama.cpp
         
     - name: Build Llama.cpp + ROCm
       shell: cmd
@@ -615,6 +622,12 @@ jobs:
         else
           echo "Warning: $hip_file not found"
         fi
+
+    - name: Apply rocWMMA patch (non-interactive)
+      run: |
+        chmod +x utils/rocwmma_patch.sh
+        # Run non-interactively; keep backups (answer 'n')
+        printf "n\n" | ./utils/rocwmma_patch.sh ./llama.cpp
         
     - name: Build Llama.cpp + ROCm
       run: |
