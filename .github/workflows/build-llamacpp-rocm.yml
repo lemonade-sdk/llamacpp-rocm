@@ -218,33 +218,29 @@ jobs:
         # Extract the tarball
         tar -xzf rocm.tar.gz -C C:\opt\rocm --strip-components=1
         
-    - name: Install rocWMMA headers (6.4.3)
+    - name: Install rocWMMA headers (develop)
       run: |
-        $zipUrl = "https://github.com/ROCm/rocWMMA/archive/refs/tags/rocm-6.4.3.zip"
-        $zipPath = "$env:TEMP\rocwmma-6.4.3.zip"
-        $extractDir = "$env:TEMP\rocWMMA-rocm-6.4.3"
-        $srcHeaders = Join-Path $extractDir "library\include\rocwmma"
+        $repoUrl = "https://github.com/ROCm/rocWMMA.git"
+        $cloneDir = Join-Path $env:TEMP "rocWMMA-develop"
         $destIncludeDir = "C:\opt\rocm\include"
         $destHeaders = Join-Path $destIncludeDir "rocwmma"
-
-        Write-Host "Downloading rocWMMA 6.4.3 headers..."
-        Invoke-WebRequest -Uri $zipUrl -OutFile $zipPath
         
-        Write-Host "Extracting rocWMMA archive..."
-        if (Test-Path $extractDir) { Remove-Item -Recurse -Force $extractDir }
-        Expand-Archive -Path $zipPath -DestinationPath $env:TEMP -Force
-
+        if (Test-Path $cloneDir) { Remove-Item -Recurse -Force $cloneDir }
+        Write-Host "Cloning rocWMMA develop branch..."
+        git clone --depth 1 --branch develop $repoUrl $cloneDir
+        
+        $srcHeaders = Join-Path $cloneDir "library\include\rocwmma"
         if (!(Test-Path $srcHeaders)) {
           Write-Error "rocWMMA headers not found at expected path: $srcHeaders"
           exit 1
         }
-
+        
         Write-Host "Installing headers to $destHeaders ..."
         New-Item -ItemType Directory -Force -Path $destIncludeDir | Out-Null
         if (Test-Path $destHeaders) { Remove-Item -Recurse -Force $destHeaders }
         Copy-Item -Recurse -Force $srcHeaders $destHeaders
         
-        Write-Host "rocWMMA headers installed successfully."
+        Write-Host "rocWMMA headers (develop) installed successfully."
         
     - name: Clone llama.cpp
       run: |
@@ -616,18 +612,13 @@ jobs:
         
         echo "ROCm environment variables set successfully"
         
-    - name: Install rocWMMA headers (6.4.3)
+    - name: Install rocWMMA headers (develop)
       run: |
         set -e
-        ROCWMMA_ZIP_URL="https://github.com/ROCm/rocWMMA/archive/refs/tags/rocm-6.4.3.zip"
         TMP_DIR="$(mktemp -d)"
         echo "Using temp directory: $TMP_DIR"
-        pushd "$TMP_DIR" >/dev/null
-        echo "Downloading rocWMMA 6.4.3 headers..."
-        curl -L -o rocwmma.zip "$ROCWMMA_ZIP_URL"
-        echo "Extracting archive..."
-        unzip -q rocwmma.zip
-        SRC_DIR="$TMP_DIR/rocWMMA-rocm-6.4.3/library/include/rocwmma"
+        git clone --depth 1 --branch develop https://github.com/ROCm/rocWMMA.git "$TMP_DIR/rocWMMA"
+        SRC_DIR="$TMP_DIR/rocWMMA/library/include/rocwmma"
         if [ ! -d "$SRC_DIR" ]; then
           echo "rocWMMA headers not found at expected path: $SRC_DIR"
           exit 1
@@ -636,9 +627,8 @@ jobs:
         sudo mkdir -p /opt/rocm/include
         sudo rm -rf /opt/rocm/include/rocwmma
         sudo cp -r "$SRC_DIR" /opt/rocm/include/
-        popd >/dev/null
         rm -rf "$TMP_DIR"
-        echo "rocWMMA headers installed successfully."
+        echo "rocWMMA headers (develop) installed successfully."
         
     - name: Clone llama.cpp
       run: |
