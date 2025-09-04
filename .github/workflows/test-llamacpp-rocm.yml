@@ -166,7 +166,7 @@ jobs:
         $modelPath = "Qwen3-0.6B-Q4_0.gguf"
         
         Write-Host "Downloading test model from: $modelUrl"
-        Invoke-WebRequest -Uri $modelUrl -OutFile $modelPath
+        curl -L -o $modelPath $modelUrl
         
         # Verify download
         if (Test-Path $modelPath) {
@@ -194,11 +194,39 @@ jobs:
         Write-Host "Command: $llamaCliPath -m `"$modelPath`" -ngl 99 -p `"I believe the meaning of life is`" -st"
         
         # Run the command and capture output
-        $output = & $llamaCliPath -m $modelPath -ngl 99 -p "I believe the meaning of life is" -st 2>&1 | Out-String
+        try {
+          $process = Start-Process -FilePath $llamaCliPath -ArgumentList @("-m", $modelPath, "-ngl", "99", "-p", "I believe the meaning of life is", "-st") -NoNewWindow -Wait -PassThru -RedirectStandardOutput "stdout.txt" -RedirectStandardError "stderr.txt"
+          
+          # Wait for the process to complete
+          $process.WaitForExit()
+          
+          # Read both stdout and stderr
+          $stdout = Get-Content "stdout.txt" -Raw -ErrorAction SilentlyContinue
+          $stderr = Get-Content "stderr.txt" -Raw -ErrorAction SilentlyContinue
+          
+          # Combine output (stderr often contains important CUDA/GPU info)
+          $output = $stdout + $stderr
+          
+          # Clean up temp files
+          Remove-Item "stdout.txt" -ErrorAction SilentlyContinue
+          Remove-Item "stderr.txt" -ErrorAction SilentlyContinue
+          
+          Write-Host "Process exit code: $($process.ExitCode)"
+        }
+        catch {
+          Write-Error "Failed to run llama-cli: $_"
+          exit 1
+        }
         
         Write-Host "=== LLAMA-CLI OUTPUT ==="
         Write-Host $output
         Write-Host "=== END OUTPUT ==="
+        
+        # Check if the process exited successfully
+        if ($process.ExitCode -ne 0) {
+          Write-Host "❌ llama-cli exited with error code: $($process.ExitCode)"
+          exit 1
+        }
         
         # Check for expected outputs
         $foundGpuOffload = $output -match "offloaded 29/29 layers to GPU"
@@ -287,7 +315,7 @@ jobs:
         model_path="Qwen3-0.6B-Q4_0.gguf"
         
         echo "Downloading test model from: $model_url"
-        wget -O "$model_path" "$model_url"
+        curl -L -o "$model_path" "$model_url"
         
         # Verify download
         if [ -f "$model_path" ]; then
