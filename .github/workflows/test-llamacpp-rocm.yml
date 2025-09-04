@@ -22,7 +22,7 @@ env:
 
 jobs:
   prepare-matrix:
-    runs-on: [stx-halo, Linux]
+    runs-on: ubuntu-22.04
     outputs:
       windows_matrix: ${{ steps.set-matrix.outputs.windows_matrix }}
       ubuntu_matrix: ${{ steps.set-matrix.outputs.ubuntu_matrix }}
@@ -188,7 +188,7 @@ jobs:
         }
 
   test-ubuntu:
-    runs-on: ubuntu-22.04
+    runs-on: [stx-halo, Linux]
     needs: prepare-matrix
     if: needs.prepare-matrix.outputs.should_test_ubuntu == 'true'
     strategy:
