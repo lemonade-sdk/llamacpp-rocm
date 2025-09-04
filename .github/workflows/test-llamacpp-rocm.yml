@@ -259,8 +259,13 @@ jobs:
       run: |
         if ! command -v jq &> /dev/null; then
           echo "Installing jq..."
-          sudo apt-get update -qq
-          sudo apt-get install -y jq
+          # Download and install jq binary directly
+          mkdir -p ~/bin
+          curl -L -o ~/bin/jq https://github.com/jqlang/jq/releases/download/jq-1.7.1/jq-linux-amd64
+          chmod +x ~/bin/jq
+          export PATH="$HOME/bin:$PATH"
+          echo "PATH=$HOME/bin:$PATH" >> $GITHUB_ENV
+          echo "jq installed to ~/bin/jq"
         else
           echo "jq is already installed"
         fi
