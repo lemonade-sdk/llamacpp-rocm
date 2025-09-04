@@ -22,7 +22,7 @@ env:
 
 jobs:
   prepare-matrix:
-    runs-on: [stx-halo, Linux]
+    runs-on: ubuntu-22.04
     outputs:
       windows_matrix: ${{ steps.set-matrix.outputs.windows_matrix }}
       ubuntu_matrix: ${{ steps.set-matrix.outputs.ubuntu_matrix }}
@@ -41,17 +41,23 @@ jobs:
         release_input="${{ env.RELEASE_TAG }}"
         
         if [ "$release_input" = "latest" ]; then
-          # Get the latest release tag
-          release_tag=$(gh release list --limit 1 --json tagName --jq '.[0].tagName')
+          # Get the latest release tag using GitHub REST API
+          release_tag=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+            "https://api.github.com/repos/${{ github.repository }}/releases/latest" \
+            | jq -r '.tag_name')
           echo "Using latest release: $release_tag"
         else
           # Use the specified release tag
           release_tag="$release_input"
           echo "Using specified release: $release_tag"
           
-          # Verify the release exists
-          if ! gh release view "$release_tag" >/dev/null 2>&1; then
-            echo "Error: Release '$release_tag' does not exist"
+          # Verify the release exists using GitHub REST API
+          response_code=$(curl -s -o /dev/null -w "%{http_code}" \
+            -H "Authorization: token $GITHUB_TOKEN" \
+            "https://api.github.com/repos/${{ github.repository }}/releases/tags/$release_tag")
+          
+          if [ "$response_code" != "200" ]; then
+            echo "Error: Release '$release_tag' does not exist (HTTP $response_code)"
             exit 1
           fi
         fi
@@ -117,12 +123,34 @@ jobs:
         $releaseTag = "${{ needs.prepare-matrix.outputs.latest_release_tag }}"
         $target = "${{ matrix.gfx_target }}"
         $assetName = "llama-${releaseTag}-windows-rocm-${target}-x64.zip"
+        $repo = "${{ github.repository }}"
         
         Write-Host "Downloading release asset: $assetName"
         Write-Host "From release: $releaseTag"
         
-        # Download the specific asset
-        gh release download $releaseTag --pattern $assetName
+        # Get release information using GitHub REST API
+        $headers = @{ "Authorization" = "token $env:GITHUB_TOKEN" }
+        $releaseUrl = "https://api.github.com/repos/$repo/releases/tags/$releaseTag"
+        
+        try {
+          $release = Invoke-RestMethod -Uri $releaseUrl -Headers $headers
+          $asset = $release.assets | Where-Object { $_.name -eq $assetName }
+          
+          if (-not $asset) {
+            Write-Error "Asset '$assetName' not found in release '$releaseTag'"
+            exit 1
+          }
+          
+          Write-Host "Found asset: $($asset.name) (Size: $($asset.size) bytes)"
+          
+          # Download the specific asset
+          Invoke-WebRequest -Uri $asset.browser_download_url -OutFile $assetName -Headers $headers
+          Write-Host "Downloaded $assetName successfully"
+        }
+        catch {
+          Write-Error "Failed to download release asset: $_"
+          exit 1
+        }
         
         # Extract the downloaded zip file
         Write-Host "Extracting $assetName..."
@@ -138,7 +166,7 @@ jobs:
         $modelPath = "Qwen3-0.6B-Q4_0.gguf"
         
         Write-Host "Downloading test model from: $modelUrl"
-        Invoke-WebRequest -Uri $modelUrl -OutFile $modelPath
+        curl.exe -L -o $modelPath $modelUrl
         
         # Verify download
         if (Test-Path $modelPath) {
@@ -166,11 +194,39 @@ jobs:
         Write-Host "Command: $llamaCliPath -m `"$modelPath`" -ngl 99 -p `"I believe the meaning of life is`" -st"
         
         # Run the command and capture output
-        $output = & $llamaCliPath -m $modelPath -ngl 99 -p "I believe the meaning of life is" -st 2>&1 | Out-String
+        try {
+          $process = Start-Process -FilePath $llamaCliPath -ArgumentList @("-m", "`"$modelPath`"", "-ngl", "99", "-p", "`"I believe the meaning of life is`"", "-st") -NoNewWindow -Wait -PassThru -RedirectStandardOutput "stdout.txt" -RedirectStandardError "stderr.txt"
+          
+          # Wait for the process to complete
+          $process.WaitForExit()
+          
+          # Read both stdout and stderr
+          $stdout = Get-Content "stdout.txt" -Raw -ErrorAction SilentlyContinue
+          $stderr = Get-Content "stderr.txt" -Raw -ErrorAction SilentlyContinue
+          
+          # Combine output (stderr often contains important CUDA/GPU info)
+          $output = $stdout + $stderr
+          
+          # Clean up temp files
+          Remove-Item "stdout.txt" -ErrorAction SilentlyContinue
+          Remove-Item "stderr.txt" -ErrorAction SilentlyContinue
+          
+          Write-Host "Process exit code: $($process.ExitCode)"
+        }
+        catch {
+          Write-Error "Failed to run llama-cli: $_"
+          exit 1
+        }
         
         Write-Host "=== LLAMA-CLI OUTPUT ==="
         Write-Host $output
         Write-Host "=== END OUTPUT ==="
+        
+        # Check if the process exited successfully
+        if ($process.ExitCode -ne 0) {
+          Write-Host "❌ llama-cli exited with error code: $($process.ExitCode)"
+          exit 1
+        }
         
         # Check for expected outputs
         $foundGpuOffload = $output -match "offloaded 29/29 layers to GPU"
@@ -188,7 +244,7 @@ jobs:
         }
 
   test-ubuntu:
-    runs-on: ubuntu-22.04
+    runs-on: [stx-halo, Linux]
     needs: prepare-matrix
     if: needs.prepare-matrix.outputs.should_test_ubuntu == 'true'
     strategy:
@@ -199,6 +255,21 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
       
+    - name: Install jq
+      run: |
+        if ! command -v jq &> /dev/null; then
+          echo "Installing jq..."
+          # Download and install jq binary directly
+          mkdir -p ~/bin
+          curl -L -o ~/bin/jq https://github.com/jqlang/jq/releases/download/jq-1.7.1/jq-linux-amd64
+          chmod +x ~/bin/jq
+          export PATH="$HOME/bin:$PATH"
+          echo "PATH=$HOME/bin:$PATH" >> $GITHUB_ENV
+          echo "jq installed to ~/bin/jq"
+        else
+          echo "jq is already installed"
+        fi
+        
     - name: Download release artifacts
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -206,12 +277,44 @@ jobs:
         release_tag="${{ needs.prepare-matrix.outputs.latest_release_tag }}"
         target="${{ matrix.gfx_target }}"
         asset_name="llama-${release_tag}-ubuntu-rocm-${target}-x64.zip"
+        repo="${{ github.repository }}"
         
         echo "Downloading release asset: $asset_name"
         echo "From release: $release_tag"
         
+        # Get release information using GitHub REST API
+        release_url="https://api.github.com/repos/$repo/releases/tags/$release_tag"
+        
+        # Get release data and extract asset download URL
+        release_data=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "$release_url")
+        
+        if [ $? -ne 0 ]; then
+          echo "Error: Failed to fetch release information"
+          exit 1
+        fi
+        
+        # Extract the browser_download_url for the specific asset
+        download_url=$(echo "$release_data" | jq -r ".assets[] | select(.name == \"$asset_name\") | .browser_download_url")
+        
+        if [ "$download_url" = "null" ] || [ -z "$download_url" ]; then
+          echo "Error: Asset '$asset_name' not found in release '$release_tag'"
+          echo "Available assets:"
+          echo "$release_data" | jq -r '.assets[].name'
+          exit 1
+        fi
+        
+        asset_size=$(echo "$release_data" | jq -r ".assets[] | select(.name == \"$asset_name\") | .size")
+        echo "Found asset: $asset_name (Size: $asset_size bytes)"
+        
         # Download the specific asset
-        gh release download "$release_tag" --pattern "$asset_name"
+        curl -L -H "Authorization: token $GITHUB_TOKEN" -o "$asset_name" "$download_url"
+        
+        if [ $? -eq 0 ]; then
+          echo "Downloaded $asset_name successfully"
+        else
+          echo "Error: Failed to download $asset_name"
+          exit 1
+        fi
         
         # Extract the downloaded zip file
         echo "Extracting $asset_name..."
@@ -227,7 +330,7 @@ jobs:
         model_path="Qwen3-0.6B-Q4_0.gguf"
         
         echo "Downloading test model from: $model_url"
-        wget -O "$model_path" "$model_url"
+        curl -L -o "$model_path" "$model_url"
         
         # Verify download
         if [ -f "$model_path" ]; then
