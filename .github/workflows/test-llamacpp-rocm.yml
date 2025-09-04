@@ -110,6 +110,21 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
       
+    - name: Install GitHub CLI
+      run: |
+        # Check if GitHub CLI is installed
+        if (-not (Get-Command gh -ErrorAction SilentlyContinue)) {
+          Write-Host "Installing GitHub CLI..."
+          # Download and install GitHub CLI using winget
+          winget install --id GitHub.cli --silent --accept-package-agreements --accept-source-agreements
+          
+          # Refresh PATH to make gh available
+          $env:PATH = [System.Environment]::GetEnvironmentVariable("PATH", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("PATH", "User")
+        } else {
+          Write-Host "GitHub CLI is already installed"
+          gh --version
+        }
+        
     - name: Download release artifacts
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -199,6 +214,20 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
       
+    - name: Install GitHub CLI
+      run: |
+        # Check if GitHub CLI is installed
+        if ! command -v gh &> /dev/null; then
+          echo "Installing GitHub CLI..."
+          curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+          echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+          sudo apt update
+          sudo apt install gh -y
+        else
+          echo "GitHub CLI is already installed"
+          gh --version
+        fi
+        
     - name: Download release artifacts
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
