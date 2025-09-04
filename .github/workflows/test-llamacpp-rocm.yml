@@ -166,7 +166,7 @@ jobs:
         $modelPath = "Qwen3-0.6B-Q4_0.gguf"
         
         Write-Host "Downloading test model from: $modelUrl"
-        curl -L -o $modelPath $modelUrl
+        curl.exe -L -o $modelPath $modelUrl
         
         # Verify download
         if (Test-Path $modelPath) {
