@@ -41,17 +41,23 @@ jobs:
         release_input="${{ env.RELEASE_TAG }}"
         
         if [ "$release_input" = "latest" ]; then
-          # Get the latest release tag
-          release_tag=$(gh release list --limit 1 --json tagName --jq '.[0].tagName')
+          # Get the latest release tag using GitHub REST API
+          release_tag=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+            "https://api.github.com/repos/${{ github.repository }}/releases/latest" \
+            | jq -r '.tag_name')
           echo "Using latest release: $release_tag"
         else
           # Use the specified release tag
           release_tag="$release_input"
           echo "Using specified release: $release_tag"
           
-          # Verify the release exists
-          if ! gh release view "$release_tag" >/dev/null 2>&1; then
-            echo "Error: Release '$release_tag' does not exist"
+          # Verify the release exists using GitHub REST API
+          response_code=$(curl -s -o /dev/null -w "%{http_code}" \
+            -H "Authorization: token $GITHUB_TOKEN" \
+            "https://api.github.com/repos/${{ github.repository }}/releases/tags/$release_tag")
+          
+          if [ "$response_code" != "200" ]; then
+            echo "Error: Release '$release_tag' does not exist (HTTP $response_code)"
             exit 1
           fi
         fi
@@ -110,21 +116,6 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
       
-    - name: Install GitHub CLI
-      run: |
-        # Check if GitHub CLI is installed
-        if (-not (Get-Command gh -ErrorAction SilentlyContinue)) {
-          Write-Host "Installing GitHub CLI..."
-          # Download and install GitHub CLI using winget
-          winget install --id GitHub.cli --silent --accept-package-agreements --accept-source-agreements
-          
-          # Refresh PATH to make gh available
-          $env:PATH = [System.Environment]::GetEnvironmentVariable("PATH", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("PATH", "User")
-        } else {
-          Write-Host "GitHub CLI is already installed"
-          gh --version
-        }
-        
     - name: Download release artifacts
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -132,12 +123,34 @@ jobs:
         $releaseTag = "${{ needs.prepare-matrix.outputs.latest_release_tag }}"
         $target = "${{ matrix.gfx_target }}"
         $assetName = "llama-${releaseTag}-windows-rocm-${target}-x64.zip"
+        $repo = "${{ github.repository }}"
         
         Write-Host "Downloading release asset: $assetName"
         Write-Host "From release: $releaseTag"
         
-        # Download the specific asset
-        gh release download $releaseTag --pattern $assetName
+        # Get release information using GitHub REST API
+        $headers = @{ "Authorization" = "token $env:GITHUB_TOKEN" }
+        $releaseUrl = "https://api.github.com/repos/$repo/releases/tags/$releaseTag"
+        
+        try {
+          $release = Invoke-RestMethod -Uri $releaseUrl -Headers $headers
+          $asset = $release.assets | Where-Object { $_.name -eq $assetName }
+          
+          if (-not $asset) {
+            Write-Error "Asset '$assetName' not found in release '$releaseTag'"
+            exit 1
+          }
+          
+          Write-Host "Found asset: $($asset.name) (Size: $($asset.size) bytes)"
+          
+          # Download the specific asset
+          Invoke-WebRequest -Uri $asset.browser_download_url -OutFile $assetName -Headers $headers
+          Write-Host "Downloaded $assetName successfully"
+        }
+        catch {
+          Write-Error "Failed to download release asset: $_"
+          exit 1
+        }
         
         # Extract the downloaded zip file
         Write-Host "Extracting $assetName..."
@@ -214,20 +227,6 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
       
-    - name: Install GitHub CLI
-      run: |
-        # Check if GitHub CLI is installed
-        if ! command -v gh &> /dev/null; then
-          echo "Installing GitHub CLI..."
-          curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
-          echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
-          sudo apt update
-          sudo apt install gh -y
-        else
-          echo "GitHub CLI is already installed"
-          gh --version
-        fi
-        
     - name: Download release artifacts
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -235,12 +234,44 @@ jobs:
         release_tag="${{ needs.prepare-matrix.outputs.latest_release_tag }}"
         target="${{ matrix.gfx_target }}"
         asset_name="llama-${release_tag}-ubuntu-rocm-${target}-x64.zip"
+        repo="${{ github.repository }}"
         
         echo "Downloading release asset: $asset_name"
         echo "From release: $release_tag"
         
+        # Get release information using GitHub REST API
+        release_url="https://api.github.com/repos/$repo/releases/tags/$release_tag"
+        
+        # Get release data and extract asset download URL
+        release_data=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "$release_url")
+        
+        if [ $? -ne 0 ]; then
+          echo "Error: Failed to fetch release information"
+          exit 1
+        fi
+        
+        # Extract the browser_download_url for the specific asset
+        download_url=$(echo "$release_data" | jq -r ".assets[] | select(.name == \"$asset_name\") | .browser_download_url")
+        
+        if [ "$download_url" = "null" ] || [ -z "$download_url" ]; then
+          echo "Error: Asset '$asset_name' not found in release '$release_tag'"
+          echo "Available assets:"
+          echo "$release_data" | jq -r '.assets[].name'
+          exit 1
+        fi
+        
+        asset_size=$(echo "$release_data" | jq -r ".assets[] | select(.name == \"$asset_name\") | .size")
+        echo "Found asset: $asset_name (Size: $asset_size bytes)"
+        
         # Download the specific asset
-        gh release download "$release_tag" --pattern "$asset_name"
+        curl -L -H "Authorization: token $GITHUB_TOKEN" -o "$asset_name" "$download_url"
+        
+        if [ $? -eq 0 ]; then
+          echo "Downloaded $asset_name successfully"
+        else
+          echo "Error: Failed to download $asset_name"
+          exit 1
+        fi
         
         # Extract the downloaded zip file
         echo "Extracting $asset_name..."
