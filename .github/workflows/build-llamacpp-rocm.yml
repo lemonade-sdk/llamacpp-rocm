@@ -173,16 +173,16 @@ jobs:
         # Add appropriate suffixes for different GPU targets
         $s3Target = $currentTarget
         if ($currentTarget -eq "gfx110X") {
-          $s3Target = "$currentTarget-dgpu-7"
+          $s3Target = "$currentTarget-dgpu"
+          Write-Host "Using S3 target with -dgpu suffix: $s3Target"
         } elseif ($currentTarget -eq "gfx120X") {
-          $s3Target = "$currentTarget-all-7"
-        } elseif ($currentTarget -eq "gfx1151") {
-          $s3Target = "$currentTarget-7"
+          $s3Target = "$currentTarget-all"
+          Write-Host "Using S3 target with -all suffix: $s3Target"
         }
         
         if ($rocmVersion -eq "latest") {
           Write-Host "Auto-detecting latest ROCm version for target: $currentTarget"
-          $s3Response = (Invoke-WebRequest "https://therock-nightly-tarball.s3.amazonaws.com/?prefix=therock-dist-windows-$s3Target").Content
+          $s3Response = (Invoke-WebRequest "https://therock-nightly-tarball.s3.amazonaws.com/?prefix=therock-dist-windows-$s3Target-7").Content
           $latestFile = $s3Response -split '<Key>' | Where-Object {$_ -match '</Key>'} | ForEach-Object { ($_ -split '</Key>')[0] } | Sort-Object | Select-Object -Last 1
           
           Write-Host "Found latest file: $latestFile"
@@ -521,7 +521,7 @@ jobs:
         
         if [ "$rocm_version" = "latest" ]; then
           echo "Auto-detecting latest ROCm version for target: $current_target"
-          s3_response=$(curl -s "https://therock-nightly-tarball.s3.amazonaws.com/?prefix=therock-dist-linux-${s3_target}-")
+          s3_response=$(curl -s "https://therock-nightly-tarball.s3.amazonaws.com/?prefix=therock-dist-linux-${s3_target}-7")
           latest_file=$(echo "$s3_response" | grep -oP '(?<=<Key>)[^<]*' | grep "therock-dist-linux-${s3_target}-" | sort | tail -n 1)
           
           echo "Found latest file: $latest_file"
