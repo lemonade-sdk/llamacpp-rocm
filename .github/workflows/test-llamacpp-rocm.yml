@@ -195,7 +195,7 @@ jobs:
         
         # Run the command and capture output
         try {
-          $process = Start-Process -FilePath $llamaCliPath -ArgumentList @("-m", $modelPath, "-ngl", "99", "-p", "I believe the meaning of life is", "-st") -NoNewWindow -Wait -PassThru -RedirectStandardOutput "stdout.txt" -RedirectStandardError "stderr.txt"
+          $process = Start-Process -FilePath $llamaCliPath -ArgumentList @("-m", "`"$modelPath`"", "-ngl", "99", "-p", "`"I believe the meaning of life is`"", "-st") -NoNewWindow -Wait -PassThru -RedirectStandardOutput "stdout.txt" -RedirectStandardError "stderr.txt"
           
           # Wait for the process to complete
           $process.WaitForExit()
