@@ -255,6 +255,16 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
       
+    - name: Install jq
+      run: |
+        if ! command -v jq &> /dev/null; then
+          echo "Installing jq..."
+          sudo apt-get update -qq
+          sudo apt-get install -y jq
+        else
+          echo "jq is already installed"
+        fi
+        
     - name: Download release artifacts
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
