@@ -493,7 +493,12 @@ jobs:
       rocm_version: ${{ steps.set-outputs.outputs.rocm_version }}
       llamacpp_commit_hash: ${{ steps.set-outputs.outputs.llamacpp_commit_hash }}
 
+
     steps:
+    - name: Free disk space
+      # Remove unused runner files to free up disk space
+      run: curl -fsSL https://raw.githubusercontent.com/kou/arrow/e49d8ae15583ceff03237571569099a6ad62be32/ci/scripts/util_free_space.sh | bash
+    
     - name: Checkout repository
       uses: actions/checkout@v4
       
