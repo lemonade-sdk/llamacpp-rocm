@@ -215,11 +215,8 @@ jobs:
         # Create directory if it doesn't exist
         New-Item -ItemType Directory -Force -Path "C:\opt\rocm"
         
-        # Extract the tarball with lower memory footprint
-        tar --use-compress-program=gzip -xf rocm.tar.gz -C C:\opt\rocm --strip-components=1
-        
-        # Delete the tar.gz file immediately to free up disk space
-        Remove-Item -Force rocm.tar.gz
+        # Extract the tarball
+        tar -xzf rocm.tar.gz -C C:\opt\rocm --strip-components=1
         
     - name: Install rocWMMA headers (develop)
       run: |
@@ -589,7 +586,10 @@ jobs:
         sudo mkdir -p /opt/rocm
         
         # Extract the tarball
-        sudo tar -xzf rocm.tar.gz -C /opt/rocm --strip-components=1
+        sudo tar --use-compress-program=gzip -xf rocm.tar.gz -C /opt/rocm --strip-components=1
+        
+        # Remove the tarball
+        rm -f rocm.tar.gz
         
     - name: Set ROCm environment variables
       run: |
