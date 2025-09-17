@@ -227,7 +227,7 @@ jobs:
         
         if (Test-Path $cloneDir) { Remove-Item -Recurse -Force $cloneDir }
         Write-Host "Cloning rocWMMA develop branch..."
-        git clone --depth 1 --branch develop $repoUrl $cloneDir
+        git clone --depth 1 --single-branch --branch develop $repoUrl $cloneDir
         
         $srcHeaders = Join-Path $cloneDir "library\include\rocwmma"
         if (!(Test-Path $srcHeaders)) {
@@ -244,18 +244,15 @@ jobs:
         
     - name: Clone llama.cpp
       run: |
-        git clone https://github.com/ggerganov/llama.cpp.git
-        cd llama.cpp
-        
-        # Checkout specified version
         $llamacppVersion = "${{ env.LLAMACPP_VERSION }}"
         if ($llamacppVersion -eq "latest") {
-          Write-Host "Checking out master branch (latest)"
-          git checkout master
+          Write-Host "Cloning master branch (latest) with shallow clone"
+          git clone --depth 1 --single-branch --branch master https://github.com/ggerganov/llama.cpp.git
         } else {
-          Write-Host "Checking out llama.cpp version: $llamacppVersion"
-          git checkout $llamacppVersion
+          Write-Host "Cloning llama.cpp version: $llamacppVersion with shallow clone"
+          git clone --depth 1 --single-branch --branch $llamacppVersion https://github.com/ggerganov/llama.cpp.git
         }
+        cd llama.cpp
         
         # Get commit hash (5 digits) and store it as environment variable
         $commitHash = git rev-parse --short=5 HEAD
@@ -614,7 +611,7 @@ jobs:
         set -e
         TMP_DIR="$(mktemp -d)"
         echo "Using temp directory: $TMP_DIR"
-        git clone --depth 1 --branch develop https://github.com/ROCm/rocWMMA.git "$TMP_DIR/rocWMMA"
+        git clone --depth 1 --single-branch --branch develop https://github.com/ROCm/rocWMMA.git "$TMP_DIR/rocWMMA"
         SRC_DIR="$TMP_DIR/rocWMMA/library/include/rocwmma"
         if [ ! -d "$SRC_DIR" ]; then
           echo "rocWMMA headers not found at expected path: $SRC_DIR"
@@ -629,18 +626,15 @@ jobs:
         
     - name: Clone llama.cpp
       run: |
-        git clone https://github.com/ggerganov/llama.cpp.git
-        cd llama.cpp
-        
-        # Checkout specified version
         llamacpp_version="${{ env.LLAMACPP_VERSION }}"
         if [ "$llamacpp_version" = "latest" ]; then
-          echo "Checking out master branch (latest)"
-          git checkout master
+          echo "Cloning master branch (latest) with shallow clone"
+          git clone --depth 1 --single-branch --branch master https://github.com/ggerganov/llama.cpp.git
         else
-          echo "Checking out llama.cpp version: $llamacpp_version"
-          git checkout "$llamacpp_version"
+          echo "Cloning llama.cpp version: $llamacpp_version with shallow clone"
+          git clone --depth 1 --single-branch --branch "$llamacpp_version" https://github.com/ggerganov/llama.cpp.git
         fi
+        cd llama.cpp
         
         # Get commit hash (5 digits) and store it as environment variable
         commit_hash=$(git rev-parse --short=5 HEAD)
