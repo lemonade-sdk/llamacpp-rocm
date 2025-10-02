@@ -276,13 +276,13 @@ jobs:
           Write-Host "Warning: $hipFile not found"
         }
 
-    - name: Apply rocWMMA patch (non-interactive)
-      shell: bash
-      run: |
-        chmod +x utils/rocwmma_patch.sh
-        # Run non-interactively; keep backups (answer 'n')
-        printf "n\n" | ./utils/rocwmma_patch.sh ./llama.cpp
-        
+    # - name: Apply rocWMMA patch (non-interactive)
+    #   shell: bash
+    #   run: |
+    #     chmod +x utils/rocwmma_patch.sh
+    #     # Run non-interactively; keep backups (answer 'n')
+    #     printf "n\n" | ./utils/rocwmma_patch.sh ./llama.cpp
+
     - name: Build Llama.cpp + ROCm
       shell: cmd
       run: |
@@ -329,7 +329,7 @@ jobs:
           -DGGML_HIP=ON ^
           -DGGML_OPENMP=OFF ^
           -DGGML_CUDA_FORCE_CUBLAS=OFF ^
-          -DGGML_HIP_ROCWMMA_FATTN=ON ^
+          -DGGML_HIP_ROCWMMA_FATTN=OFF ^
           -DGGML_HIP_FORCE_ROCWMMA_FATTN_GFX12=OFF ^
           -DLLAMA_CURL=OFF ^
           -DGGML_NATIVE=OFF ^
