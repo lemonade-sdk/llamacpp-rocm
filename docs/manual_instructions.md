@@ -59,6 +59,8 @@ cmake --build . -j 24 2>&1 | findstr /i "error"
 
 > **Note**: Adjust the `-DAMDGPU_TARGETS="gfx1151"` parameter for your specific GPU. See the [GPU Target Reference](#gpu-target-reference) section for details.
 
+For `"gfx1200"` and `"gfx1201"` CMake flag `"-DGGML_HIP_FORCE_ROCWMMA_FATTN_GFX12"` should be set to `"ON"`.
+
 If you see no errors, that means that llama.cpp has correctly been built and files are available inside your `build\bin` folder. 
 
 ---
@@ -148,6 +150,8 @@ cmake --build . -j $(nproc)
 
 > **Note**: Adjust the `-DAMDGPU_TARGETS="gfx1151"` parameter for your specific GPU. See the [GPU Target Reference](#gpu-target-reference) section for details.
 
+For `"gfx1200"` and `"gfx1201"` CMake flag `"-DGGML_HIP_FORCE_ROCWMMA_FATTN_GFX12"` should be set to `"ON"`.
+
 ### Part 4: Copy required ROCm libraries
 
 After successful compilation, copy the required ROCm libraries to the build directory:
@@ -178,9 +182,9 @@ If you see no errors during the build process, llama.cpp has been successfully c
 
 When building llama.cpp with ROCm, the `-DAMDGPU_TARGETS` parameter must be set based on your specific GPU architecture. Our automated workflow uses generic targets that get mapped to specific architectures:
 
-- **`gfx120X`** maps to `gfx1200,gfx1201` (RDNA 3 series like RX 7900 XT/XTX)
-- **`gfx110X`** maps to `gfx1100` (RDNA 2 series like RX 6000 series)  
-- **`gfx1151`** remains as `gfx1151` (specific for RX 7600/7700 XT)
+- **`gfx120X`** maps to `gfx1200, gfx1201` (RDNA4 series like RX 9060 XT or RX 9070 XT/XTX)
+- **`gfx110X`** maps to `gfx1100` (RDNA3 series like RX 7900 XT/XTX)  
+- **`gfx1151`** remains as `gfx1151` (Strix Halo)
 
 For a complete list of GPU targets and their mappings, see the [automated workflow](../.github/workflows/build-llamacpp-rocm.yml).
 
@@ -189,12 +193,12 @@ For a complete list of GPU targets and their mappings, see the [automated workfl
 Replace the `-DAMDGPU_TARGETS="gfx1151"` parameter in your cmake command with the appropriate target for your GPU:
 
 ```bash
-# For RDNA 3 series (RX 7900 XT/XTX)
--DAMDGPU_TARGETS="gfx1200,gfx1201"
+# For RDNA4 series (RX 9060 XT or RX 9070 XT/XTX)
+-DAMDGPU_TARGETS="gfx1200, gfx1201"
 
-# For RDNA 2 series (RX 6000 series) 
+# For RDNA3 series (RX 7900 XT/XTX) 
 -DAMDGPU_TARGETS="gfx1100"
 
-# For RX 7600/7700 XT
+# For Strix Halo
 -DAMDGPU_TARGETS="gfx1151"
 ```
