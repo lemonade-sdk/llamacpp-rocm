@@ -262,19 +262,6 @@ jobs:
         # Show current commit info
         Write-Host "Current llama.cpp commit:"
         git log --oneline -1
-        
-    - name: Update HIP version check
-      run: |
-        cd llama.cpp
-        $hipFile = "ggml\src\ggml-cuda\vendors\hip.h"
-        if (Test-Path $hipFile) {
-          $content = Get-Content $hipFile -Raw
-          $updatedContent = $content -replace 'HIP_VERSION >= 70000000', 'HIP_VERSION >= 50600000'
-          Set-Content $hipFile $updatedContent -NoNewline
-          Write-Host "Updated HIP version check in $hipFile"
-        } else {
-          Write-Host "Warning: $hipFile not found"
-        }
 
     # - name: Apply rocWMMA patch (non-interactive)
     #   shell: bash
@@ -650,17 +637,6 @@ jobs:
         # Show current commit info
         echo "Current llama.cpp commit:"
         git log --oneline -1
-        
-    - name: Update HIP version check
-      run: |
-        cd llama.cpp
-        hip_file="ggml/src/ggml-cuda/vendors/hip.h"
-        if [ -f "$hip_file" ]; then
-          sed -i 's/HIP_VERSION >= 70000000/HIP_VERSION >= 50600000/g' "$hip_file"
-          echo "Updated HIP version check in $hip_file"
-        else
-          echo "Warning: $hip_file not found"
-        fi
 
     #- name: Apply rocWMMA patch (non-interactive)
     #  run: |
