@@ -172,6 +172,10 @@ cp -v /opt/rocm/lib/rocm_sysdeps/lib/*.so* .
 # Copy the rocblas library folder
 mkdir -p rocblas
 cp -r /opt/rocm/lib/rocblas/library rocblas/
+
+# Copy the hipblaslt library folder
+mkdir -p hipblaslt
+cp -r /opt/rocm/lib/hipblaslt/library hipblaslt/
 ```
 
 If you see no errors during the build process, llama.cpp has been successfully compiled and all files are available in your `build/bin` folder.
