@@ -42,11 +42,7 @@ I used chocolatey, but you can also install those manually.
 * Setp 6: Add `C:\opt\rocm\lib\llvm\bin` to path
 * Step 7: clone llamacpp
 
-### Part 3: Updating llama.cpp
-
-Open `C:\<YOUR_LLAMACPP_PATH>\ggml\src\ggml-cuda\vendors\hip.h` and replace `HIP_VERSION >= 70000000` with `HIP_VERSION >= 50600000`
-
-### Part 4: Building Llama.cpp + ROCm
+### Part 3: Building Llama.cpp + ROCm
 
 Open `x64 Native Tools Command Prompt` and run the following commands:
 
@@ -115,17 +111,7 @@ sudo apt install -y cmake ninja-build git wget
   git clone https://github.com/ggerganov/llama.cpp.git
   ```
 
-### Part 3: Updating llama.cpp
-
-> **Note**: This step is identical to the [Windows Part 3](#part-3-updating-llamacpp) above, with the same file modification.
-
-Navigate to your llama.cpp directory and update the HIP version check:
-```bash
-cd llama.cpp
-sed -i 's/HIP_VERSION >= 70000000/HIP_VERSION >= 50600000/g' ggml/src/ggml-cuda/vendors/hip.h
-```
-
-### Part 4: Building Llama.cpp + ROCm
+### Part 3: Building Llama.cpp + ROCm
 
 Run the following commands to build llama.cpp with ROCm support:
 
@@ -162,7 +148,7 @@ cmake --build . -j $(nproc)
 
 > **Note**: Adjust the `-DAMDGPU_TARGETS="gfx1151"` parameter for your specific GPU. See the [GPU Target Reference](#gpu-target-reference) section for details.
 
-### Part 5: Copy required ROCm libraries
+### Part 4: Copy required ROCm libraries
 
 After successful compilation, copy the required ROCm libraries to the build directory:
 
