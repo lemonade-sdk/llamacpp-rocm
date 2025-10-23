@@ -279,7 +279,7 @@ jobs:
         echo Input target: %current_target%
         
         if "%current_target%"=="gfx110X" (
-          set "mapped_target=gfx1100"
+          set "mapped_target=gfx1100;gfx1101;gfx1102"
         ) else if "%current_target%"=="gfx1151" (
           set "mapped_target=gfx1151"
         ) else if "%current_target%"=="gfx120X" (
@@ -665,11 +665,11 @@ jobs:
         echo "Input target: $current_target"
         
         if [ "$current_target" = "gfx110X" ]; then
-          mapped_target="gfx1100"
+          mapped_target="gfx1100;gfx1101;gfx1102"
         elif [ "$current_target" = "gfx1151" ]; then
           mapped_target="gfx1151"
         elif [ "$current_target" = "gfx120X" ]; then
-          mapped_target="gfx1200,gfx1201"
+          mapped_target="gfx1200;gfx1201"
         else
           mapped_target="$current_target"
         fi
