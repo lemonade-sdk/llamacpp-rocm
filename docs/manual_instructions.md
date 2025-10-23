@@ -186,8 +186,8 @@ If you see no errors during the build process, llama.cpp has been successfully c
 
 When building llama.cpp with ROCm, the `-DAMDGPU_TARGETS` parameter must be set based on your specific GPU architecture. Our automated workflow uses generic targets that get mapped to specific architectures:
 
-- **`gfx120X`** maps to `gfx1200, gfx1201` (RDNA4 series like RX 9060 XT or RX 9070 XT/XTX)
-- **`gfx110X`** maps to `gfx1100` (RDNA3 series like RX 7900 XT/XTX)  
+- **`gfx120X`** maps to `gfx1200, gfx1201` (RDNA4 series like: RX 9070 XT/GRE/9070, RX 9060 XT/9060)
+- **`gfx110X`** maps to `gfx1100, gfx1101, gfx1102` (RDNA3 series like: PRO W7900/W7800/W7700/W7600, RX 7900 XTX/XT/GRE, RX 7800 XT, RX 7700 XT/7700, RX 7600 XT/7600)  
 - **`gfx1151`** remains as `gfx1151` (Strix Halo)
 
 For a complete list of GPU targets and their mappings, see the [automated workflow](../.github/workflows/build-llamacpp-rocm.yml).
@@ -197,10 +197,10 @@ For a complete list of GPU targets and their mappings, see the [automated workfl
 Replace the `-DAMDGPU_TARGETS="gfx1151"` parameter in your cmake command with the appropriate target for your GPU:
 
 ```bash
-# For RDNA4 series (RX 9060 XT or RX 9070 XT/XTX)
+# For RDNA4 series (RX 9070 XT/GRE/9070, RX 9060 XT/9060)
 -DAMDGPU_TARGETS="gfx1200, gfx1201"
 
-# For RDNA3 series (RX 7900 XT/XTX) 
+# For RDNA3 series (PRO W7900/W7800/W7700/W7600, RX 7900 XTX/XT/GRE, RX 7800 XT, RX 7700 XT/7700, RX 7600 XT/7600) 
 -DAMDGPU_TARGETS="gfx1100"
 
 # For Strix Halo
