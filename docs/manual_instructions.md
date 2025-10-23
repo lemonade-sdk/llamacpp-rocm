@@ -59,8 +59,6 @@ cmake --build . -j 24 2>&1 | findstr /i "error"
 
 > **Note**: Adjust the `-DAMDGPU_TARGETS="gfx1151"` parameter for your specific GPU. See the [GPU Target Reference](#gpu-target-reference) section for details.
 
-For `"gfx1200"` and `"gfx1201"` CMake flag `"-DGGML_HIP_FORCE_ROCWMMA_FATTN_GFX12"` should be set to `"ON"`.
-
 If you see no errors, that means that llama.cpp has correctly been built and files are available inside your `build\bin` folder. 
 
 ---
@@ -138,7 +136,6 @@ cmake .. -G Ninja \
   -DGGML_OPENMP=OFF \
   -DGGML_CUDA_FORCE_CUBLAS=OFF \
   -DGGML_HIP_ROCWMMA_FATTN=ON \
-  -DGGML_HIP_FORCE_ROCWMMA_FATTN_GFX12=OFF \
   -DLLAMA_CURL=OFF \
   -DGGML_NATIVE=OFF \
   -DGGML_STATIC=OFF \
@@ -149,8 +146,6 @@ cmake --build . -j $(nproc)
 ```
 
 > **Note**: Adjust the `-DAMDGPU_TARGETS="gfx1151"` parameter for your specific GPU. See the [GPU Target Reference](#gpu-target-reference) section for details.
-
-For `"gfx1200"` and `"gfx1201"` CMake flag `"-DGGML_HIP_FORCE_ROCWMMA_FATTN_GFX12"` should be set to `"ON"`.
 
 ### Part 4: Copy required ROCm libraries
 
