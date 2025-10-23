@@ -218,29 +218,29 @@ jobs:
         # Extract the tarball
         tar -xzf rocm.tar.gz -C C:\opt\rocm --strip-components=1
         
-    #- name: Install rocWMMA headers (develop)
-    #  run: |
-    #    $repoUrl = "https://github.com/ROCm/rocWMMA.git"
-    #    $cloneDir = Join-Path $env:TEMP "rocWMMA-develop"
-    #    $destIncludeDir = "C:\opt\rocm\include"
-    #    $destHeaders = Join-Path $destIncludeDir "rocwmma"
-    #    
-    #    if (Test-Path $cloneDir) { Remove-Item -Recurse -Force $cloneDir }
-    #    Write-Host "Cloning rocWMMA develop branch..."
-    #    git clone --depth 1 --single-branch --branch develop $repoUrl $cloneDir
-    #    
-    #    $srcHeaders = Join-Path $cloneDir "library\include\rocwmma"
-    #    if (!(Test-Path $srcHeaders)) {
-    #      Write-Error "rocWMMA headers not found at expected path: $srcHeaders"
-    #      exit 1
-    #    }
-    #    
-    #    Write-Host "Installing headers to $destHeaders ..."
-    #    New-Item -ItemType Directory -Force -Path $destIncludeDir | Out-Null
-    #    if (Test-Path $destHeaders) { Remove-Item -Recurse -Force $destHeaders }
-    #    Copy-Item -Recurse -Force $srcHeaders $destHeaders
-    #    
-    #    Write-Host "rocWMMA headers (develop) installed successfully."
+    - name: Install rocWMMA headers (develop)
+      run: |
+        $repoUrl = "https://github.com/ROCm/rocWMMA.git"
+        $cloneDir = Join-Path $env:TEMP "rocWMMA-develop"
+        $destIncludeDir = "C:\opt\rocm\include"
+        $destHeaders = Join-Path $destIncludeDir "rocwmma"
+        
+        if (Test-Path $cloneDir) { Remove-Item -Recurse -Force $cloneDir }
+        Write-Host "Cloning rocWMMA develop branch..."
+        git clone --depth 1 --single-branch --branch develop $repoUrl $cloneDir
+        
+        $srcHeaders = Join-Path $cloneDir "library\include\rocwmma"
+        if (!(Test-Path $srcHeaders)) {
+          Write-Error "rocWMMA headers not found at expected path: $srcHeaders"
+          exit 1
+        }
+        
+        Write-Host "Installing headers to $destHeaders ..."
+        New-Item -ItemType Directory -Force -Path $destIncludeDir | Out-Null
+        if (Test-Path $destHeaders) { Remove-Item -Recurse -Force $destHeaders }
+        Copy-Item -Recurse -Force $srcHeaders $destHeaders
+        
+        Write-Host "rocWMMA headers (develop) installed successfully."
         
     - name: Clone llama.cpp
       run: |
@@ -276,12 +276,12 @@ jobs:
           Write-Host "Warning: $hipFile not found"
         }
 
-    # - name: Apply rocWMMA patch (non-interactive)
-    #   shell: bash
-    #   run: |
-    #     chmod +x utils/rocwmma_patch.sh
-    #     # Run non-interactively; keep backups (answer 'n')
-    #     printf "n\n" | ./utils/rocwmma_patch.sh ./llama.cpp
+     - name: Apply rocWMMA patch (non-interactive)
+       shell: bash
+       run: |
+         chmod +x utils/rocwmma_patch.sh
+         # Run non-interactively; keep backups (answer 'n')
+         printf "n\n" | ./utils/rocwmma_patch.sh ./llama.cpp
 
     - name: Build Llama.cpp + ROCm
       shell: cmd
@@ -329,7 +329,7 @@ jobs:
           -DGGML_HIP=ON ^
           -DGGML_OPENMP=OFF ^
           -DGGML_CUDA_FORCE_CUBLAS=OFF ^
-          -DGGML_HIP_ROCWMMA_FATTN=OFF ^
+          -DGGML_HIP_ROCWMMA_FATTN=ON ^
           -DGGML_HIP_FORCE_ROCWMMA_FATTN_GFX12=OFF ^
           -DLLAMA_CURL=OFF ^
           -DGGML_NATIVE=OFF ^
@@ -612,23 +612,23 @@ jobs:
         
         echo "ROCm environment variables set successfully"
         
-    #- name: Install rocWMMA headers (develop)
-    #  run: |
-    #    set -e
-    #    TMP_DIR="$(mktemp -d)"
-    #    echo "Using temp directory: $TMP_DIR"
-    #    git clone --depth 1 --single-branch --branch develop https://github.com/ROCm/rocWMMA.git "$TMP_DIR/rocWMMA"
-    #    SRC_DIR="$TMP_DIR/rocWMMA/library/include/rocwmma"
-    #    if [ ! -d "$SRC_DIR" ]; then
-    #      echo "rocWMMA headers not found at expected path: $SRC_DIR"
-    #      exit 1
-    #    fi
-    #    echo "Installing headers to /opt/rocm/include/rocwmma ..."
-    #    sudo mkdir -p /opt/rocm/include
-    #    sudo rm -rf /opt/rocm/include/rocwmma
-    #    sudo cp -r "$SRC_DIR" /opt/rocm/include/
-    #    rm -rf "$TMP_DIR"
-    #    echo "rocWMMA headers (develop) installed successfully."
+    - name: Install rocWMMA headers (develop)
+      run: |
+        set -e
+        TMP_DIR="$(mktemp -d)"
+        echo "Using temp directory: $TMP_DIR"
+        git clone --depth 1 --single-branch --branch develop https://github.com/ROCm/rocWMMA.git "$TMP_DIR/rocWMMA"
+        SRC_DIR="$TMP_DIR/rocWMMA/library/include/rocwmma"
+        if [ ! -d "$SRC_DIR" ]; then
+          echo "rocWMMA headers not found at expected path: $SRC_DIR"
+          exit 1
+        fi
+        echo "Installing headers to /opt/rocm/include/rocwmma ..."
+        sudo mkdir -p /opt/rocm/include
+        sudo rm -rf /opt/rocm/include/rocwmma
+        sudo cp -r "$SRC_DIR" /opt/rocm/include/
+        rm -rf "$TMP_DIR"
+        echo "rocWMMA headers (develop) installed successfully."
         
     - name: Clone llama.cpp
       run: |
@@ -662,11 +662,11 @@ jobs:
           echo "Warning: $hip_file not found"
         fi
 
-    #- name: Apply rocWMMA patch (non-interactive)
-    #  run: |
-    #    chmod +x utils/rocwmma_patch.sh
-    #    # Run non-interactively; keep backups (answer 'n')
-    #    printf "n\n" | ./utils/rocwmma_patch.sh ./llama.cpp
+    - name: Apply rocWMMA patch (non-interactive)
+      run: |
+        chmod +x utils/rocwmma_patch.sh
+        # Run non-interactively; keep backups (answer 'n')
+        printf "n\n" | ./utils/rocwmma_patch.sh ./llama.cpp
         
     - name: Build Llama.cpp + ROCm
       run: |
@@ -702,7 +702,7 @@ jobs:
           -DGGML_HIP=ON \
           -DGGML_OPENMP=OFF \
           -DGGML_CUDA_FORCE_CUBLAS=OFF \
-          -DGGML_HIP_ROCWMMA_FATTN=OFF \
+          -DGGML_HIP_ROCWMMA_FATTN=ON \
           -DGGML_HIP_FORCE_ROCWMMA_FATTN_GFX12=OFF \
           -DLLAMA_CURL=OFF \
           -DGGML_NATIVE=OFF \
