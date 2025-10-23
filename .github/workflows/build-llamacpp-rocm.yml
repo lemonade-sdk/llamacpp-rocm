@@ -24,6 +24,10 @@ on:
         default: true
         type: boolean
 
+  # Trigger on pushes to pull requests
+  pull_request:
+    types: [opened, synchronize, reopened]
+
   # Trigger on a schedule to build nightly releases
   schedule:
     # Runs at 1:00 PM UTC, which is 5:00 AM PST (UTC-8)
@@ -262,19 +266,6 @@ jobs:
         # Show current commit info
         Write-Host "Current llama.cpp commit:"
         git log --oneline -1
-        
-    - name: Update HIP version check
-      run: |
-        cd llama.cpp
-        $hipFile = "ggml\src\ggml-cuda\vendors\hip.h"
-        if (Test-Path $hipFile) {
-          $content = Get-Content $hipFile -Raw
-          $updatedContent = $content -replace 'HIP_VERSION >= 70000000', 'HIP_VERSION >= 50600000'
-          Set-Content $hipFile $updatedContent -NoNewline
-          Write-Host "Updated HIP version check in $hipFile"
-        } else {
-          Write-Host "Warning: $hipFile not found"
-        }
 
     # - name: Apply rocWMMA patch (non-interactive)
     #   shell: bash
@@ -292,7 +283,7 @@ jobs:
         echo Input target: %current_target%
         
         if "%current_target%"=="gfx110X" (
-          set "mapped_target=gfx1100"
+          set "mapped_target=gfx1100;gfx1101;gfx1102"
         ) else if "%current_target%"=="gfx1151" (
           set "mapped_target=gfx1151"
         ) else if "%current_target%"=="gfx120X" (
@@ -330,7 +321,6 @@ jobs:
           -DGGML_OPENMP=OFF ^
           -DGGML_CUDA_FORCE_CUBLAS=OFF ^
           -DGGML_HIP_ROCWMMA_FATTN=OFF ^
-          -DGGML_HIP_FORCE_ROCWMMA_FATTN_GFX12=OFF ^
           -DLLAMA_CURL=OFF ^
           -DGGML_NATIVE=OFF ^
           -DGGML_STATIC=OFF ^
@@ -386,6 +376,21 @@ jobs:
             # List the contents of the copied rocblas\library folder
             Write-Host "Contents of rocblas\library:"
             Get-ChildItem $destRocblasPath -Recurse | Select-Object FullName, Length | Format-Table -AutoSize
+          } else {
+            Write-Host "Warning: rocblas\library folder not found at: $rocblasLibPath"
+          }
+
+          # Copy the hipblaslt\library folder and all its contents
+          $hipblasltLibPath = Join-Path $rocmBinPath "hipblaslt\library"
+          if (Test-Path $hipblasltLibPath) {
+            Write-Host "Copying hipblaslt\library folder and all contents..."
+            $destHipblasltPath = Join-Path $buildBinPath "hipblaslt\library"
+            Copy-Item -Path $hipblasltLibPath -Destination $destHipblasltPath -Recurse -Force
+            Write-Host "Copied: hipblaslt\library folder with all contents"
+
+            # List the contents of the copied hipblaslt\library folder
+            Write-Host "Contents of hipblaslt\library:"
+            Get-ChildItem $destHipblasltPath -Recurse | Select-Object FullName, Length | Format-Table -AutoSize
           } else {
             Write-Host "Warning: rocblas\library folder not found at: $rocblasLibPath"
           }
@@ -650,17 +655,6 @@ jobs:
         # Show current commit info
         echo "Current llama.cpp commit:"
         git log --oneline -1
-        
-    - name: Update HIP version check
-      run: |
-        cd llama.cpp
-        hip_file="ggml/src/ggml-cuda/vendors/hip.h"
-        if [ -f "$hip_file" ]; then
-          sed -i 's/HIP_VERSION >= 70000000/HIP_VERSION >= 50600000/g' "$hip_file"
-          echo "Updated HIP version check in $hip_file"
-        else
-          echo "Warning: $hip_file not found"
-        fi
 
     #- name: Apply rocWMMA patch (non-interactive)
     #  run: |
@@ -675,11 +669,11 @@ jobs:
         echo "Input target: $current_target"
         
         if [ "$current_target" = "gfx110X" ]; then
-          mapped_target="gfx1100"
+          mapped_target="gfx1100;gfx1101;gfx1102"
         elif [ "$current_target" = "gfx1151" ]; then
           mapped_target="gfx1151"
         elif [ "$current_target" = "gfx120X" ]; then
-          mapped_target="gfx1200,gfx1201"
+          mapped_target="gfx1200;gfx1201"
         else
           mapped_target="$current_target"
         fi
@@ -703,7 +697,6 @@ jobs:
           -DGGML_OPENMP=OFF \
           -DGGML_CUDA_FORCE_CUBLAS=OFF \
           -DGGML_HIP_ROCWMMA_FATTN=OFF \
-          -DGGML_HIP_FORCE_ROCWMMA_FATTN_GFX12=OFF \
           -DLLAMA_CURL=OFF \
           -DGGML_NATIVE=OFF \
           -DGGML_STATIC=OFF \
@@ -731,6 +724,22 @@ jobs:
           find "$dest_rocblas_path" -type f -exec ls -la {} \; | head -20
         else
           echo "Warning: rocblas/library folder not found at: $rocblas_lib_path"
+        fi
+
+        # Copy the hipblaslt/library folder and all its contents
+        hipblaslt_lib_path="/opt/rocm/lib/hipblaslt/library"
+        if [ -d "$hipblaslt_lib_path" ]; then
+          echo "Copying hipblaslt/library folder and all contents..."
+          dest_hipblaslt_path="$build_bin_path/hipblaslt/library"
+          mkdir -p "$(dirname "$dest_hipblaslt_path")"
+          cp -r "$hipblaslt_lib_path" "$(dirname "$dest_hipblaslt_path")/"
+          echo "Copied: hipblaslt/library folder with all contents"
+
+          # List the contents of the copied hipblaslt/library folder
+          echo "Contents of hipblaslt/library:"
+          find "$dest_hipblaslt_path" -type f -exec ls -la {} \; | head -20
+        else
+          echo "Warning: hipblaslt/library folder not found at: $hipblaslt_lib_path"
         fi
  
         # Copy required ROCm libraries to build directory
@@ -1047,6 +1056,7 @@ jobs:
       (needs.build-windows.result == 'success' || needs.build-ubuntu.result == 'success') &&
       (needs.test-windows-gfx1151.result == 'success' || needs.test-windows-gfx1151.result == 'skipped') &&
       (needs.test-ubuntu-gfx1151.result == 'success' || needs.test-ubuntu-gfx1151.result == 'skipped') &&
+      github.event_name != 'pull_request' &&
       (github.event_name == 'workflow_dispatch' && 
        (github.event.inputs.create_release == 'true' || github.event.inputs.create_release == null) ||
        github.event_name == 'schedule')
