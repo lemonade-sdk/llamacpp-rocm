@@ -376,6 +376,21 @@ jobs:
           } else {
             Write-Host "Warning: rocblas\library folder not found at: $rocblasLibPath"
           }
+
+          # Copy the hipblaslt\library folder and all its contents
+          $hipblasltLibPath = Join-Path $rocmBinPath "hipblaslt\library"
+          if (Test-Path $hipblasltLibPath) {
+            Write-Host "Copying hipblaslt\library folder and all contents..."
+            $destHipblasltPath = Join-Path $buildBinPath "hipblaslt\library"
+            Copy-Item -Path $hipblasltLibPath -Destination $destHipblasltPath -Recurse -Force
+            Write-Host "Copied: hipblaslt\library folder with all contents"
+
+            # List the contents of the copied hipblaslt\library folder
+            Write-Host "Contents of hipblaslt\library:"
+            Get-ChildItem $destHipblasltPath -Recurse | Select-Object FullName, Length | Format-Table -AutoSize
+          } else {
+            Write-Host "Warning: rocblas\library folder not found at: $rocblasLibPath"
+          }
           
           Write-Host "ROCm core files successfully copied to build directory"
         } else {
@@ -707,6 +722,22 @@ jobs:
           find "$dest_rocblas_path" -type f -exec ls -la {} \; | head -20
         else
           echo "Warning: rocblas/library folder not found at: $rocblas_lib_path"
+        fi
+
+        # Copy the hipblaslt/library folder and all its contents
+        hipblaslt_lib_path="/opt/rocm/lib/hipblaslt/library"
+        if [ -d "$hipblaslt_lib_path" ]; then
+          echo "Copying hipblaslt/library folder and all contents..."
+          dest_hipblaslt_path="$build_bin_path/hipblaslt/library"
+          mkdir -p "$(dirname "$dest_hipblaslt_path")"
+          cp -r "$hipblaslt_lib_path" "$(dirname "$dest_hipblaslt_path")/"
+          echo "Copied: hipblaslt/library folder with all contents"
+
+          # List the contents of the copied hipblaslt/library folder
+          echo "Contents of hipblaslt/library:"
+          find "$dest_hipblaslt_path" -type f -exec ls -la {} \; | head -20
+        else
+          echo "Warning: hipblaslt/library folder not found at: $hipblaslt_lib_path"
         fi
  
         # Copy required ROCm libraries to build directory
