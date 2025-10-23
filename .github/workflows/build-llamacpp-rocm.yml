@@ -280,7 +280,6 @@ jobs:
       shell: bash
       run: |
         chmod +x utils/rocwmma_patch.sh
-        # Run non-interactively; keep backups (answer 'n')
         printf "n\n" | ./utils/rocwmma_patch.sh ./llama.cpp
 
     - name: Build Llama.cpp + ROCm
@@ -665,7 +664,6 @@ jobs:
     - name: Apply rocWMMA patch (non-interactive)
       run: |
         chmod +x utils/rocwmma_patch.sh
-        # Run non-interactively; keep backups (answer 'n')
         printf "n\n" | ./utils/rocwmma_patch.sh ./llama.cpp
         
     - name: Build Llama.cpp + ROCm
