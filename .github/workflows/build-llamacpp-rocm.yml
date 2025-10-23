@@ -235,6 +235,23 @@ jobs:
           exit 1
         }
         
+        # Generate rocwmma-version.hpp from template
+        Write-Host "Generating rocwmma-version.hpp from template..."
+        $versionTemplate = Join-Path $srcHeaders "internal\rocwmma-version.hpp.in"
+        $versionHeader = Join-Path $srcHeaders "internal\rocwmma-version.hpp"
+        
+        if (Test-Path $versionTemplate) {
+          $content = Get-Content $versionTemplate -Raw
+          $content = $content -replace '@rocwmma_VERSION_MAJOR@', '2'
+          $content = $content -replace '@rocwmma_VERSION_MINOR@', '1'
+          $content = $content -replace '@rocwmma_VERSION_PATCH@', '0'
+          Set-Content -Path $versionHeader -Value $content -NoNewline
+          Write-Host "Generated rocwmma-version.hpp with version 2.1.0"
+        } else {
+          Write-Error "rocwmma-version.hpp.in template not found at: $versionTemplate"
+          exit 1
+        }
+        
         Write-Host "Installing headers to $destHeaders ..."
         New-Item -ItemType Directory -Force -Path $destIncludeDir | Out-Null
         if (Test-Path $destHeaders) { Remove-Item -Recurse -Force $destHeaders }
@@ -622,6 +639,23 @@ jobs:
           echo "rocWMMA headers not found at expected path: $SRC_DIR"
           exit 1
         fi
+        
+        # Generate rocwmma-version.hpp from template
+        echo "Generating rocwmma-version.hpp from template..."
+        VERSION_TEMPLATE="$SRC_DIR/internal/rocwmma-version.hpp.in"
+        VERSION_HEADER="$SRC_DIR/internal/rocwmma-version.hpp"
+        
+        if [ -f "$VERSION_TEMPLATE" ]; then
+          sed -e 's/@rocwmma_VERSION_MAJOR@/2/g' \
+              -e 's/@rocwmma_VERSION_MINOR@/1/g' \
+              -e 's/@rocwmma_VERSION_PATCH@/0/g' \
+              "$VERSION_TEMPLATE" > "$VERSION_HEADER"
+          echo "Generated rocwmma-version.hpp with version 2.1.0"
+        else
+          echo "rocwmma-version.hpp.in template not found at: $VERSION_TEMPLATE"
+          exit 1
+        fi
+        
         echo "Installing headers to /opt/rocm/include/rocwmma ..."
         sudo mkdir -p /opt/rocm/include
         sudo rm -rf /opt/rocm/include/rocwmma
