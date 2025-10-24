@@ -199,7 +199,7 @@ jobs:
                 Version = $version
                 Major = [int]($version -split '\.')[0]
                 Minor = [int]($version -split '\.')[1]
-                Patch = [int]($version -split '\.')[2] -replace '[ar]c.*', ''
+                Patch = [int](($version -split '\.')[2] -replace '[ar]c.*', '')
                 RC = [int]($version -split '[ar]c')[1]
                 IsAlpha = $version -match 'a'
               }
