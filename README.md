@@ -32,8 +32,8 @@ We provide nightly builds of **llama.cpp** with **AMD ROCm™ 7** acceleration b
 
 This build specifically targets the following GPU architectures:
 - **gfx1151** (STX Halo GPUs) - Ryzen AI MAX+ Pro 395
-- **gfx120X** (RDNA4 GPUs) - includes AMD Radeon AI PRO R9700, RX 9070 XT/GRE/9070, RX 9060 XT
-- **gfx110X** (RDNA3 GPUs) - includes AMD Radeon PRO W7900/W7800/W7700/V710, RX 7900 XTX/XT/GRE, RX 7800 XT, RX 7700 XT
+- **gfx120X** (RDNA4 GPUs) - includes AMD Radeon RX 9070 XT/GRE/9070, RX 9060 XT/9060
+- **gfx110X** (RDNA3 GPUs) - includes AMD Radeon PRO W7900/W7800/W7700/W7600, RX 7900 XTX/XT/GRE, RX 7800 XT, RX 7700 XT/7700, RX 7600 XT/7600
 
 **All builds include ROCm™ 7 built-in** - no separate ROCm™ installation required!
 
