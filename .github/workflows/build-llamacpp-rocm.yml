@@ -24,6 +24,10 @@ on:
         default: true
         type: boolean
 
+  # Trigger on pushes to pull requests
+  pull_request:
+    types: [opened, synchronize, reopened]
+
   # Trigger on a schedule to build nightly releases
   schedule:
     # Runs at 1:00 PM UTC, which is 5:00 AM PST (UTC-8)
@@ -1047,6 +1051,7 @@ jobs:
       (needs.build-windows.result == 'success' || needs.build-ubuntu.result == 'success') &&
       (needs.test-windows-gfx1151.result == 'success' || needs.test-windows-gfx1151.result == 'skipped') &&
       (needs.test-ubuntu-gfx1151.result == 'success' || needs.test-ubuntu-gfx1151.result == 'skipped') &&
+      github.event_name != 'pull_request' &&
       (github.event_name == 'workflow_dispatch' && 
        (github.event.inputs.create_release == 'true' || github.event.inputs.create_release == null) ||
        github.event_name == 'schedule')
