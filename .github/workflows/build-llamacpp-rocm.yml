@@ -11,7 +11,7 @@ on:
         required: false
         default: 'gfx1151,gfx120X,gfx110X'
       rocm_version:
-        description: 'ROCm version to use (e.g., 7.0.0rc20250722) or "latest" to auto-detect'
+        description: 'ROCm version to use (e.g., 7.10.0a251022) or "latest" to auto-detect'
         required: false
         default: 'latest'
       llamacpp_version:
@@ -187,12 +187,32 @@ jobs:
         if ($rocmVersion -eq "latest") {
           Write-Host "Auto-detecting latest ROCm version for target: $currentTarget"
           $s3Response = (Invoke-WebRequest "https://therock-nightly-tarball.s3.amazonaws.com/?prefix=therock-dist-windows-$s3Target-7").Content
-          $latestFile = $s3Response -split '<Key>' | Where-Object {$_ -match '</Key>'} | ForEach-Object { ($_ -split '</Key>')[0] } | Sort-Object | Select-Object -Last 1
+          $files = $s3Response -split '<Key>' | Where-Object {$_ -match '</Key>'} | ForEach-Object { ($_ -split '</Key>')[0] }
+          
+          # Extract versions and sort them properly using semantic versioning
+          $versionFiles = @()
+          foreach ($file in $files) {
+            if ($file -match "therock-dist-windows-$s3Target-.*?(\d+\.\d+\.\d+[ar]c\d+)\.tar\.gz") {
+              $version = $matches[1]
+              $versionFiles += [PSCustomObject]@{
+                File = $file
+                Version = $version
+                Major = [int]($version -split '\.')[0]
+                Minor = [int]($version -split '\.')[1]
+                Patch = [int]($version -split '\.')[2] -replace '[ar]c.*', ''
+                RC = [int]($version -split '[ar]c')[1]
+                IsAlpha = $version -match 'a'
+              }
+            }
+          }
+          
+          # Sort by semantic version (major.minor.patch.rc, with alpha versions being newer than rc)
+          $latestFile = ($versionFiles | Sort-Object Major, Minor, Patch, @{Expression={if($_.IsAlpha){1}else{0}}}, RC | Select-Object -Last 1).File
           
           Write-Host "Found latest file: $latestFile"
           
           # Extract version from the filename for environment variable
-          if ($latestFile -match "therock-dist-windows-$s3Target-.*?(\d+\.\d+\.\d+rc\d+)\.tar\.gz") {
+          if ($latestFile -match "therock-dist-windows-$s3Target-.*?(\d+\.\d+\.\d+[ar]c\d+)\.tar\.gz") {
             $rocmVersion = $matches[1]
             Write-Host "Detected latest ROCm version: $rocmVersion"
           } else {
@@ -561,12 +581,62 @@ jobs:
         if [ "$rocm_version" = "latest" ]; then
           echo "Auto-detecting latest ROCm version for target: $current_target"
           s3_response=$(curl -s "https://therock-nightly-tarball.s3.amazonaws.com/?prefix=therock-dist-linux-${s3_target}-7")
-          latest_file=$(echo "$s3_response" | grep -oP '(?<=<Key>)[^<]*' | grep "therock-dist-linux-${s3_target}-" | sort | tail -n 1)
+          
+          # Extract all files and parse versions properly
+          files=$(echo "$s3_response" | grep -oP '(?<=<Key>)[^<]*' | grep "therock-dist-linux-${s3_target}-")
+          
+          # Extract versions and sort them properly using semantic versioning
+          latest_file=""
+          latest_major=0
+          latest_minor=0
+          latest_patch=0
+          latest_rc=0
+          latest_is_alpha=false
+          
+          while IFS= read -r file; do
+            if [[ "$file" =~ therock-dist-linux-${s3_target}-.*?([0-9]+\.[0-9]+\.[0-9]+[ar]c[0-9]+)\.tar\.gz ]]; then
+              version="${BASH_REMATCH[1]}"
+              major=$(echo "$version" | cut -d. -f1)
+              minor=$(echo "$version" | cut -d. -f2)
+              patch=$(echo "$version" | cut -d. -f3 | sed 's/[ar]c.*//')
+              rc=$(echo "$version" | sed 's/.*[ar]c//')
+              is_alpha=false
+              if [[ "$version" =~ a ]]; then
+                is_alpha=true
+              fi
+              
+              # Compare versions (alpha versions are newer than rc versions)
+              is_newer=false
+              if [ "$major" -gt "$latest_major" ]; then
+                is_newer=true
+              elif [ "$major" -eq "$latest_major" ] && [ "$minor" -gt "$latest_minor" ]; then
+                is_newer=true
+              elif [ "$major" -eq "$latest_major" ] && [ "$minor" -eq "$latest_minor" ] && [ "$patch" -gt "$latest_patch" ]; then
+                is_newer=true
+              elif [ "$major" -eq "$latest_major" ] && [ "$minor" -eq "$latest_minor" ] && [ "$patch" -eq "$latest_patch" ]; then
+                # Same major.minor.patch, compare alpha vs rc
+                if [ "$is_alpha" = true ] && [ "$latest_is_alpha" = false ]; then
+                  is_newer=true
+                elif [ "$is_alpha" = "$latest_is_alpha" ] && [ "$rc" -gt "$latest_rc" ]; then
+                  is_newer=true
+                fi
+              fi
+              
+              if [ "$is_newer" = true ]; then
+                latest_file="$file"
+                latest_major="$major"
+                latest_minor="$minor"
+                latest_patch="$patch"
+                latest_rc="$rc"
+                latest_is_alpha="$is_alpha"
+              fi
+            fi
+          done <<< "$files"
           
           echo "Found latest file: $latest_file"
           
           # Extract version from the filename for environment variable
-          if [[ "$latest_file" =~ therock-dist-linux-${s3_target}-.*?([0-9]+\.[0-9]+\.[0-9]+rc[0-9]+)\.tar\.gz ]]; then
+          if [[ "$latest_file" =~ therock-dist-linux-${s3_target}-.*?([0-9]+\.[0-9]+\.[0-9]+[ar]c[0-9]+)\.tar\.gz ]]; then
             rocm_version="${BASH_REMATCH[1]}"
             echo "Detected latest ROCm version: $rocm_version"
           else
