@@ -9,9 +9,9 @@ on:
       gfx_target:
         description: 'AMD GPU targets (comma-separated)'
         required: false
-        default: 'gfx1151,gfx120X,gfx110X'
+        default: 'gfx1151,gfx1150,gfx120X,gfx110X'
       rocm_version:
-        description: 'ROCm version to use (e.g., 7.10.0a20251022) or "latest" to auto-detect'
+        description: 'ROCm version to use (e.g., 7.11.0a20251205) or "latest" to auto-detect'
         required: false
         default: 'latest'
       llamacpp_version:
@@ -36,7 +36,7 @@ on:
 
 env:
   OPERATING_SYSTEMS: ${{ github.event.inputs.operating_systems || 'windows,ubuntu' }}
-  GFX_TARGETS: ${{ github.event.inputs.gfx_target || 'gfx1151,gfx120X,gfx110X' }}
+  GFX_TARGETS: ${{ github.event.inputs.gfx_target || 'gfx1151,gfx1150,gfx120X,gfx110X' }}
   ROCM_VERSION: ${{ github.event.inputs.rocm_version || 'latest' }}
   LLAMACPP_VERSION: ${{ github.event.inputs.llamacpp_version || 'latest' }}
 
@@ -306,6 +306,8 @@ jobs:
           set "mapped_target=gfx1100;gfx1101;gfx1102"
         ) else if "%current_target%"=="gfx1151" (
           set "mapped_target=gfx1151"
+        ) else if "%current_target%"=="gfx1150" (
+          set "mapped_target=gfx1150"
         ) else if "%current_target%"=="gfx120X" (
           set "mapped_target=gfx1200;gfx1201"
         ) else (
@@ -334,7 +336,7 @@ jobs:
           -DCMAKE_CXX_COMPILER="C:\opt\rocm\lib\llvm\bin\clang++.exe" ^
           -DCMAKE_CROSSCOMPILING=ON ^
           -DCMAKE_BUILD_TYPE=Release ^
-          -DAMDGPU_TARGETS="%mapped_target%" ^
+          -DGPU_TARGETS="%mapped_target%" ^
           -DBUILD_SHARED_LIBS=ON ^
           -DLLAMA_BUILD_TESTS=OFF ^
           -DGGML_HIP=ON ^
@@ -743,6 +745,8 @@ jobs:
           mapped_target="gfx1100;gfx1101;gfx1102"
         elif [ "$current_target" = "gfx1151" ]; then
           mapped_target="gfx1151"
+        elif [ "$current_target" = "gfx1150" ]; then
+          mapped_target="gfx1150"
         elif [ "$current_target" = "gfx120X" ]; then
           mapped_target="gfx1200;gfx1201"
         else
@@ -761,7 +765,7 @@ jobs:
           -DCMAKE_CXX_COMPILER=/opt/rocm/llvm/bin/clang++ \
           -DCMAKE_CROSSCOMPILING=ON \
           -DCMAKE_BUILD_TYPE=Release \
-          -DAMDGPU_TARGETS="$mapped_target" \
+          -DGPU_TARGETS="$mapped_target" \
           -DBUILD_SHARED_LIBS=ON \
           -DLLAMA_BUILD_TESTS=OFF \
           -DGGML_HIP=ON \
@@ -931,7 +935,7 @@ jobs:
     needs: [prepare-matrix, build-windows]
     if: |
       needs.build-windows.result == 'success' &&
-      contains(github.event.inputs.gfx_target || 'gfx1151,gfx120X,gfx110X', 'gfx1151') &&
+      contains(github.event.inputs.gfx_target || 'gfx1151,gfx1150,gfx120X,gfx110X', 'gfx1151') &&
       needs.prepare-matrix.outputs.should_build_windows == 'true'
 
     steps:
@@ -1053,7 +1057,7 @@ jobs:
     needs: [prepare-matrix, build-ubuntu]
     if: |
       needs.build-ubuntu.result == 'success' &&
-      contains(github.event.inputs.gfx_target || 'gfx1151,gfx120X,gfx110X', 'gfx1151') &&
+      contains(github.event.inputs.gfx_target || 'gfx1151,gfx1150,gfx120X,gfx110X', 'gfx1151') &&
       needs.prepare-matrix.outputs.should_build_ubuntu == 'true'
 
     steps:
