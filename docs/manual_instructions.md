@@ -50,7 +50,7 @@ set HIP_PLATFORM=amd
 cd "C:\<YOUR_LLAMACPP_PATH>\llama.cpp"
 mkdir build
 cd build
-cmake .. -G Ninja -DCMAKE_C_COMPILER="C:\opt\rocm\lib\llvm\bin\clang.exe" -DCMAKE_CXX_COMPILER="C:\opt\rocm\lib\llvm\bin\clang++.exe" -DCMAKE_CROSSCOMPILING=ON -DCMAKE_BUILD_TYPE=Release -DGPU_TARGETS="gfx1151" -DBUILD_SHARED_LIBS=ON -DLLAMA_BUILD_TESTS=OFF -DGGML_HIP=ON -DGGML_OPENMP=OFF -DGGML_CUDA_FORCE_CUBLAS=OFF -DGGML_HIP_ROCWMMA_FATTN=ON -DLLAMA_CURL=OFF -DGGML_NATIVE=OFF -DGGML_STATIC=OFF -DCMAKE_SYSTEM_NAME=Windows
+cmake .. -G Ninja -DCMAKE_C_COMPILER="C:\opt\rocm\lib\llvm\bin\clang.exe" -DCMAKE_CXX_COMPILER="C:\opt\rocm\lib\llvm\bin\clang++.exe" -DCMAKE_CXX_FLAGS="-IC:\opt\rocm\include" -DCMAKE_CROSSCOMPILING=ON -DCMAKE_BUILD_TYPE=Release -DGPU_TARGETS="gfx1151" -DBUILD_SHARED_LIBS=ON -DLLAMA_BUILD_TESTS=OFF -DGGML_HIP=ON -DGGML_OPENMP=OFF -DGGML_CUDA_FORCE_CUBLAS=OFF -DGGML_HIP_ROCWMMA_FATTN=ON -DLLAMA_CURL=OFF -DGGML_NATIVE=OFF -DGGML_STATIC=OFF -DCMAKE_SYSTEM_NAME=Windows
 cmake --build . -j 24 2>&1 | findstr /i "error"
 ```
 
@@ -124,6 +124,7 @@ cd build
 cmake .. -G Ninja \
   -DCMAKE_C_COMPILER=/opt/rocm/llvm/bin/clang \
   -DCMAKE_CXX_COMPILER=/opt/rocm/llvm/bin/clang++ \
+  -DCMAKE_CXX_FLAGS="-I/opt/rocm/include" \
   -DCMAKE_CROSSCOMPILING=ON \
   -DCMAKE_BUILD_TYPE=Release \
   -DGPU_TARGETS="gfx1151" \
