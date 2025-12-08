@@ -1,0 +1,232 @@
+name: 'Test Llama.cpp Build'
+description: 'Download and test llama.cpp build artifacts'
+
+inputs:
+  os_type:
+    description: 'Operating system type (Windows or Linux)'
+    required: true
+  gfx_target:
+    description: 'GPU target (e.g., gfx1151, gfx1150)'
+    required: true
+  artifact_name:
+    description: 'Full artifact name to download'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Download build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: ${{ inputs.artifact_name }}
+        path: llama-binaries
+        
+    - name: Download test model (Windows)
+      if: inputs.os_type == 'Windows'
+      shell: pwsh
+      run: |
+        $modelUrl = "https://huggingface.co/unsloth/Qwen3-0.6B-GGUF/resolve/main/Qwen3-0.6B-Q4_0.gguf?download=true"
+        $modelPath = "Qwen3-0.6B-Q4_0.gguf"
+        
+        Write-Host "Downloading test model from: $modelUrl"
+        curl.exe -L -o $modelPath $modelUrl
+        
+        # Verify download
+        if (Test-Path $modelPath) {
+          $fileSize = (Get-Item $modelPath).Length
+          Write-Host "Model downloaded successfully. Size: $fileSize bytes"
+        } else {
+          Write-Error "Failed to download model"
+          exit 1
+        }
+        
+    - name: Download test model (Linux)
+      if: inputs.os_type == 'Linux'
+      shell: bash
+      run: |
+        model_url="https://huggingface.co/unsloth/Qwen3-0.6B-GGUF/resolve/main/Qwen3-0.6B-Q4_0.gguf?download=true"
+        model_path="Qwen3-0.6B-Q4_0.gguf"
+        
+        echo "Downloading test model from: $model_url"
+        curl -L -o "$model_path" "$model_url"
+        
+        # Verify download
+        if [ -f "$model_path" ]; then
+          file_size=$(stat -c%s "$model_path")
+          echo "Model downloaded successfully. Size: $file_size bytes"
+        else
+          echo "Failed to download model"
+          exit 1
+        fi
+        
+    - name: Set up library path (Linux)
+      if: inputs.os_type == 'Linux'
+      shell: bash
+      run: |
+        # Add the llama-binaries directory to LD_LIBRARY_PATH
+        echo "LD_LIBRARY_PATH=$(pwd)/llama-binaries:$LD_LIBRARY_PATH" >> $GITHUB_ENV
+        
+    - name: Run llama-cli test (Windows)
+      if: inputs.os_type == 'Windows'
+      shell: pwsh
+      run: |
+        $llamaCliPath = "llama-binaries\llama-cli.exe"
+        $modelPath = "Qwen3-0.6B-Q4_0.gguf"
+        
+        # Verify llama-cli exists
+        if (-not (Test-Path $llamaCliPath)) {
+          Write-Error "llama-cli.exe not found at: $llamaCliPath"
+          Write-Host "Available files in llama-binaries:"
+          Get-ChildItem -Recurse "llama-binaries"
+          exit 1
+        }
+        
+        Write-Host "Running llama-cli test for ${{ inputs.gfx_target }}..."
+        Write-Host "Command: $llamaCliPath -m `"$modelPath`" -ngl 99 -p `"I believe the meaning of life is`" -st"
+        
+        # Run the command and capture output
+        try {
+          $process = Start-Process -FilePath $llamaCliPath -ArgumentList @("-m", "`"$modelPath`"", "-ngl", "99", "-p", "`"I believe the meaning of life is`"", "-st") -NoNewWindow -Wait -PassThru -RedirectStandardOutput "stdout.txt" -RedirectStandardError "stderr.txt"
+          
+          # Wait for the process to complete
+          $process.WaitForExit()
+          
+          # Read both stdout and stderr
+          $stdout = Get-Content "stdout.txt" -Raw -ErrorAction SilentlyContinue
+          $stderr = Get-Content "stderr.txt" -Raw -ErrorAction SilentlyContinue
+          
+          # Always print the output (both stdout and stderr)
+          Write-Host "=== LLAMA-CLI STDOUT ==="
+          if ($stdout) {
+            Write-Host $stdout
+          } else {
+            Write-Host "(empty)"
+          }
+          Write-Host "=== LLAMA-CLI STDERR ==="
+          if ($stderr) {
+            Write-Host $stderr
+          } else {
+            Write-Host "(empty)"
+          }
+          Write-Host "=== END OUTPUT ==="
+          Write-Host "Process exit code: $($process.ExitCode)"
+          
+          # Combine output for pattern matching (stderr often contains important CUDA/GPU info)
+          $output = $stdout + $stderr
+          
+          # Clean up temp files
+          Remove-Item "stdout.txt" -ErrorAction SilentlyContinue
+          Remove-Item "stderr.txt" -ErrorAction SilentlyContinue
+        }
+        catch {
+          Write-Error "Failed to start llama-cli process: $_"
+          Write-Error "This usually indicates a missing dependency (DLL) or permission issue"
+          # Try to get more details about dependencies
+          Write-Host "Checking for dependency issues..."
+          Write-Host "Files in llama-binaries directory:"
+          Get-ChildItem "llama-binaries" | Format-Table Name, Length
+          exit 1
+        }
+        
+        # Check if the process exited successfully
+        if ($process.ExitCode -ne 0) {
+          Write-Host "❌ llama-cli exited with error code: $($process.ExitCode)"
+          Write-Host "This error code typically indicates:"
+          Write-Host "  - Exit code 127: Command or library not found (missing DLL)"
+          Write-Host "  - Exit code 1: General error"
+          Write-Host "  - Other codes: Application-specific errors"
+          Write-Host ""
+          Write-Host "Please check the STDERR output above for specific error messages."
+          exit 1
+        }
+        
+        # Check for expected outputs
+        $foundGpuOffload = $output -match "offloaded 29/29 layers to GPU"
+        $foundThinkTag = $output -match "</think>"
+        
+        Write-Host "=== TEST RESULTS ==="
+        Write-Host "Expected 'offloaded 29/29 layers to GPU': $(if ($foundGpuOffload) { 'FOUND' } else { 'NOT FOUND' })"
+        Write-Host "Expected '</think>' tag: $(if ($foundThinkTag) { 'FOUND' } else { 'NOT FOUND' })"
+        
+        if ($foundGpuOffload -and $foundThinkTag) {
+          Write-Host "✅ Test PASSED - Both expected outputs found"
+        } else {
+          Write-Host "❌ Test FAILED - Missing expected outputs"
+          exit 1
+        }
+        
+    - name: Run llama-cli test (Linux)
+      if: inputs.os_type == 'Linux'
+      shell: bash
+      run: |
+        llama_cli_path="./llama-binaries/llama-cli"
+        model_path="Qwen3-0.6B-Q4_0.gguf"
+        
+        # Make llama-cli executable
+        chmod +x "$llama_cli_path"
+        
+        # Verify llama-cli exists
+        if [ ! -f "$llama_cli_path" ]; then
+          echo "llama-cli not found at: $llama_cli_path"
+          echo "Available files in llama-binaries:"
+          find llama-binaries -type f
+          exit 1
+        fi
+        
+        echo "Running llama-cli test for ${{ inputs.gfx_target }}..."
+        echo "Command: $llama_cli_path -m \"$model_path\" -ngl 99 -p \"I believe the meaning of life is\" -st"
+        
+        # Run the command and capture output and exit code
+        set +e  # Don't exit on error, we want to capture the output and check exit code manually
+        output=$("$llama_cli_path" -m "$model_path" -ngl 99 -p "I believe the meaning of life is" -st 2>&1)
+        exit_code=$?
+        set -e  # Re-enable exit on error
+        
+        echo "=== LLAMA-CLI OUTPUT ==="
+        if [ -n "$output" ]; then
+          echo "$output"
+        else
+          echo "(empty)"
+        fi
+        echo "=== END OUTPUT ==="
+        echo "Process exit code: $exit_code"
+        
+        # Check if the process exited successfully
+        if [ $exit_code -ne 0 ]; then
+          echo "❌ llama-cli exited with error code: $exit_code"
+          echo "This error code typically indicates:"
+          echo "  - Exit code 127: Command or library not found (missing shared library)"
+          echo "  - Exit code 1: General error"
+          echo "  - Other codes: Application-specific errors"
+          echo ""
+          echo "Checking for missing library dependencies..."
+          ldd "$llama_cli_path" || echo "ldd command failed"
+          echo ""
+          echo "Please check the output above for specific error messages."
+          exit 1
+        fi
+        
+        # Check for expected outputs
+        if echo "$output" | grep -q "offloaded 29/29 layers to GPU"; then
+          found_gpu_offload=true
+        else
+          found_gpu_offload=false
+        fi
+        
+        if echo "$output" | grep -q "</think>"; then
+          found_think_tag=true
+        else
+          found_think_tag=false
+        fi
+        
+        echo "=== TEST RESULTS ==="
+        echo "Expected 'offloaded 29/29 layers to GPU': $(if [ "$found_gpu_offload" = true ]; then echo 'FOUND'; else echo 'NOT FOUND'; fi)"
+        echo "Expected '</think>' tag: $(if [ "$found_think_tag" = true ]; then echo 'FOUND'; else echo 'NOT FOUND'; fi)"
+        
+        if [ "$found_gpu_offload" = true ] && [ "$found_think_tag" = true ]; then
+          echo "✅ Test PASSED - Both expected outputs found"
+        else
+          echo "❌ Test FAILED - Missing expected outputs"
+          exit 1
+        fi
+
