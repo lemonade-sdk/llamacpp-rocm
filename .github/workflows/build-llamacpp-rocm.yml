@@ -903,7 +903,7 @@ jobs:
       uses: actions/checkout@v4
       
     - name: Test llama.cpp build
-      uses: ./.github/actions/test-llama
+      uses: ./.github/actions/test-llamacpp-build
       with:
         os_type: ${{ matrix.os }}
         gfx_target: ${{ matrix.gfx_target }}
@@ -933,7 +933,7 @@ jobs:
       uses: actions/checkout@v4
       
     - name: Test llama.cpp build
-      uses: ./.github/actions/test-llama
+      uses: ./.github/actions/test-llamacpp-build
       with:
         os_type: ${{ matrix.os }}
         gfx_target: ${{ matrix.gfx_target }}
