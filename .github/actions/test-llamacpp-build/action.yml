@@ -23,7 +23,7 @@ runs:
         
     - name: Download test model (Windows)
       if: inputs.os_type == 'Windows'
-      shell: pwsh
+      shell: powershell
       run: |
         $modelUrl = "https://huggingface.co/unsloth/Qwen3-0.6B-GGUF/resolve/main/Qwen3-0.6B-Q4_0.gguf?download=true"
         $modelPath = "Qwen3-0.6B-Q4_0.gguf"
@@ -68,7 +68,7 @@ runs:
         
     - name: Run llama-cli test (Windows)
       if: inputs.os_type == 'Windows'
-      shell: pwsh
+      shell: powershell
       run: |
         $llamaCliPath = "llama-binaries\llama-cli.exe"
         $modelPath = "Qwen3-0.6B-Q4_0.gguf"
