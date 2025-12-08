@@ -880,7 +880,7 @@ jobs:
         echo "Cleanup completed successfully"
 
   test-stx-halo:
-    runs-on: [stx-halo, ${{ matrix.os }}]
+    runs-on: ${{ matrix.runner }}
     needs: [prepare-matrix, build-windows, build-ubuntu]
     if: |
       (needs.build-windows.result == 'success' || needs.build-ubuntu.result == 'success') &&
@@ -891,9 +891,11 @@ jobs:
           - os: Windows
             gfx_target: gfx1151
             artifact_prefix: windows
+            runner: ["stx-halo", "Windows"]
           - os: Linux
             gfx_target: gfx1151
             artifact_prefix: ubuntu
+            runner: ["stx-halo", "Linux"]
       fail-fast: false
 
     steps:
@@ -908,7 +910,7 @@ jobs:
         artifact_name: llama-${{ matrix.artifact_prefix }}-rocm-${{ matrix.gfx_target }}-x64
 
   test-stx:
-    runs-on: [stx, ${{ matrix.os }}]
+    runs-on: ${{ matrix.runner }}
     needs: [prepare-matrix, build-windows, build-ubuntu]
     if: |
       (needs.build-windows.result == 'success' || needs.build-ubuntu.result == 'success') &&
@@ -919,9 +921,11 @@ jobs:
           - os: Windows
             gfx_target: gfx1150
             artifact_prefix: windows
+            runner: ["stx", "Windows"]
           - os: Linux
             gfx_target: gfx1150
             artifact_prefix: ubuntu
+            runner: ["stx", "Linux"]
       fail-fast: false
 
     steps:
