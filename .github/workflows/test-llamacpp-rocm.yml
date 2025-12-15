@@ -32,7 +32,7 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-      
+
     - name: Get release tag
       id: get-release
       env:
@@ -73,7 +73,6 @@ jobs:
         
         echo "Input targets: $targets"
         echo "Input operating systems: $operating_systems"
-
         # Convert targets to JSON array
         matrix_targets=$(echo "$targets" \
           | tr ',' '\n' \
@@ -82,7 +81,6 @@ jobs:
           | jq -R . \
           | jq -s '{gfx_target: .}' \
           | jq -c)
-
         # Check which operating systems to test
         should_test_windows="false"
         should_test_ubuntu="false"
@@ -103,7 +101,6 @@ jobs:
         echo "Windows test: $should_test_windows"
         echo "Ubuntu test: $should_test_ubuntu"
         echo "Generated matrix: $matrix_targets"
-
   test-windows:
     runs-on: [stx-halo, Windows]
     needs: prepare-matrix
@@ -115,7 +112,7 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-      
+
     - name: Download release artifacts
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -242,7 +239,6 @@ jobs:
           Write-Host "❌ Test FAILED - Missing expected outputs"
           exit 1
         }
-
   test-ubuntu:
     runs-on: [stx-halo, Linux]
     needs: prepare-matrix
@@ -254,7 +250,7 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-      
+
     - name: Install jq
       run: |
         if ! command -v jq &> /dev/null; then
