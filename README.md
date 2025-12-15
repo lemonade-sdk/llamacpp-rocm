@@ -32,6 +32,7 @@ We provide nightly builds of **llama.cpp** with **AMD ROCm™ 7** acceleration b
 
 This build specifically targets the following GPU architectures:
 - **gfx1151** (STX Halo APU) - Ryzen AI MAX+ Pro 395
+- **gfx1150** (STX Point APU) - Ryzen AI 300
 - **gfx120X** (RDNA4 GPUs) - includes AMD Radeon RX 9070 XT/GRE/9070, RX 9060 XT/9060
 - **gfx110X** (RDNA3 GPUs) - includes AMD Radeon PRO W7900/W7800/W7700/W7600, RX 7900 XTX/XT/GRE, RX 7800 XT, RX 7700 XT/7700, RX 7600 XT/7600
 
@@ -41,13 +42,14 @@ This build specifically targets the following GPU architectures:
 
 Our automated GitHub Actions workflow creates nightly builds for:
 - **Windows** and **Ubuntu** operating systems
-- **Multiple GPU targets**: `gfx1151`, `gfx110X`, `gfx120X`
+- **Multiple GPU targets**: `gfx1151`, `gfx1150`, `gfx110X`, `gfx120X`
 - **ROCm™ 7 built-in** - complete runtime libraries included
 
 
 | GPU Target | Ubuntu | Windows |
 |-------------|--------|---------|
 | **gfx110X** | [![Download Ubuntu gfx110X](https://img.shields.io/badge/Download-Ubuntu%20gfx110X-blue)](https://github.com/aigdat/llamacpp-rocm/releases/latest) | [![Download Windows gfx110X](https://img.shields.io/badge/Download-Windows%20gfx110X-green)](https://github.com/aigdat/llamacpp-rocm/releases/latest) |
+| **gfx1150** | [![Download Ubuntu gfx1150](https://img.shields.io/badge/Download-Ubuntu%20gfx1150-blue)](https://github.com/aigdat/llamacpp-rocm/releases/latest) | [![Download Windows gfx1150](https://img.shields.io/badge/Download-Windows%20gfx1150-green)](https://github.com/aigdat/llamacpp-rocm/releases/latest) |
 | **gfx1151** | [![Download Ubuntu gfx1151](https://img.shields.io/badge/Download-Ubuntu%20gfx1151-blue)](https://github.com/aigdat/llamacpp-rocm/releases/latest) | [![Download Windows gfx1151](https://img.shields.io/badge/Download-Windows%20gfx1151-green)](https://github.com/aigdat/llamacpp-rocm/releases/latest) |
 | **gfx120X** | [![Download Ubuntu gfx120X](https://img.shields.io/badge/Download-Ubuntu%20gfx120X-blue)](https://github.com/aigdat/llamacpp-rocm/releases/latest) | [![Download Windows gfx120X](https://img.shields.io/badge/Download-Windows%20gfx120X-green)](https://github.com/aigdat/llamacpp-rocm/releases/latest) |
 

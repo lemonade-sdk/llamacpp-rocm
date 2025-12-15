@@ -402,7 +402,6 @@ jobs:
         
     - name: Upload build artifacts
       id: upload-artifacts
-      if: matrix.gfx_target != 'gfx1150'
       uses: actions/upload-artifact@v4
       with:
         name: llama-windows-rocm-${{ matrix.gfx_target }}-x64
@@ -446,7 +445,6 @@ jobs:
         
     - name: Upload build summary
       id: upload-summary
-      if: matrix.gfx_target != 'gfx1150'
       uses: actions/upload-artifact@v4
       with:
         name: build-summary-windows-${{ matrix.gfx_target }}
@@ -804,7 +802,6 @@ jobs:
         
     - name: Upload build artifacts
       id: upload-artifacts
-      if: matrix.gfx_target != 'gfx1150'
       uses: actions/upload-artifact@v4
       with:
         name: llama-ubuntu-rocm-${{ matrix.gfx_target }}-x64
@@ -845,7 +842,6 @@ jobs:
         
     - name: Upload build summary
       id: upload-summary
-      if: matrix.gfx_target != 'gfx1150'
       uses: actions/upload-artifact@v4
       with:
         name: build-summary-ubuntu-${{ matrix.gfx_target }}
@@ -925,11 +921,7 @@ jobs:
           - os: Windows
             gfx_target: gfx1150
             artifact_prefix: windows
-            runner: ["gfx1150", "Windows"]
-          - os: Linux
-            gfx_target: gfx1150
-            artifact_prefix: ubuntu
-            runner: ["gfx1150", "Linux"]
+            runner: ["stx", "Windows"]
       fail-fast: false
 
     steps:
@@ -1030,12 +1022,6 @@ jobs:
           for target in "${TARGET_ARRAY[@]}"; do
             target=$(echo "$target" | xargs) # trim whitespace
             
-            # Skip gfx1150 artifacts
-            if [ "$target" = "gfx1150" ]; then
-              echo "Skipping gfx1150 target"
-              continue
-            fi
-            
             echo "Processing OS: $os, target: $target"
             
             # Use artifact name to find the directory
@@ -1091,11 +1077,6 @@ jobs:
           os=$(echo "$os" | xargs) # trim whitespace
           for target in "${TARGET_ARRAY[@]}"; do
             target=$(echo "$target" | xargs) # trim whitespace
-            
-            # Skip gfx1150 artifacts
-            if [ "$target" = "gfx1150" ]; then
-              continue
-            fi
             
             final_archive_name="llama-${TAG}-${os}-rocm-${target}-x64"
             if [ -f "${final_archive_name}.zip" ]; then

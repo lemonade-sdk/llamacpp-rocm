@@ -82,11 +82,11 @@ runs:
         }
         
         Write-Host "Running llama-cli test for ${{ inputs.gfx_target }}..."
-        Write-Host "Command: $llamaCliPath -m `"$modelPath`" -ngl 99 -p `"I believe the meaning of life is`" -st"
+        Write-Host "Command: $llamaCliPath -m `"$modelPath`" -ngl 99 -p `"I believe the meaning of life is`" -st -v"
         
         # Run the command and capture output
         try {
-          $process = Start-Process -FilePath $llamaCliPath -ArgumentList @("-m", "`"$modelPath`"", "-ngl", "99", "-p", "`"I believe the meaning of life is`"", "-st") -NoNewWindow -Wait -PassThru -RedirectStandardOutput "stdout.txt" -RedirectStandardError "stderr.txt"
+          $process = Start-Process -FilePath $llamaCliPath -ArgumentList @("-m", "`"$modelPath`"", "-ngl", "99", "-p", "`"I believe the meaning of life is`"", "-st", "-v") -NoNewWindow -Wait -PassThru -RedirectStandardOutput "stdout.txt" -RedirectStandardError "stderr.txt"
           
           # Wait for the process to complete
           $process.WaitForExit()
@@ -174,11 +174,11 @@ runs:
         fi
         
         echo "Running llama-cli test for ${{ inputs.gfx_target }}..."
-        echo "Command: $llama_cli_path -m \"$model_path\" -ngl 99 -p \"I believe the meaning of life is\" -st"
+        echo "Command: $llama_cli_path -m \"$model_path\" -ngl 99 -p \"I believe the meaning of life is\" -st -v"
         
         # Run the command and capture output and exit code
         set +e  # Don't exit on error, we want to capture the output and check exit code manually
-        output=$("$llama_cli_path" -m "$model_path" -ngl 99 -p "I believe the meaning of life is" -st 2>&1)
+        output=$("$llama_cli_path" -m "$model_path" -ngl 99 -p "I believe the meaning of life is" -st -v 2>&1)
         exit_code=$?
         set -e  # Re-enable exit on error
         
