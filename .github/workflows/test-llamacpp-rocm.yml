@@ -387,21 +387,36 @@ jobs:
           exit 1
         fi
         
-        # Check for expected outputs by grepping the file directly
-        if grep -q "offloaded 29/29 layers to GPU" output.txt; then
+        # Strip ANSI color codes, carriage returns, and other control characters
+        # This is crucial because llama-cli uses them for progress bars
+        sed 's/\x1b\[[0-9;]*m//g' output.txt | tr -d '\r' > output_clean.txt
+        
+        echo "=== DEBUGGING GREP ==="
+        echo "Raw file size: $(wc -c < output.txt) bytes"
+        echo "Clean file size: $(wc -c < output_clean.txt) bytes"
+        echo ""
+        echo "Searching for GPU offload pattern in cleaned output..."
+        grep -n "offloaded.*layers to GPU" output_clean.txt | tail -5 || echo "  → Pattern not found"
+        echo ""
+        echo "Searching for think tag pattern in cleaned output..."
+        grep -n "</think>" output_clean.txt | tail -5 || echo "  → Pattern not found"
+        echo "=== END DEBUGGING ==="
+        
+        # Check for expected outputs by grepping the cleaned file
+        if grep -q "offloaded.*layers to GPU" output_clean.txt; then
           found_gpu_offload=true
         else
           found_gpu_offload=false
         fi
         
-        if grep -q "</think>" output.txt; then
+        if grep -q "</think>" output_clean.txt; then
           found_think_tag=true
         else
           found_think_tag=false
         fi
         
-        # Clean up temp file
-        rm -f output.txt
+        # Clean up temp files
+        rm -f output.txt output_clean.txt
         
         echo "=== TEST RESULTS ==="
         echo "Expected 'offloaded 29/29 layers to GPU': $(if [ "$found_gpu_offload" = true ]; then echo 'FOUND'; else echo 'NOT FOUND'; fi)"
