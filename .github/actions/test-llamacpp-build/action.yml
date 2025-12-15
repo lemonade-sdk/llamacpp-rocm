@@ -161,6 +161,7 @@ runs:
       run: |
         llama_cli_path="./llama-binaries/llama-cli"
         model_path="Qwen3-0.6B-Q4_0.gguf"
+        output_file="llama_output.txt"
         
         # Make llama-cli executable
         chmod +x "$llama_cli_path"
@@ -176,15 +177,15 @@ runs:
         echo "Running llama-cli test for ${{ inputs.gfx_target }}..."
         echo "Command: $llama_cli_path -m \"$model_path\" -ngl 99 -p \"I believe the meaning of life is\" -st -v"
         
-        # Run the command and capture output and exit code
+        # Run the command and capture output to file (more robust than variable)
         set +e  # Don't exit on error, we want to capture the output and check exit code manually
-        output=$("$llama_cli_path" -m "$model_path" -ngl 99 -p "I believe the meaning of life is" -st -v 2>&1)
+        "$llama_cli_path" -m "$model_path" -ngl 99 -p "I believe the meaning of life is" -st -v > "$output_file" 2>&1
         exit_code=$?
         set -e  # Re-enable exit on error
         
         echo "=== LLAMA-CLI OUTPUT ==="
-        if [ -n "$output" ]; then
-          echo "$output"
+        if [ -f "$output_file" ] && [ -s "$output_file" ]; then
+          cat "$output_file"
         else
           echo "(empty)"
         fi
@@ -203,25 +204,29 @@ runs:
           ldd "$llama_cli_path" || echo "ldd command failed"
           echo ""
           echo "Please check the output above for specific error messages."
+          rm -f "$output_file"
           exit 1
         fi
         
-        # Check for expected outputs
-        if echo "$output" | grep -q "offloaded 29/29 layers to GPU"; then
+        # Check for expected outputs using grep -F (fixed strings, no regex interpretation)
+        # This handles special characters like angle brackets more reliably
+        found_gpu_offload=false
+        found_think_tag=false
+        
+        if grep -F "offloaded 29/29 layers to GPU" "$output_file" > /dev/null 2>&1; then
           found_gpu_offload=true
-        else
-          found_gpu_offload=false
         fi
         
-        if echo "$output" | grep -q "</think>"; then
+        if grep -F "</think>" "$output_file" > /dev/null 2>&1; then
           found_think_tag=true
-        else
-          found_think_tag=false
         fi
         
         echo "=== TEST RESULTS ==="
         echo "Expected 'offloaded 29/29 layers to GPU': $(if [ "$found_gpu_offload" = true ]; then echo 'FOUND'; else echo 'NOT FOUND'; fi)"
         echo "Expected '</think>' tag: $(if [ "$found_think_tag" = true ]; then echo 'FOUND'; else echo 'NOT FOUND'; fi)"
+        
+        # Clean up output file
+        rm -f "$output_file"
         
         if [ "$found_gpu_offload" = true ] && [ "$found_think_tag" = true ]; then
           echo "✅ Test PASSED - Both expected outputs found"
