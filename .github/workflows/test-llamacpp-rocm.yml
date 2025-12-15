@@ -365,25 +365,43 @@ jobs:
         echo "Running llama-cli test..."
         echo "Command: $llama_cli_path -m \"$model_path\" -ngl 99 -p \"I believe the meaning of life is\" -st"
         
-        # Run the command and capture output
-        output=$("$llama_cli_path" -m "$model_path" -ngl 99 -p "I believe the meaning of life is" -st 2>&1)
+        # Run the command and redirect output to file (to avoid variable size limits)
+        "$llama_cli_path" -m "$model_path" -ngl 99 -p "I believe the meaning of life is" -st > output.txt 2>&1
+        exit_code=$?
+        
+        echo "Process exit code: $exit_code"
+        
+        # Display output file size for debugging
+        if [ -f output.txt ]; then
+          file_size=$(stat -c%s output.txt 2>/dev/null || stat -f%z output.txt 2>/dev/null || echo "unknown")
+          echo "Output file size: $file_size bytes"
+        fi
         
         echo "=== LLAMA-CLI OUTPUT ==="
-        echo "$output"
+        cat output.txt
         echo "=== END OUTPUT ==="
         
-        # Check for expected outputs
-        if echo "$output" | grep -q "offloaded 29/29 layers to GPU"; then
+        # Check if the process exited successfully
+        if [ $exit_code -ne 0 ]; then
+          echo "❌ llama-cli exited with error code: $exit_code"
+          exit 1
+        fi
+        
+        # Check for expected outputs by grepping the file directly
+        if grep -q "offloaded 29/29 layers to GPU" output.txt; then
           found_gpu_offload=true
         else
           found_gpu_offload=false
         fi
         
-        if echo "$output" | grep -q "</think>"; then
+        if grep -q "</think>" output.txt; then
           found_think_tag=true
         else
           found_think_tag=false
         fi
+        
+        # Clean up temp file
+        rm -f output.txt
         
         echo "=== TEST RESULTS ==="
         echo "Expected 'offloaded 29/29 layers to GPU': $(if [ "$found_gpu_offload" = true ]; then echo 'FOUND'; else echo 'NOT FOUND'; fi)"
