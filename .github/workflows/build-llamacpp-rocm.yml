@@ -992,11 +992,11 @@ jobs:
         
         # Check for expected outputs
         $foundGpuOffload = $output -match "offloaded 29/29 layers to GPU"
-        $foundThinkTag = $output -match "</think>"
+        $foundThinkTag = $output -match "\[End thinking\]"
         
         Write-Host "=== TEST RESULTS ==="
         Write-Host "Expected 'offloaded 29/29 layers to GPU': $(if ($foundGpuOffload) { 'FOUND' } else { 'NOT FOUND' })"
-        Write-Host "Expected '</think>' tag: $(if ($foundThinkTag) { 'FOUND' } else { 'NOT FOUND' })"
+        Write-Host "Expected '[End thinking]' tag: $(if ($foundThinkTag) { 'FOUND' } else { 'NOT FOUND' })"
         
         if ($foundGpuOffload -and $foundThinkTag) {
           Write-Host "✅ Test PASSED - Both expected outputs found"
@@ -1101,7 +1101,7 @@ jobs:
           found_gpu_offload=false
         fi
         
-        if echo "$output" | grep -q "</think>"; then
+        if echo "$output" | grep -q "\[End thinking\]"; then
           found_think_tag=true
         else
           found_think_tag=false
@@ -1109,7 +1109,7 @@ jobs:
         
         echo "=== TEST RESULTS ==="
         echo "Expected 'offloaded 29/29 layers to GPU': $(if [ "$found_gpu_offload" = true ]; then echo 'FOUND'; else echo 'NOT FOUND'; fi)"
-        echo "Expected '</think>' tag: $(if [ "$found_think_tag" = true ]; then echo 'FOUND'; else echo 'NOT FOUND'; fi)"
+        echo "Expected '[End thinking]' tag: $(if [ "$found_think_tag" = true ]; then echo 'FOUND'; else echo 'NOT FOUND'; fi)"
         
         if [ "$found_gpu_offload" = true ] && [ "$found_think_tag" = true ]; then
           echo "✅ Test PASSED - Both expected outputs found"
