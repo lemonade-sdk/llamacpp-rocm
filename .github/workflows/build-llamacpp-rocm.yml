@@ -527,12 +527,13 @@ jobs:
       run: |
         echo "Installing build dependencies..."
         sudo apt update
-        sudo apt install -y cmake ninja-build unzip curl
+        sudo apt install -y cmake ninja-build unzip curl patchelf
         
         # Verify installations
         echo "Verifying installations..."
         cmake --version
         ninja --version
+        patchelf --version
         echo "Build dependencies installation completed"
             
     - name: Download and extract ROCm directly to /opt/rocm
@@ -779,6 +780,7 @@ jobs:
         cp -v /opt/rocm/lib/libhipblaslt.so* "$build_bin_path/" 2>/dev/null || echo "libhipblaslt.so* not found"
         cp -v /opt/rocm/lib/rocm_sysdeps/lib/librocm_sysdeps_liblzma.so* "$build_bin_path/" 2>/dev/null || echo "librocm_sysdeps_liblzma.so* not found"
         cp -v /opt/rocm/lib/librocprofiler-register.so* "$build_bin_path/" 2>/dev/null || echo "librocprofiler-register.so* not found"
+        # Copy libamd_comgr.so and the loader stub
         cp -v /opt/rocm/lib/libamd_comgr.so* "$build_bin_path/" 2>/dev/null || echo "libamd_comgr.so* not found in /opt/rocm/lib"
         cp -v /opt/rocm/lib/libamd_comgr_loader.so* "$build_bin_path/" 2>/dev/null || echo "libamd_comgr_loader.so* not found"
         # In newer ROCm versions, libamd_comgr.so may be in a different location - search and copy
@@ -797,6 +799,17 @@ jobs:
         cp -v /opt/rocm/lib/rocm_sysdeps/lib/librocm_sysdeps_bz2.so* "$build_bin_path/" 2>/dev/null || echo "librocm_sysdeps_bz2.so* not found"
 
         echo "Finished copying required ROCm libraries"
+        
+        # Patch RPATH of all shared libraries to look in the same directory ($ORIGIN)
+        # This allows the libamd_comgr_loader.so stub to find libamd_comgr.so.3 via dlopen
+        echo "Patching RPATH of shared libraries to use \$ORIGIN..."
+        for lib in "$build_bin_path"/*.so*; do
+          if [ -f "$lib" ] && file "$lib" | grep -q "ELF.*shared object"; then
+            echo "Patching: $lib"
+            patchelf --set-rpath '$ORIGIN' "$lib" 2>/dev/null || echo "  Warning: Could not patch $lib"
+          fi
+        done
+        echo "Finished patching RPATH"
         
     - name: List build artifacts (including ROCm files)
       run: |
