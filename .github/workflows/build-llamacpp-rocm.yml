@@ -793,6 +793,52 @@ jobs:
         cp -v /opt/rocm/lib/rocm_sysdeps/lib/librocm_sysdeps_bz2.so* "$build_bin_path/" 2>/dev/null || echo "librocm_sysdeps_bz2.so* not found"
 
         echo "Finished copying required ROCm libraries"
+
+    - name: Patch binaries for portable distribution
+      run: |
+        echo "Installing patchelf..."
+        sudo apt-get install -y patchelf
+        
+        build_bin_path="llama.cpp/build/bin"
+        cd "$build_bin_path"
+        
+        echo "Patching binaries to use libamd_comgr.so.3 directly instead of the lazy-loading stub..."
+        echo "This ensures the binaries work without requiring ROCM_PATH or other environment variables."
+        
+        # Replace the stub loader dependency with the actual library in all shared libraries
+        for lib in *.so*; do
+          if [ -f "$lib" ] && [ ! -L "$lib" ]; then
+            if ldd "$lib" 2>/dev/null | grep -q "libamd_comgr_loader.so.1"; then
+              echo "Patching $lib: replacing libamd_comgr_loader.so.1 -> libamd_comgr.so.3"
+              patchelf --replace-needed libamd_comgr_loader.so.1 libamd_comgr.so.3 "$lib" || echo "  Warning: could not patch $lib"
+            fi
+          fi
+        done
+        
+        # Patch executables as well
+        for exe in llama-cli llama-server llama-bench llama-quantize llama-perplexity llama-embedding llama-simple llama-speculative; do
+          if [ -f "$exe" ]; then
+            if ldd "$exe" 2>/dev/null | grep -q "libamd_comgr_loader.so.1"; then
+              echo "Patching $exe: replacing libamd_comgr_loader.so.1 -> libamd_comgr.so.3"
+              patchelf --replace-needed libamd_comgr_loader.so.1 libamd_comgr.so.3 "$exe" || echo "  Warning: could not patch $exe"
+            fi
+          fi
+        done
+        
+        # Remove the stub loader files (no longer needed)
+        echo "Removing stub loader files..."
+        rm -f libamd_comgr_loader.so libamd_comgr_loader.so.1 libamd_comgr_loader.so.1.0*
+        
+        # Set RPATH to $ORIGIN so libraries are found relative to the binary
+        echo "Setting RPATH to \$ORIGIN for all binaries and libraries..."
+        for file in llama-cli llama-server llama-bench llama-quantize llama-perplexity llama-embedding llama-simple llama-speculative *.so*; do
+          if [ -f "$file" ] && [ ! -L "$file" ]; then
+            echo "Setting RPATH on $file"
+            patchelf --set-rpath '$ORIGIN' "$file" 2>/dev/null || echo "  Warning: could not set RPATH on $file"
+          fi
+        done
+        
+        echo "Binary patching completed successfully"
         
     - name: List build artifacts (including ROCm files)
       run: |
