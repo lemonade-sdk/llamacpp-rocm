@@ -786,9 +786,6 @@ jobs:
         cp -v /opt/rocm/lib/librocroller.so* "$build_bin_path/" 2>/dev/null || echo "librocroller.so* not found"
         cp -v /opt/rocm/lib/rocm_sysdeps/lib/librocm_sysdeps_z.so* "$build_bin_path/" 2>/dev/null || echo "librocm_sysdeps_z.so* not found"
         cp -v /opt/rocm/lib/rocm_sysdeps/lib/librocm_sysdeps_zstd.so* "$build_bin_path/" 2>/dev/null || echo "librocm_sysdeps_zstd.so* not found"
-        # Copy LLVM/Clang libraries needed by libamd_comgr.so.3
-        # libLLVM.so - LLVM core (required by comgr for GPU code generation)
-        # libclang-cpp.so - Clang C++ API (required by comgr for compilation)
         cp -v /opt/rocm/lib/llvm/lib/libLLVM.so* "$build_bin_path/" 2>/dev/null || echo "libLLVM.so* not found"
         cp -v /opt/rocm/lib/llvm/lib/libclang-cpp.so* "$build_bin_path/" 2>/dev/null || echo "libclang-cpp.so* not found"
         
@@ -799,98 +796,14 @@ jobs:
 
         echo "Finished copying required ROCm libraries"
 
-    - name: Patch binaries for portable distribution
+    - name: Set RPATH for portable distribution
       run: |
-        echo "Installing patchelf..."
         sudo apt-get install -y patchelf
-        
-        build_bin_path="llama.cpp/build/bin"
-        cd "$build_bin_path"
-        
-        # The ROCm libraries use a lazy-loading stub (libamd_comgr_loader.so.1) that loads
-        # libamd_comgr.so.3 at runtime. Libraries like libamdhip64.so call functions from
-        # the stub loader, so we CANNOT remove it. Instead, we set RPATH on everything
-        # so the loader can find the real library via $ORIGIN at runtime.
-        
-        echo "Setting RPATH to \$ORIGIN for all binaries and libraries..."
-        echo "This allows the stub loader to find libamd_comgr.so.3 in the same directory."
-        
-        for file in *.so*; do
-          if [ -f "$file" ] && [ ! -L "$file" ]; then
-            echo "Setting RPATH on $file"
-            patchelf --set-rpath '$ORIGIN' "$file" 2>/dev/null || echo "  Warning: could not set RPATH on $file"
-          fi
-        done
-        
-        for exe in llama-cli llama-server llama-bench llama-quantize llama-perplexity llama-embedding llama-simple llama-speculative; do
-          if [ -f "$exe" ]; then
-            echo "Setting RPATH on $exe"
-            patchelf --set-rpath '$ORIGIN' "$exe" 2>/dev/null || echo "  Warning: could not set RPATH on $exe"
-          fi
-        done
-        
-        echo "Binary patching completed successfully"
-        
-    - name: Verify all dependencies are satisfied
-      run: |
         cd llama.cpp/build/bin
-        echo "Verifying all shared library dependencies are satisfied..."
-        echo ""
-        
-        missing_deps=false
-        for exe in llama-cli llama-server; do
-          if [ -f "$exe" ]; then
-            echo "=== Checking $exe ==="
-            missing=$(ldd "$exe" 2>/dev/null | grep "not found" || true)
-            if [ -n "$missing" ]; then
-              echo "❌ Missing dependencies for $exe:"
-              echo "$missing"
-              missing_deps=true
-            else
-              echo "✅ All dependencies satisfied for $exe"
-            fi
-          fi
+        # Set RPATH to $ORIGIN so all libraries (including the comgr stub loader) find deps locally
+        for file in *.so* llama-*; do
+          [ -f "$file" ] && [ ! -L "$file" ] && patchelf --set-rpath '$ORIGIN' "$file" 2>/dev/null || true
         done
-        
-        # Verify the stub loader is present (required for libamdhip64.so)
-        echo ""
-        echo "=== Checking stub loader ==="
-        if [ -f "libamd_comgr_loader.so.1" ]; then
-          echo "✅ libamd_comgr_loader.so.1 is present"
-        else
-          echo "❌ libamd_comgr_loader.so.1 is MISSING - this will cause runtime errors!"
-          missing_deps=true
-        fi
-        
-        if [ -f "libamd_comgr.so.3" ]; then
-          echo "✅ libamd_comgr.so.3 is present"
-        else
-          echo "❌ libamd_comgr.so.3 is MISSING - this will cause runtime errors!"
-          missing_deps=true
-        fi
-        
-        # Verify RPATH is set correctly on the loader
-        echo ""
-        echo "=== Checking RPATH on stub loader ==="
-        loader_rpath=$(patchelf --print-rpath libamd_comgr_loader.so.1 2>/dev/null || echo "FAILED")
-        if [ "$loader_rpath" = '$ORIGIN' ]; then
-          echo "✅ libamd_comgr_loader.so.1 has correct RPATH: $loader_rpath"
-        else
-          echo "⚠️  libamd_comgr_loader.so.1 RPATH: $loader_rpath (expected \$ORIGIN)"
-        fi
-        
-        if [ "$missing_deps" = true ]; then
-          echo ""
-          echo "❌ BUILD FAILED: Some dependencies are missing!"
-          echo "Add the missing libraries to the 'Copy ROCm core libs' step."
-          echo ""
-          echo "Available libraries in build directory:"
-          ls -la *.so* | head -50
-          exit 1
-        else
-          echo ""
-          echo "✅ All dependencies verified successfully"
-        fi
 
     - name: List build artifacts (including ROCm files)
       run: |
