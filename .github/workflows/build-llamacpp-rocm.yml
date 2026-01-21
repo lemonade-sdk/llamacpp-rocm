@@ -787,13 +787,24 @@ jobs:
         cp -v /opt/rocm/lib/rocm_sysdeps/lib/librocm_sysdeps_z.so* "$build_bin_path/" 2>/dev/null || echo "librocm_sysdeps_z.so* not found"
         cp -v /opt/rocm/lib/rocm_sysdeps/lib/librocm_sysdeps_zstd.so* "$build_bin_path/" 2>/dev/null || echo "librocm_sysdeps_zstd.so* not found"
         cp -v /opt/rocm/lib/llvm/lib/libLLVM.so* "$build_bin_path/" 2>/dev/null || echo "libLLVM.so* not found"
+        cp -v /opt/rocm/lib/llvm/lib/libclang-cpp.so* "$build_bin_path/" 2>/dev/null || echo "libclang-cpp.so* not found"
+        
         cp -v /opt/rocm/lib/rocm_sysdeps/lib/librocm_sysdeps_elf.so* "$build_bin_path/" 2>/dev/null || echo "librocm_sysdeps_elf.so* not found"
         cp -v /opt/rocm/lib/rocm_sysdeps/lib/librocm_sysdeps_drm.so* "$build_bin_path/" 2>/dev/null || echo "librocm_sysdeps_drm.so* not found"
         cp -v /opt/rocm/lib/rocm_sysdeps/lib/librocm_sysdeps_drm_amdgpu.so* "$build_bin_path/" 2>/dev/null || echo "librocm_sysdeps_drm_amdgpu.so* not found"
         cp -v /opt/rocm/lib/rocm_sysdeps/lib/librocm_sysdeps_bz2.so* "$build_bin_path/" 2>/dev/null || echo "librocm_sysdeps_bz2.so* not found"
 
         echo "Finished copying required ROCm libraries"
-        
+
+    - name: Set RPATH for portable distribution
+      run: |
+        sudo apt-get install -y patchelf
+        cd llama.cpp/build/bin
+        # Set RPATH to $ORIGIN so all libraries (including the comgr stub loader) find deps locally
+        for file in *.so* llama-*; do
+          [ -f "$file" ] && [ ! -L "$file" ] && patchelf --set-rpath '$ORIGIN' "$file" 2>/dev/null || true
+        done
+
     - name: List build artifacts (including ROCm files)
       run: |
         cd llama.cpp/build/bin
@@ -892,7 +903,10 @@ jobs:
             gfx_target: gfx1151
             artifact_prefix: windows
             runner: ["stx-halo", "Windows"]
-          # Linux testing for gfx1151 is disabled
+          - os: Linux
+            gfx_target: gfx1151
+            artifact_prefix: ubuntu
+            runner: ["stx-halo", "Linux"]
       fail-fast: false
 
     steps:
