@@ -807,39 +807,25 @@ jobs:
         build_bin_path="llama.cpp/build/bin"
         cd "$build_bin_path"
         
-        echo "Patching binaries to use libamd_comgr.so.3 directly instead of the lazy-loading stub..."
-        echo "This ensures the binaries work without requiring ROCM_PATH or other environment variables."
+        # The ROCm libraries use a lazy-loading stub (libamd_comgr_loader.so.1) that loads
+        # libamd_comgr.so.3 at runtime. Libraries like libamdhip64.so call functions from
+        # the stub loader, so we CANNOT remove it. Instead, we set RPATH on everything
+        # so the loader can find the real library via $ORIGIN at runtime.
         
-        # Replace the stub loader dependency with the actual library in all shared libraries
-        for lib in *.so*; do
-          if [ -f "$lib" ] && [ ! -L "$lib" ]; then
-            if ldd "$lib" 2>/dev/null | grep -q "libamd_comgr_loader.so.1"; then
-              echo "Patching $lib: replacing libamd_comgr_loader.so.1 -> libamd_comgr.so.3"
-              patchelf --replace-needed libamd_comgr_loader.so.1 libamd_comgr.so.3 "$lib" || echo "  Warning: could not patch $lib"
-            fi
-          fi
-        done
-        
-        # Patch executables as well
-        for exe in llama-cli llama-server llama-bench llama-quantize llama-perplexity llama-embedding llama-simple llama-speculative; do
-          if [ -f "$exe" ]; then
-            if ldd "$exe" 2>/dev/null | grep -q "libamd_comgr_loader.so.1"; then
-              echo "Patching $exe: replacing libamd_comgr_loader.so.1 -> libamd_comgr.so.3"
-              patchelf --replace-needed libamd_comgr_loader.so.1 libamd_comgr.so.3 "$exe" || echo "  Warning: could not patch $exe"
-            fi
-          fi
-        done
-        
-        # Remove the stub loader files (no longer needed)
-        echo "Removing stub loader files..."
-        rm -f libamd_comgr_loader.so libamd_comgr_loader.so.1 libamd_comgr_loader.so.1.0*
-        
-        # Set RPATH to $ORIGIN so libraries are found relative to the binary
         echo "Setting RPATH to \$ORIGIN for all binaries and libraries..."
-        for file in llama-cli llama-server llama-bench llama-quantize llama-perplexity llama-embedding llama-simple llama-speculative *.so*; do
+        echo "This allows the stub loader to find libamd_comgr.so.3 in the same directory."
+        
+        for file in *.so*; do
           if [ -f "$file" ] && [ ! -L "$file" ]; then
             echo "Setting RPATH on $file"
             patchelf --set-rpath '$ORIGIN' "$file" 2>/dev/null || echo "  Warning: could not set RPATH on $file"
+          fi
+        done
+        
+        for exe in llama-cli llama-server llama-bench llama-quantize llama-perplexity llama-embedding llama-simple llama-speculative; do
+          if [ -f "$exe" ]; then
+            echo "Setting RPATH on $exe"
+            patchelf --set-rpath '$ORIGIN' "$exe" 2>/dev/null || echo "  Warning: could not set RPATH on $exe"
           fi
         done
         
@@ -865,6 +851,33 @@ jobs:
             fi
           fi
         done
+        
+        # Verify the stub loader is present (required for libamdhip64.so)
+        echo ""
+        echo "=== Checking stub loader ==="
+        if [ -f "libamd_comgr_loader.so.1" ]; then
+          echo "✅ libamd_comgr_loader.so.1 is present"
+        else
+          echo "❌ libamd_comgr_loader.so.1 is MISSING - this will cause runtime errors!"
+          missing_deps=true
+        fi
+        
+        if [ -f "libamd_comgr.so.3" ]; then
+          echo "✅ libamd_comgr.so.3 is present"
+        else
+          echo "❌ libamd_comgr.so.3 is MISSING - this will cause runtime errors!"
+          missing_deps=true
+        fi
+        
+        # Verify RPATH is set correctly on the loader
+        echo ""
+        echo "=== Checking RPATH on stub loader ==="
+        loader_rpath=$(patchelf --print-rpath libamd_comgr_loader.so.1 2>/dev/null || echo "FAILED")
+        if [ "$loader_rpath" = '$ORIGIN' ]; then
+          echo "✅ libamd_comgr_loader.so.1 has correct RPATH: $loader_rpath"
+        else
+          echo "⚠️  libamd_comgr_loader.so.1 RPATH: $loader_rpath (expected \$ORIGIN)"
+        fi
         
         if [ "$missing_deps" = true ]; then
           echo ""
