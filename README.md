@@ -19,7 +19,7 @@
   <img src="https://img.shields.io/badge/OS-Windows%20%7C%20Ubuntu-0078D6?logo=windows&logoColor=white" alt="Platform: Windows | Ubuntu" />
 </a>
 <a href="#-supported-devices" title="GPU targets">
-  <img src="https://img.shields.io/badge/GPU-gfx110X%20%7C%20gfx1151%20%7C%20gfx120X-00B04F?logo=amd&logoColor=white" alt="GPU Targets" />
+  <img src="https://img.shields.io/badge/GPU-gfx110X%20%7Cgfx1150%20%7C%20gfx1151%20%7C%20gfx120X-00B04F?logo=amd&logoColor=white" alt="GPU Targets" />
 </a>
 
 
