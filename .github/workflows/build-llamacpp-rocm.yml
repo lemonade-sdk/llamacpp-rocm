@@ -977,7 +977,10 @@ jobs:
             gfx_target: gfx1151
             artifact_prefix: windows
             runner: ["stx-halo", "Windows"]
-          # Linux testing for gfx1151 is disabled
+          - os: Linux
+            gfx_target: gfx1151
+            artifact_prefix: ubuntu
+            runner: ["stx-halo", "Linux"]
       fail-fast: false
 
     steps:
