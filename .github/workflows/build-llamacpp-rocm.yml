@@ -167,6 +167,24 @@ jobs:
         perl --version
 
         Write-Host "Manual installation of build dependencies completed"
+
+    - name: Install curl development libraries via vcpkg
+      run: |
+        Write-Host "Installing curl via vcpkg..."
+        
+        # vcpkg is pre-installed on GitHub Windows runners
+        $vcpkgRoot = "C:\vcpkg"
+        
+        # Install curl with SSL support
+        & "$vcpkgRoot\vcpkg.exe" install curl:x64-windows
+        
+        # Integrate vcpkg with CMake
+        & "$vcpkgRoot\vcpkg.exe" integrate install
+        
+        # Store vcpkg root for CMake
+        echo "VCPKG_ROOT=$vcpkgRoot" >> $env:GITHUB_ENV
+        
+        Write-Host "curl installed successfully via vcpkg"
             
     - name: Download ROCm nightly tarball
       run: |
@@ -299,11 +317,12 @@ jobs:
         mkdir build
         cd build
 
-        REM Configure the project
+        REM Configure the project with vcpkg toolchain for curl support
         cmake .. -G Ninja ^
           -DCMAKE_C_COMPILER="C:\opt\rocm\lib\llvm\bin\clang.exe" ^
           -DCMAKE_CXX_COMPILER="C:\opt\rocm\lib\llvm\bin\clang++.exe" ^
           -DCMAKE_CXX_FLAGS="-IC:\opt\rocm\include" ^
+          -DCMAKE_TOOLCHAIN_FILE="C:\vcpkg\scripts\buildsystems\vcpkg.cmake" ^
           -DCMAKE_CROSSCOMPILING=ON ^
           -DCMAKE_BUILD_TYPE=Release ^
           -DGPU_TARGETS="%mapped_target%" ^
@@ -313,7 +332,7 @@ jobs:
           -DGGML_OPENMP=OFF ^
           -DGGML_CUDA_FORCE_CUBLAS=OFF ^
           -DGGML_HIP_ROCWMMA_FATTN=ON ^
-          -DLLAMA_CURL=OFF ^
+          -DLLAMA_CURL=ON ^
           -DGGML_NATIVE=OFF ^
           -DGGML_STATIC=OFF ^
           -DCMAKE_SYSTEM_NAME=Windows
@@ -321,7 +340,7 @@ jobs:
         REM Build the project
         cmake --build . -j %NUMBER_OF_PROCESSORS%
         
-    - name: Copy ROCm core DLLs to build directory
+    - name: Copy ROCm core DLLs and curl to build directory
       run: |
         $rocmVersion = if ($env:DETECTED_ROCM_VERSION) { $env:DETECTED_ROCM_VERSION } else { $env:ROCM_VERSION }
         $buildBinPath = "llama.cpp\build\bin"
@@ -343,6 +362,24 @@ jobs:
             "libhipblaslt.dll",
             "hipblas.dll"
           )
+          
+          # Also copy curl DLLs from vcpkg
+          Write-Host "Copying curl DLLs from vcpkg..."
+          $vcpkgBinPath = "C:\vcpkg\installed\x64-windows\bin"
+          if (Test-Path $vcpkgBinPath) {
+            $curlDlls = @("libcurl.dll", "zlib1.dll")
+            foreach ($dll in $curlDlls) {
+              $sourcePath = Join-Path $vcpkgBinPath $dll
+              if (Test-Path $sourcePath) {
+                Copy-Item $sourcePath $buildBinPath
+                Write-Host "Copied: $dll (from vcpkg)"
+              } else {
+                Write-Host "Warning: $dll not found in vcpkg"
+              }
+            }
+          } else {
+            Write-Host "Warning: vcpkg bin directory not found at: $vcpkgBinPath"
+          }
           
           foreach ($pattern in $filesToCopy) {
             $matchingFiles = Get-ChildItem -Path $rocmBinPath -Name $pattern -ErrorAction SilentlyContinue
@@ -527,12 +564,13 @@ jobs:
       run: |
         echo "Installing build dependencies..."
         sudo apt update
-        sudo apt install -y cmake ninja-build unzip curl
+        sudo apt install -y cmake ninja-build unzip curl libcurl4-openssl-dev
         
         # Verify installations
         echo "Verifying installations..."
         cmake --version
         ninja --version
+        pkg-config --modversion libcurl || echo "pkg-config for libcurl not available, but headers should be installed"
         echo "Build dependencies installation completed"
             
     - name: Download and extract ROCm directly to /opt/rocm
@@ -721,7 +759,7 @@ jobs:
           -DGGML_OPENMP=OFF \
           -DGGML_CUDA_FORCE_CUBLAS=OFF \
           -DGGML_HIP_ROCWMMA_FATTN=ON \
-          -DLLAMA_CURL=OFF \
+          -DLLAMA_CURL=ON \
           -DGGML_NATIVE=OFF \
           -DGGML_STATIC=OFF \
           -DCMAKE_SYSTEM_NAME=Linux

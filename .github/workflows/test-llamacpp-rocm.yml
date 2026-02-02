@@ -239,6 +239,58 @@ jobs:
           Write-Host "❌ Test FAILED - Missing expected outputs"
           exit 1
         }
+
+    - name: Test curl support - model URL download
+      run: |
+        $llamaCliPath = "llama-binaries\llama-cli.exe"
+        $modelUrl = "https://huggingface.co/unsloth/Qwen3-0.6B-GGUF/resolve/main/Qwen3-0.6B-Q4_0.gguf"
+        
+        Write-Host "Testing curl support by downloading model directly via --model-url..."
+        Write-Host "Command: $llamaCliPath -mu `"$modelUrl`" -ngl 99 -p `"Hello`" -n 5 -st"
+        
+        # Run the command with model URL
+        try {
+          $process = Start-Process -FilePath $llamaCliPath -ArgumentList @("-mu", "`"$modelUrl`"", "-ngl", "99", "-p", "`"Hello`"", "-n", "5", "-st") -NoNewWindow -Wait -PassThru -RedirectStandardOutput "curl_stdout.txt" -RedirectStandardError "curl_stderr.txt"
+          
+          $process.WaitForExit()
+          
+          $stdout = Get-Content "curl_stdout.txt" -Raw -ErrorAction SilentlyContinue
+          $stderr = Get-Content "curl_stderr.txt" -Raw -ErrorAction SilentlyContinue
+          $output = $stdout + $stderr
+          
+          Write-Host "=== CURL TEST OUTPUT ==="
+          Write-Host $output
+          Write-Host "=== END OUTPUT ==="
+          Write-Host "Process exit code: $($process.ExitCode)"
+          
+          Remove-Item "curl_stdout.txt" -ErrorAction SilentlyContinue
+          Remove-Item "curl_stderr.txt" -ErrorAction SilentlyContinue
+        }
+        catch {
+          Write-Error "Failed to run curl test: $_"
+          exit 1
+        }
+        
+        # Check for curl-related errors
+        if ($output -match "built without libcurl") {
+          Write-Host "❌ CURL TEST FAILED - llama.cpp was built without curl support"
+          exit 1
+        }
+        
+        if ($process.ExitCode -ne 0) {
+          Write-Host "❌ CURL TEST FAILED - Process exited with code: $($process.ExitCode)"
+          exit 1
+        }
+        
+        # Check for successful model download indicators
+        $foundDownload = $output -match "downloading" -or $output -match "model_load" -or $output -match "offloaded"
+        
+        if ($foundDownload) {
+          Write-Host "✅ CURL TEST PASSED - Model URL download functionality works"
+        } else {
+          Write-Host "⚠️ CURL TEST WARNING - Could not verify download, but no errors detected"
+        }
+
   test-ubuntu:
     runs-on: [stx-halo, Linux]
     needs: prepare-matrix
@@ -391,3 +443,45 @@ jobs:
           echo "❌ Test FAILED - Missing expected outputs"
           exit 1
         fi
+
+    - name: Test curl support - model URL download
+      run: |
+        llama_cli_path="./llama-binaries/llama-cli"
+        model_url="https://huggingface.co/unsloth/Qwen3-0.6B-GGUF/resolve/main/Qwen3-0.6B-Q4_0.gguf"
+        output_file="curl_test_output.txt"
+        
+        echo "Testing curl support by downloading model directly via --model-url..."
+        echo "Command: $llama_cli_path -mu \"$model_url\" -ngl 99 -p \"Hello\" -n 5 -st"
+        
+        # Run the command with model URL
+        set +e
+        "$llama_cli_path" -mu "$model_url" -ngl 99 -p "Hello" -n 5 -st > "$output_file" 2>&1
+        exit_code=$?
+        set -e
+        
+        echo "=== CURL TEST OUTPUT ==="
+        cat "$output_file"
+        echo "=== END OUTPUT ==="
+        echo "Process exit code: $exit_code"
+        
+        # Check for curl-related errors
+        if grep -q "built without libcurl" "$output_file"; then
+          echo "❌ CURL TEST FAILED - llama.cpp was built without curl support"
+          rm -f "$output_file"
+          exit 1
+        fi
+        
+        if [ $exit_code -ne 0 ]; then
+          echo "❌ CURL TEST FAILED - Process exited with code: $exit_code"
+          rm -f "$output_file"
+          exit 1
+        fi
+        
+        # Check for successful model download indicators
+        if grep -qE "(downloading|model_load|offloaded)" "$output_file"; then
+          echo "✅ CURL TEST PASSED - Model URL download functionality works"
+        else
+          echo "⚠️ CURL TEST WARNING - Could not verify download, but no errors detected"
+        fi
+        
+        rm -f "$output_file"
