@@ -235,6 +235,40 @@ runs:
           exit 1
         fi
 
+    - name: Install OpenSSL for curl support (Windows)
+      if: inputs.os_type == 'Windows'
+      shell: powershell
+      run: |
+        Write-Host "Installing OpenSSL for HTTPS support..."
+        
+        # Download OpenSSL Light installer from slproweb.com (Shining Light Productions)
+        $opensslUrl = "https://slproweb.com/download/Win64OpenSSL_Light-3_6_1.exe"
+        $installerPath = "openssl-installer.exe"
+        
+        Write-Host "Downloading OpenSSL from: $opensslUrl"
+        Invoke-WebRequest -Uri $opensslUrl -OutFile $installerPath -UseBasicParsing
+        
+        # Run silent install
+        Write-Host "Running silent OpenSSL installation..."
+        Start-Process -FilePath $installerPath -ArgumentList "/silent", "/verysilent", "/sp-", "/suppressmsgboxes" -Wait
+        
+        # Clean up installer
+        Remove-Item $installerPath -ErrorAction SilentlyContinue
+        
+        # Add OpenSSL to PATH
+        $opensslPath = "C:\Program Files\OpenSSL-Win64\bin"
+        if (Test-Path $opensslPath) {
+          Write-Host "OpenSSL installed at: $opensslPath"
+          echo "$opensslPath" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          
+          # List DLLs to verify
+          Write-Host "OpenSSL DLLs:"
+          Get-ChildItem "$opensslPath\*.dll" | ForEach-Object { Write-Host "  $($_.Name)" }
+        } else {
+          Write-Error "OpenSSL installation failed - bin directory not found"
+          exit 1
+        }
+
     - name: Test curl support - model URL download (Windows)
       if: inputs.os_type == 'Windows'
       shell: powershell
