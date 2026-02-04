@@ -331,9 +331,10 @@ jobs:
           -DGGML_HIP=ON ^
           -DGGML_OPENMP=OFF ^
           -DGGML_CUDA_FORCE_CUBLAS=OFF ^
-          -DGGML_HIP_ROCWMMA_FATTN=ON ^
           -DLLAMA_CURL=ON ^
           -DLLAMA_OPENSSL=ON ^
+          -DGGML_RPC=ON ^
+          -DGGML_HIP_ROCWMMA_FATTN=OFF ^
           -DGGML_NATIVE=OFF ^
           -DGGML_STATIC=OFF ^
           -DCMAKE_SYSTEM_NAME=Windows
@@ -775,8 +776,9 @@ jobs:
           -DGGML_HIP=ON \
           -DGGML_OPENMP=OFF \
           -DGGML_CUDA_FORCE_CUBLAS=OFF \
-          -DGGML_HIP_ROCWMMA_FATTN=ON \
           -DLLAMA_CURL=ON \
+          -DGGML_RPC=ON \
+          -DGGML_HIP_ROCWMMA_FATTN=OFF \
           -DGGML_NATIVE=OFF \
           -DGGML_STATIC=OFF \
           -DCMAKE_SYSTEM_NAME=Linux
