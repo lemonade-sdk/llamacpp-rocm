@@ -175,8 +175,8 @@ jobs:
         # vcpkg is pre-installed on GitHub Windows runners
         $vcpkgRoot = "C:\vcpkg"
         
-        # Install curl with SSL support
-        & "$vcpkgRoot\vcpkg.exe" install curl:x64-windows
+        # Install curl with OpenSSL support for HTTPS
+        & "$vcpkgRoot\vcpkg.exe" install "curl[openssl]:x64-windows"
         
         # Integrate vcpkg with CMake
         & "$vcpkgRoot\vcpkg.exe" integrate install
@@ -184,7 +184,7 @@ jobs:
         # Store vcpkg root for CMake
         echo "VCPKG_ROOT=$vcpkgRoot" >> $env:GITHUB_ENV
         
-        Write-Host "curl installed successfully via vcpkg"
+        Write-Host "curl with OpenSSL installed successfully via vcpkg"
             
     - name: Download ROCm nightly tarball
       run: |
@@ -333,6 +333,7 @@ jobs:
           -DGGML_CUDA_FORCE_CUBLAS=OFF ^
           -DGGML_HIP_ROCWMMA_FATTN=ON ^
           -DLLAMA_CURL=ON ^
+          -DLLAMA_OPENSSL=ON ^
           -DGGML_NATIVE=OFF ^
           -DGGML_STATIC=OFF ^
           -DCMAKE_SYSTEM_NAME=Windows
@@ -363,10 +364,11 @@ jobs:
             "hipblas.dll"
           )
           
-          # Also copy curl DLLs from vcpkg
-          Write-Host "Copying curl DLLs from vcpkg..."
+          # Also copy curl and OpenSSL DLLs from vcpkg
+          Write-Host "Copying curl and OpenSSL DLLs from vcpkg..."
           $vcpkgBinPath = "C:\vcpkg\installed\x64-windows\bin"
           if (Test-Path $vcpkgBinPath) {
+            # Copy specific DLLs by exact name
             $curlDlls = @("libcurl.dll", "zlib1.dll")
             foreach ($dll in $curlDlls) {
               $sourcePath = Join-Path $vcpkgBinPath $dll
@@ -375,6 +377,21 @@ jobs:
                 Write-Host "Copied: $dll (from vcpkg)"
               } else {
                 Write-Host "Warning: $dll not found in vcpkg"
+              }
+            }
+            
+            # Copy OpenSSL DLLs using pattern matching (handles different OpenSSL versions)
+            $opensslPatterns = @("libcrypto*.dll", "libssl*.dll")
+            foreach ($pattern in $opensslPatterns) {
+              $matchingFiles = Get-ChildItem -Path $vcpkgBinPath -Name $pattern -ErrorAction SilentlyContinue
+              if ($matchingFiles) {
+                foreach ($file in $matchingFiles) {
+                  $sourcePath = Join-Path $vcpkgBinPath $file
+                  Copy-Item $sourcePath $buildBinPath
+                  Write-Host "Copied: $file (from vcpkg - OpenSSL)"
+                }
+              } else {
+                Write-Host "Warning: No files found matching pattern: $pattern in vcpkg"
               }
             }
           } else {
