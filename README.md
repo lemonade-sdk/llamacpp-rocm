@@ -1,4 +1,4 @@
-﻿# llamacpp-rocm
+# llamacpp-rocm
 
 <a href="https://github.com/aigdat/llamacpp-rocm/releases/latest" title="Download the latest release">
   <img src="https://img.shields.io/github/v/release/aigdat/llamacpp-rocm?logo=github&logoColor=white" alt="GitHub release (latest by date)" />
@@ -54,6 +54,8 @@ Our automated GitHub Actions workflow creates nightly builds for:
 | **gfx120X** | [![Download Ubuntu gfx120X](https://img.shields.io/badge/Download-Ubuntu%20gfx120X-blue)](https://github.com/aigdat/llamacpp-rocm/releases/latest) | [![Download Windows gfx120X](https://img.shields.io/badge/Download-Windows%20gfx120X-green)](https://github.com/aigdat/llamacpp-rocm/releases/latest) |
 
 > **⚡ Ready to Run**: All releases include complete ROCm™ 7 runtime libraries - just download and go!
+
+> **Linux (gfx1150/APU):** OOM despite free VRAM? Add `ttm.pages_limit=12582912` (48 GB) to the kernel cmdline (e.g. GRUB), run `update-grub`, then reboot. See [TheRock FAQ](https://github.com/ROCm/TheRock/blob/main/docs/faq.md#gfx1151-strix-halo-specific-questions) for more.
 
 ---
 
