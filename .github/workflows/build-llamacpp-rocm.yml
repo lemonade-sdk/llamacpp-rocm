@@ -304,6 +304,7 @@ jobs:
           -DCMAKE_C_COMPILER="C:\opt\rocm\lib\llvm\bin\clang.exe" ^
           -DCMAKE_CXX_COMPILER="C:\opt\rocm\lib\llvm\bin\clang++.exe" ^
           -DCMAKE_CXX_FLAGS="-IC:\opt\rocm\include" ^
+          -DCMAKE_HIP_FLAGS="-mllvm --amdgpu-unroll-threshold-local=600" ^
           -DCMAKE_CROSSCOMPILING=ON ^
           -DCMAKE_BUILD_TYPE=Release ^
           -DGPU_TARGETS="%mapped_target%" ^
@@ -713,6 +714,7 @@ jobs:
           -DCMAKE_C_COMPILER=/opt/rocm/llvm/bin/clang \
           -DCMAKE_CXX_COMPILER=/opt/rocm/llvm/bin/clang++ \
           -DCMAKE_CXX_FLAGS="-I/opt/rocm/include" \
+          -DCMAKE_HIP_FLAGS="-mllvm --amdgpu-unroll-threshold-local=600" \
           -DCMAKE_CROSSCOMPILING=ON \
           -DCMAKE_BUILD_TYPE=Release \
           -DGPU_TARGETS="$mapped_target" \
