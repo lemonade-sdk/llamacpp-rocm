@@ -422,8 +422,18 @@ jobs:
         echo "rocm_version=$rocmVersion" >> $env:GITHUB_OUTPUT
         echo "llamacpp_commit_hash=$env:LLAMACPP_COMMIT_HASH" >> $env:GITHUB_OUTPUT
         
+        # Save ROCm version to file for per-architecture release notes
+        [System.IO.File]::WriteAllText("rocm-version.txt", $rocmVersion)
+        
         Write-Host "Final rocm_version: $rocmVersion"
         Write-Host "Final llamacpp_commit_hash: $env:LLAMACPP_COMMIT_HASH"
+
+    - name: Upload ROCm version info
+      uses: actions/upload-artifact@v4
+      with:
+        name: rocm-version-windows-${{ matrix.gfx_target }}
+        path: rocm-version.txt
+        retention-days: 1
         
     - name: Create release summary
       run: |
@@ -478,6 +488,11 @@ jobs:
         if (Test-Path "build-summary-windows-${{ matrix.gfx_target }}.md") {
           Write-Host "Removing build-summary-windows-${{ matrix.gfx_target }}.md..."
           Remove-Item -Force "build-summary-windows-${{ matrix.gfx_target }}.md"
+        }
+        
+        if (Test-Path "rocm-version.txt") {
+          Write-Host "Removing rocm-version.txt..."
+          Remove-Item -Force "rocm-version.txt"
         }
         
         Write-Host "Cleanup completed successfully"
@@ -834,8 +849,18 @@ jobs:
         echo "rocm_version=$rocm_version" >> $GITHUB_OUTPUT
         echo "llamacpp_commit_hash=${LLAMACPP_COMMIT_HASH}" >> $GITHUB_OUTPUT
         
+        # Save ROCm version to file for per-architecture release notes
+        printf '%s' "$rocm_version" > rocm-version.txt
+        
         echo "Final rocm_version: $rocm_version"
         echo "Final llamacpp_commit_hash: ${LLAMACPP_COMMIT_HASH}"
+
+    - name: Upload ROCm version info
+      uses: actions/upload-artifact@v4
+      with:
+        name: rocm-version-ubuntu-${{ matrix.gfx_target }}
+        path: rocm-version.txt
+        retention-days: 1
         
     - name: Create release summary
       run: |
@@ -888,6 +913,11 @@ jobs:
         if [ -f "build-summary-ubuntu-${{ matrix.gfx_target }}.md" ]; then
           echo "Removing build-summary-ubuntu-${{ matrix.gfx_target }}.md..."
           rm -f "build-summary-ubuntu-${{ matrix.gfx_target }}.md"
+        fi
+        
+        if [ -f "rocm-version.txt" ]; then
+          echo "Removing rocm-version.txt..."
+          rm -f "rocm-version.txt"
         fi
         
         echo "Cleanup completed successfully"
@@ -1065,8 +1095,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
       run: |
         TAG="${{ steps.generate-tag.outputs.tag }}"
-        # Get ROCm version from either Windows or Ubuntu build (whichever succeeded)
-        ROCM_VERSION="${{ needs.build-windows.outputs.rocm_version || needs.build-ubuntu.outputs.rocm_version }}"
         # Get llama.cpp commit hash from either Windows or Ubuntu build (whichever succeeded)
         LLAMACPP_COMMIT_HASH="${{ needs.build-windows.outputs.llamacpp_commit_hash || needs.build-ubuntu.outputs.llamacpp_commit_hash }}"
         targets="${{ env.GFX_TARGETS }}"
@@ -1075,16 +1103,61 @@ jobs:
         echo "Creating release with tag: $TAG"
         echo "GPU Targets: $targets"
         echo "Operating Systems: $operating_systems"
-        echo "ROCm Version: $ROCM_VERSION"
         echo "Llama.cpp Commit: $LLAMACPP_COMMIT_HASH"
+        
+        # Collect per-architecture ROCm versions from uploaded artifacts
+        IFS=',' read -ra TARGET_ARRAY <<< "$targets"
+        IFS=',' read -ra OS_ARRAY <<< "$operating_systems"
+        
+        declare -A rocm_versions
+        all_versions=""
+        
+        for os in "${OS_ARRAY[@]}"; do
+          os=$(echo "$os" | xargs)
+          for target in "${TARGET_ARRAY[@]}"; do
+            target=$(echo "$target" | xargs)
+            version_file="./all-artifacts/rocm-version-${os}-${target}/rocm-version.txt"
+            if [ -f "$version_file" ]; then
+              ver=$(cat "$version_file" | tr -d '[:space:]')
+              rocm_versions["${os}-${target}"]="$ver"
+              all_versions="${all_versions}${ver}\n"
+              echo "ROCm version for ${os}/${target}: $ver"
+            else
+              echo "Warning: No ROCm version file found for ${os}/${target}"
+            fi
+          done
+        done
+        
+        # Determine if all versions are the same
+        unique_versions=$(echo -e "$all_versions" | sort -u | grep -v '^$')
+        unique_count=$(echo "$unique_versions" | wc -l)
+        
+        if [ "$unique_count" -eq 1 ]; then
+          # All architectures used the same ROCm version
+          ROCM_VERSION_NOTES="**ROCm Version**: $unique_versions"
+        else
+          # Different architectures used different ROCm versions
+          ROCM_VERSION_NOTES="**ROCm Version(s)**:"
+          for os in "${OS_ARRAY[@]}"; do
+            os=$(echo "$os" | xargs)
+            for target in "${TARGET_ARRAY[@]}"; do
+              target=$(echo "$target" | xargs)
+              key="${os}-${target}"
+              ver="${rocm_versions[$key]:-N/A}"
+              ROCM_VERSION_NOTES="${ROCM_VERSION_NOTES}
+        - ${target} (${os}): ${ver}"
+            done
+          done
+        fi
+        
+        echo "ROCm version notes:"
+        echo "$ROCM_VERSION_NOTES"
         
         # Verify archives exist
         ls -la *.zip
         
         # Prepare upload files list
         upload_files=""
-        IFS=',' read -ra TARGET_ARRAY <<< "$targets"
-        IFS=',' read -ra OS_ARRAY <<< "$operating_systems"
         
         for os in "${OS_ARRAY[@]}"; do
           os=$(echo "$os" | xargs) # trim whitespace
@@ -1106,7 +1179,7 @@ jobs:
           --notes "**Build Number**: $TAG
         **Operating System(s)**: $operating_systems
         **GPU Target(s)**: $targets
-        **ROCm Version**: $ROCM_VERSION
+        ${ROCM_VERSION_NOTES}
         **Llama.cpp Commit Hash**: $LLAMACPP_COMMIT_HASH
         **Build Date**: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
 
