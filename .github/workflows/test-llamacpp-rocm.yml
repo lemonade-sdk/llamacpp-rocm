@@ -272,7 +272,7 @@ jobs:
       run: |
         release_tag="${{ needs.prepare-matrix.outputs.latest_release_tag }}"
         target="${{ matrix.gfx_target }}"
-        asset_name="llama-${release_tag}-ubuntu-rocm-${target}-x64.zip"
+        asset_name="llama-${release_tag}-ubuntu-rocm-${target}-x64.tar.gz"
         repo="${{ github.repository }}"
         
         echo "Downloading release asset: $asset_name"
@@ -312,9 +312,10 @@ jobs:
           exit 1
         fi
         
-        # Extract the downloaded zip file
+        # Extract the downloaded tar.gz file
         echo "Extracting $asset_name..."
-        unzip -q "$asset_name" -d llama-binaries
+        mkdir -p llama-binaries
+        tar -xzf "$asset_name" -C llama-binaries
         
         # List contents
         echo "Contents of llama-binaries:"

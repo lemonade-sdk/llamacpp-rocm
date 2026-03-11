@@ -1042,13 +1042,19 @@ jobs:
             artifact_dir="./all-artifacts/${artifact_name}"
             
             # Create final archive with release tag
+            # Use .tar.gz for Linux/Ubuntu, .zip for Windows
             final_archive_name="llama-${TAG}-${os}-rocm-${target}-x64"
             
             if [ -d "$artifact_dir" ]; then
-              echo "Creating archive: ${final_archive_name}.zip"
-              cd "$artifact_dir"
-              zip -r "../../${final_archive_name}.zip" *
-              cd ../../
+              if [ "$os" = "windows" ]; then
+                echo "Creating archive: ${final_archive_name}.zip"
+                cd "$artifact_dir"
+                zip -r "../../${final_archive_name}.zip" *
+                cd ../../
+              else
+                echo "Creating archive: ${final_archive_name}.tar.gz"
+                tar -czvf "${final_archive_name}.tar.gz" -C "$artifact_dir" .
+              fi
             else
               echo "Warning: Artifact directory not found: $artifact_dir"
               ls -la ./all-artifacts/
@@ -1057,7 +1063,7 @@ jobs:
         done
         
         echo "Created archives:"
-        ls -la *.zip
+        ls -la *.zip *.tar.gz 2>/dev/null || echo "No archives found"
         
     - name: Create Release
       if: steps.check-tag.outputs.tag_exists == 'false'
@@ -1079,7 +1085,7 @@ jobs:
         echo "Llama.cpp Commit: $LLAMACPP_COMMIT_HASH"
         
         # Verify archives exist
-        ls -la *.zip
+        ls -la *.zip *.tar.gz 2>/dev/null || echo "No archives found"
         
         # Prepare upload files list
         upload_files=""
@@ -1092,8 +1098,15 @@ jobs:
             target=$(echo "$target" | xargs) # trim whitespace
             
             final_archive_name="llama-${TAG}-${os}-rocm-${target}-x64"
-            if [ -f "${final_archive_name}.zip" ]; then
-              upload_files="${upload_files} ${final_archive_name}.zip"
+            # Use .tar.gz for Linux/Ubuntu, .zip for Windows
+            if [ "$os" = "windows" ]; then
+              if [ -f "${final_archive_name}.zip" ]; then
+                upload_files="${upload_files} ${final_archive_name}.zip"
+              fi
+            else
+              if [ -f "${final_archive_name}.tar.gz" ]; then
+                upload_files="${upload_files} ${final_archive_name}.tar.gz"
+              fi
             fi
           done
         done
