@@ -9,7 +9,7 @@ on:
       gfx_target:
         description: 'AMD GPU targets (comma-separated)'
         required: false
-        default: 'gfx1151,gfx1150,gfx120X,gfx110X'
+        default: 'gfx1151,gfx1150,gfx120X,gfx110X,gfx103X'
       rocm_version:
         description: 'ROCm version to use (e.g., 7.11.0a20251205) or "latest" to auto-detect'
         required: false
@@ -176,7 +176,7 @@ jobs:
         
         # Add appropriate suffixes for different GPU targets
         $s3Target = $currentTarget
-        if ($currentTarget -eq "gfx110X") {
+        if ($currentTarget -eq "gfx103X" -or $currentTarget -eq "gfx110X") {
           $s3Target = "$currentTarget-dgpu"
           Write-Host "Using S3 target with -dgpu suffix: $s3Target"
         } elseif ($currentTarget -eq "gfx120X") {
@@ -273,6 +273,8 @@ jobs:
         
         if "%current_target%"=="gfx110X" (
           set "mapped_target=gfx1100;gfx1101;gfx1102"
+        ) else if "%current_target%"=="gfx103X" (
+          set "mapped_target=gfx1030"
         ) else if "%current_target%"=="gfx1151" (
           set "mapped_target=gfx1151"
         ) else if "%current_target%"=="gfx1150" (
@@ -336,6 +338,7 @@ jobs:
           # Copy files matching patterns and specific names
           $filesToCopy = @(
             "amdhip64_*.dll",
+            "rocm_kpack.dll",
             "amd_comgr*.dll", 
             "libhipblas.dll",
             "rocblas.dll",
