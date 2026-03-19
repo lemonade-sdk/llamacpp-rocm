@@ -34,8 +34,8 @@ This build specifically targets the following GPU architectures:
 - **gfx1151** (STX Halo APU) - Ryzen AI MAX+ Pro 395
 - **gfx1150** (STX Point APU) - Ryzen AI 300
 - **gfx120X** (RDNA4 GPUs) - includes AMD Radeon RX 9070 XT/GRE/9070, RX 9060 XT/9060
-- **gfx110X** (RDNA3 GPUs) - includes AMD Radeon PRO W7900/W7800/W7700/W7600, RX 7900 XTX/XT/GRE, RX 7800 XT, RX 7700 XT/7700, RX 7600 XT/7600
-- **gfx103X** (RDNA2 GPUs) - includes AMD Radeon RX 6800 XT/6800, RX 6700 XT/6700, RX 6600 XT/6600, RX 6500 XT/6500
+- **gfx110X** (RDNA3 GPUs) - includes AMD Radeon dGPUs: PRO W7900/W7800/W7700/W7600, RX 7900 XTX/XT/GRE, RX 7800 XT, RX 7700 XT/7700, RX 7600 XT/7600 and iGPUs: Radeon 780M/760M/740M
+- **gfx103X** (RDNA2 GPUs) - includes AMD Radeon dGPUs: RX 6800 XT/6800, RX 6700 XT/6700, RX 6600 XT/6600, RX 6500 XT/6500
 
 **All builds include ROCm™ 7 built-in** - no separate ROCm™ installation required!
 
