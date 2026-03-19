@@ -180,7 +180,8 @@ If you see no errors during the build process, llama.cpp has been successfully c
 When building llama.cpp with ROCm, the `-DGPU_TARGETS` parameter must be set based on your specific GPU architecture. Our automated workflow uses generic targets that get mapped to specific architectures:
 
 - **`gfx120X`** maps to `gfx1200, gfx1201` (RDNA4 series like: RX 9070 XT/GRE/9070, RX 9060 XT/9060)
-- **`gfx110X`** maps to `gfx1100, gfx1101, gfx1102` (RDNA3 series like: PRO W7900/W7800/W7700/W7600, RX 7900 XTX/XT/GRE, RX 7800 XT, RX 7700 XT/7700, RX 7600 XT/7600)  
+- **`gfx110X`** maps to `gfx1100, gfx1101, gfx1102` (RDNA3 series like: PRO W7900/W7800/W7700/W7600, RX 7900 XTX/XT/GRE, RX 7800 XT, RX 7700 XT/7700, RX 7600 XT/7600)
+- **`gfx103X`** maps to `gfx1030, gfx1031, gfx1032, gfx1034` (RDNA2 series like: RX 6800 XT/6800, RX 6700 XT/6700, RX 6600 XT/6600, RX 6500 XT/6500)
 - **`gfx1150`** remains as `gfx1150` (Strix Point)
 - **`gfx1151`** remains as `gfx1151` (Strix Halo)
 
@@ -196,6 +197,9 @@ Replace the `-DGPU_TARGETS="gfx1151"` parameter in your cmake command with the a
 
 # For RDNA3 series (PRO W7900/W7800/W7700/W7600, RX 7900 XTX/XT/GRE, RX 7800 XT, RX 7700 XT/7700, RX 7600 XT/7600) 
 -DGPU_TARGETS="gfx1100;gfx1101;gfx1102"
+
+# For RDNA2 series (RX 6800 XT/6800, RX 6700 XT/6700, RX 6600 XT/6600, RX 6500 XT/6500)
+-DGPU_TARGETS="gfx1030;gfx1031;gfx1032;gfx1034"
 
 # For Strix Point
 -DGPU_TARGETS="gfx1150"
