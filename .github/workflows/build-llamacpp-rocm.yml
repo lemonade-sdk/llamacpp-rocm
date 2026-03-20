@@ -176,10 +176,10 @@ jobs:
         
         # Add appropriate suffixes for different GPU targets
         $s3Target = $currentTarget
-        if ($currentTarget -eq "gfx103X" -or $currentTarget -eq "gfx110X") {
+        if ($currentTarget -eq "gfx103X") {
           $s3Target = "$currentTarget-dgpu"
           Write-Host "Using S3 target with -dgpu suffix: $s3Target"
-        } elseif ($currentTarget -eq "gfx120X") {
+        } elseif ($currentTarget -eq "gfx110X" -or $currentTarget -eq "gfx120X") {
           $s3Target = "$currentTarget-all"
           Write-Host "Using S3 target with -all suffix: $s3Target"
         }
@@ -272,7 +272,7 @@ jobs:
         echo Input target: %current_target%
         
         if "%current_target%"=="gfx110X" (
-          set "mapped_target=gfx1100;gfx1101;gfx1102"
+          set "mapped_target=gfx1100;gfx1101;gfx1102;gfx1103"
         ) else if "%current_target%"=="gfx103X" (
           set "mapped_target=gfx1030;gfx1031;gfx1032;gfx1034"
         ) else if "%current_target%"=="gfx1151" (
@@ -547,10 +547,10 @@ jobs:
         
         # Add appropriate suffixes for different GPU targets
         s3_target="$current_target"
-        if [[ "$current_target" = "gfx103X" || "$current_target" = "gfx110X" ]]; then
+        if [ "$current_target" = "gfx103X" ]; then
           s3_target="${current_target}-dgpu"
           echo "Using S3 target with -dgpu suffix: $s3_target"
-        elif [ "$current_target" = "gfx120X" ]; then
+        elif [[ "$current_target" = "gfx110X" || "$current_target" = "gfx120X" ]]; then
           s3_target="${current_target}-all"
           echo "Using S3 target with -all suffix: $s3_target"
         fi
@@ -694,7 +694,7 @@ jobs:
         echo "Input target: $current_target"
         
         if [ "$current_target" = "gfx110X" ]; then
-          mapped_target="gfx1100;gfx1101;gfx1102"
+          mapped_target="gfx1100;gfx1101;gfx1102;gfx1103"
         elif [ "$current_target" = "gfx103X" ]; then
           mapped_target="gfx1030;gfx1031;gfx1032;gfx1034"
         elif [ "$current_target" = "gfx1151" ]; then
