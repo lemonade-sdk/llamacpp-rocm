@@ -1,0 +1,89 @@
+name: Bug Report
+description: Report an issue with llamacpp-rocm
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report an issue! Please fill in the details below so we can help you as quickly as possible.
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating System
+      description: Which OS are you running?
+      options:
+        - Windows 10
+        - Windows 11
+        - Ubuntu 22.04
+        - Ubuntu 24.04
+        - Fedora
+        - Arch Linux
+        - Other Linux (specify below)
+    validations:
+      required: true
+
+  - type: input
+    id: os-other
+    attributes:
+      label: OS Details (if "Other" or additional info)
+      description: Kernel version, distro version, or any other relevant OS details.
+      placeholder: e.g. Debian 12, kernel 6.1
+
+  - type: input
+    id: gpu
+    attributes:
+      label: GPU Model
+      description: Which AMD GPU are you using?
+      placeholder: e.g. RX 7900 XTX, RX 6800 XT, MI300X
+    validations:
+      required: true
+
+  - type: input
+    id: build-version
+    attributes:
+      label: llamacpp-rocm Build Version
+      description: Which release tag or build did you use? Check the [releases page](https://github.com/lemonade-sdk/llamacpp-rocm/releases).
+      placeholder: e.g. b1223
+    validations:
+      required: true
+
+  - type: input
+    id: model
+    attributes:
+      label: Model Used
+      description: Provide the Hugging Face link or checkpoint/GGUF filename.
+      placeholder: e.g. https://huggingface.co/TheBloke/Llama-2-7B-GGUF or llama-2-7b.Q4_K_M.gguf
+    validations:
+      required: true
+
+  - type: dropdown
+    id: vulkan-repro
+    attributes:
+      label: Does this issue also occur with Vulkan on upstream llama.cpp?
+      description: |
+        Try reproducing with the official [ggml-org/llama.cpp](https://github.com/ggml-org/llama.cpp) using the Vulkan backend.
+        This helps us determine if the issue is ROCm-specific.
+      options:
+        - "Yes — also broken on Vulkan / upstream llama.cpp"
+        - "No — only happens with this ROCm build"
+        - "Not tested"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Issue Description
+      description: Describe what happened and what you expected to happen.
+      placeholder: When I run ... I get ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional-info
+    attributes:
+      label: Additional Information
+      description: |
+        Any other context that might help — logs, screenshots, command-line flags, quantisation type, etc.
+      render: text
