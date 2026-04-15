@@ -898,6 +898,44 @@ jobs:
         
         echo "Cleanup completed successfully"
 
+  build-deb:
+    name: Build .deb Package (${{ matrix.gfx_target }})
+    needs: [prepare-matrix, build-ubuntu]
+    runs-on: ubuntu-22.04
+    if: needs.build-ubuntu.result == 'success' && needs.prepare-matrix.outputs.should_build_ubuntu == 'true'
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.prepare-matrix.outputs.ubuntu_matrix) }}
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Install packaging tools
+      run: sudo apt-get install -y patchelf dpkg-dev
+
+    - name: Download Ubuntu build artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: llama-ubuntu-rocm-${{ matrix.gfx_target }}-x64
+        path: ./binaries
+
+    - name: Build .deb package
+      run: |
+        chmod +x scripts/create_deb.sh
+        bash scripts/create_deb.sh \
+          ./binaries \
+          "0~snapshot~$(date -u +%Y%m%d)" \
+          "${{ matrix.gfx_target }}" \
+          ./debs
+
+    - name: Upload .deb artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: llama-ubuntu-rocm-${{ matrix.gfx_target }}-x64-deb
+        path: debs/*.deb
+        retention-days: 30
+
   test-stx-halo:
     runs-on: ${{ matrix.runner }}
     needs: [prepare-matrix, build-windows, build-ubuntu]
@@ -1020,50 +1058,64 @@ jobs:
           echo "tag_exists=false" >> $GITHUB_OUTPUT
         fi
         
-    - name: Create archives for all target artifacts
+    - name: Install packaging tools
+      if: steps.check-tag.outputs.tag_exists == 'false'
+      run: sudo apt-get install -y patchelf dpkg-dev
+
+    - name: Create archives and .deb packages for all target artifacts
       if: steps.check-tag.outputs.tag_exists == 'false'
       run: |
         # Parse targets and operating systems from environment
         targets="${{ env.GFX_TARGETS }}"
         operating_systems="${{ env.OPERATING_SYSTEMS }}"
         TAG="${{ steps.generate-tag.outputs.tag }}"
-        
+
         echo "Processing targets: $targets"
         echo "Processing operating systems: $operating_systems"
         echo "Using release tag: $TAG"
-        
+
+        mkdir -p debs
+
         # Create individual archives for each target and OS combination
         IFS=',' read -ra TARGET_ARRAY <<< "$targets"
         IFS=',' read -ra OS_ARRAY <<< "$operating_systems"
-        
+
         for os in "${OS_ARRAY[@]}"; do
           os=$(echo "$os" | xargs) # trim whitespace
           for target in "${TARGET_ARRAY[@]}"; do
             target=$(echo "$target" | xargs) # trim whitespace
-            
+
             echo "Processing OS: $os, target: $target"
-            
+
             # Use artifact name to find the directory
             artifact_name="llama-${os}-rocm-${target}-x64"
             artifact_dir="./all-artifacts/${artifact_name}"
-            
+
             # Create final archive with release tag
             final_archive_name="llama-${TAG}-${os}-rocm-${target}-x64"
-            
+
             if [ -d "$artifact_dir" ]; then
               echo "Creating archive: ${final_archive_name}.zip"
               cd "$artifact_dir"
               zip -r "../../${final_archive_name}.zip" *
               cd ../../
+
+              # Build .deb for Ubuntu targets
+              if [ "$os" = "ubuntu" ]; then
+                echo "Building .deb for ${target} at version ${TAG}"
+                bash scripts/create_deb.sh "$artifact_dir" "$TAG" "$target" debs
+              fi
             else
               echo "Warning: Artifact directory not found: $artifact_dir"
               ls -la ./all-artifacts/
             fi
           done
         done
-        
+
         echo "Created archives:"
         ls -la *.zip
+        echo "Created .deb packages:"
+        ls -la debs/*.deb || echo "(none)"
         
     - name: Create Release
       if: steps.check-tag.outputs.tag_exists == 'false'
@@ -1086,26 +1138,33 @@ jobs:
         
         # Verify archives exist
         ls -la *.zip
-        
-        # Prepare upload files list
+
+        # Prepare upload files list (zips)
         upload_files=""
         IFS=',' read -ra TARGET_ARRAY <<< "$targets"
         IFS=',' read -ra OS_ARRAY <<< "$operating_systems"
-        
+
         for os in "${OS_ARRAY[@]}"; do
           os=$(echo "$os" | xargs) # trim whitespace
           for target in "${TARGET_ARRAY[@]}"; do
             target=$(echo "$target" | xargs) # trim whitespace
-            
+
             final_archive_name="llama-${TAG}-${os}-rocm-${target}-x64"
             if [ -f "${final_archive_name}.zip" ]; then
               upload_files="${upload_files} ${final_archive_name}.zip"
             fi
           done
         done
-        
-        echo "Files to upload: $upload_files"
-        
+
+        # Collect .deb packages
+        deb_files=""
+        for deb in debs/*.deb; do
+          [ -f "$deb" ] && deb_files="${deb_files} ${deb}"
+        done
+
+        echo "Zip files to upload: $upload_files"
+        echo "Deb files to upload: $deb_files"
+
         # Create release with GitHub CLI
         gh release create "$TAG" \
           --title "$TAG" \
@@ -1116,5 +1175,21 @@ jobs:
         **Llama.cpp Commit Hash**: $LLAMACPP_COMMIT_HASH
         **Build Date**: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
 
-        This release includes compiled llama.cpp binaries with ROCm support for multiple GPU targets and operating systems, with all essential ROCm runtime libraries included." \
-          $upload_files
+        This release includes compiled llama.cpp binaries with ROCm support for multiple GPU targets and operating systems, with all essential ROCm runtime libraries included.
+
+        ### Ubuntu — Install via .deb (recommended)
+
+        \`\`\`bash
+        # Replace gfx1151 with your GPU target (see GPU Targets above)
+        wget https://github.com/lemonade-sdk/llamacpp-rocm/releases/download/${TAG}/llamacpp-rocm-gfx1151_${TAG}_amd64.deb
+        sudo dpkg -i llamacpp-rocm-gfx1151_${TAG}_amd64.deb
+        llama-server -m /path/to/model.gguf -ngl 99
+        \`\`\`
+
+        ### Ubuntu — Manual install from .zip
+
+        \`\`\`bash
+        unzip llama-${TAG}-ubuntu-rocm-<target>-x64.zip -d llamacpp-rocm
+        cd llamacpp-rocm && ./llama-server -m /path/to/model.gguf -ngl 99
+        \`\`\`" \
+          $upload_files $deb_files
