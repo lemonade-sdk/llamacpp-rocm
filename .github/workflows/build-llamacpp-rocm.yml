@@ -9,7 +9,7 @@ on:
       gfx_target:
         description: 'AMD GPU targets (comma-separated)'
         required: false
-        default: 'gfx1151,gfx1150,gfx120X,gfx110X,gfx103X'
+        default: 'gfx1153,gfx1152,gfx1151,gfx1150,gfx120X,gfx110X,gfx103X'
       rocm_version:
         description: 'ROCm version to use (e.g., 7.13.0a20260318) or "latest" to auto-detect'
         required: false
@@ -36,7 +36,7 @@ on:
 
 env:
   OPERATING_SYSTEMS: ${{ github.event.inputs.operating_systems || 'windows,ubuntu' }}
-  GFX_TARGETS: ${{ github.event.inputs.gfx_target || 'gfx1151,gfx1150,gfx120X,gfx110X,gfx103X' }}
+  GFX_TARGETS: ${{ github.event.inputs.gfx_target || 'gfx1153,gfx1152,gfx1151,gfx1150,gfx120X,gfx110X,gfx103X' }}
   ROCM_VERSION: ${{ github.event.inputs.rocm_version || 'latest' }}
   LLAMACPP_VERSION: ${{ github.event.inputs.llamacpp_version || 'latest' }}
 
@@ -275,6 +275,10 @@ jobs:
           set "mapped_target=gfx1100;gfx1101;gfx1102;gfx1103"
         ) else if "%current_target%"=="gfx103X" (
           set "mapped_target=gfx1030;gfx1031;gfx1032;gfx1034"
+        ) else if "%current_target%"=="gfx1153" (
+          set "mapped_target=gfx1153"
+        ) else if "%current_target%"=="gfx1152" (
+          set "mapped_target=gfx1152"
         ) else if "%current_target%"=="gfx1151" (
           set "mapped_target=gfx1151"
         ) else if "%current_target%"=="gfx1150" (
@@ -697,6 +701,10 @@ jobs:
           mapped_target="gfx1100;gfx1101;gfx1102;gfx1103"
         elif [ "$current_target" = "gfx103X" ]; then
           mapped_target="gfx1030;gfx1031;gfx1032;gfx1034"
+        elif [ "$current_target" = "gfx1153" ]; then
+          mapped_target="gfx1153"
+        elif [ "$current_target" = "gfx1152" ]; then
+          mapped_target="gfx1152"
         elif [ "$current_target" = "gfx1151" ]; then
           mapped_target="gfx1151"
         elif [ "$current_target" = "gfx1150" ]; then
@@ -903,7 +911,7 @@ jobs:
     needs: [prepare-matrix, build-windows, build-ubuntu]
     if: |
       (needs.build-windows.result == 'success' || needs.build-ubuntu.result == 'success') &&
-      contains(github.event.inputs.gfx_target || 'gfx1151,gfx1150,gfx120X,gfx110X', 'gfx1151')
+      contains(github.event.inputs.gfx_target || 'gfx1153,gfx1152,gfx1151,gfx1150,gfx120X,gfx110X', 'gfx1151')
     strategy:
       matrix:
         include:
@@ -933,7 +941,7 @@ jobs:
     needs: [prepare-matrix, build-windows, build-ubuntu]
     if: |
       (needs.build-windows.result == 'success' || needs.build-ubuntu.result == 'success') &&
-      contains(github.event.inputs.gfx_target || 'gfx1151,gfx1150,gfx120X,gfx110X', 'gfx1150')
+      contains(github.event.inputs.gfx_target || 'gfx1153,gfx1152,gfx1151,gfx1150,gfx120X,gfx110X', 'gfx1150')
     strategy:
       matrix:
         include:
