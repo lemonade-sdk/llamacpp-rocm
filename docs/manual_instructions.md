@@ -182,8 +182,10 @@ When building llama.cpp with ROCm, the `-DGPU_TARGETS` parameter must be set bas
 - **`gfx120X`** maps to `gfx1200, gfx1201` (RDNA4 series like: RX 9070 XT/GRE/9070, RX 9060 XT/9060)
 - **`gfx110X`** maps to `gfx1100, gfx1101, gfx1102, gfx1103` (RDNA3 dGPU series like: PRO W7900/W7800/W7700/W7600, RX 7900 XTX/XT/GRE, RX 7800 XT, RX 7700 XT/7700, RX 7600 XT/7600 and RDNA3 iGPU series like Radeon 780M/760M/740M)
 - **`gfx103X`** maps to `gfx1030, gfx1031, gfx1032, gfx1034` (RDNA2 dGPU series like: RX 6800 XT/6800, RX 6700 XT/6700, RX 6600 XT/6600, RX 6500 XT/6500)
-- **`gfx1150`** remains as `gfx1150` (Strix Point)
-- **`gfx1151`** remains as `gfx1151` (Strix Halo)
+- **`gfx1150`** remains as `gfx1150` (Strix Point) (RDNA3.5)
+- **`gfx1151`** remains as `gfx1151` (Strix Halo) (RDNA3.5)
+- **`gfx1152`** remains as `gfx1152` (Krackan1) (RDNA3.5)
+- **`gfx1153`** remains as `gfx1153` (Krackan2) (RDNA3.5)
 
 For a complete list of GPU targets and their mappings, see the [automated workflow](../.github/workflows/build-llamacpp-rocm.yml).
 
@@ -209,5 +211,10 @@ Replace the `-DGPU_TARGETS="gfx1151"` parameter in your cmake command with the a
 
 # For Strix Halo
 -DGPU_TARGETS="gfx1151"
-```
 
+# For Krackan1
+-DGPU_TARGETS="gfx1152"
+
+# For Krackan2
+-DGPU_TARGETS="gfx1153"
+```
