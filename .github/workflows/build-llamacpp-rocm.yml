@@ -713,6 +713,15 @@ jobs:
         mkdir build
         cd build
 
+        if [ "$current_target" = "gfx1151" ]; then
+          EXTRA_CMAKE_ARGS = \
+            -DGGML_OPENMP=ON \
+            -DGGML_HIP_NO_VMM=ON
+        else
+          EXTRA_CMAKE_ARGS = \
+            -DGGML_OPENMP=OFF
+        fi
+
         # Configure the project
         cmake .. -G Ninja \
           -DCMAKE_C_COMPILER=/opt/rocm/llvm/bin/clang \
@@ -724,14 +733,15 @@ jobs:
           -DBUILD_SHARED_LIBS=ON \
           -DLLAMA_BUILD_TESTS=OFF \
           -DGGML_HIP=ON \
-          -DGGML_OPENMP=OFF \
+          -DGGML_LTO=ON \
           -DGGML_CUDA_FORCE_CUBLAS=OFF \
           -DGGML_RPC=ON \
           -DGGML_HIP_ROCWMMA_FATTN=OFF \
           -DLLAMA_BUILD_BORINGSSL=ON \
           -DGGML_NATIVE=OFF \
           -DGGML_STATIC=OFF \
-          -DCMAKE_SYSTEM_NAME=Linux
+          -DCMAKE_SYSTEM_NAME=Linux \
+          $EXTRA_CMAKE_ARGS
 
         # Build the project
         cmake --build . -j $(nproc)
