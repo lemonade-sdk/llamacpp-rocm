@@ -19,7 +19,7 @@
   <img src="https://img.shields.io/badge/OS-Windows%20%7C%20Ubuntu-0078D6?logo=windows&logoColor=white" alt="Platform: Windows | Ubuntu" />
 </a>
 <a href="#-supported-devices" title="GPU targets">
-  <img src="https://img.shields.io/badge/GPU-gfx110X%20%7Cgfx1150%20%7C%20gfx1151%20%7C%20gfx120X%20%7C%20gfx103X-00B04F?logo=amd&logoColor=white" alt="GPU Targets" />
+  <img src="https://img.shields.io/badge/GPU-gfx110X%20%7Cgfx1150%20%7C%20gfx1151%20%7C%20gfx120X%20%7C%20gfx103X%20%7C%20gfx101X-00B04F?logo=amd&logoColor=white" alt="GPU Targets" />
 </a>
 
 
@@ -33,9 +33,11 @@ We provide nightly builds of **llama.cpp** with **AMD ROCm™ 7** acceleration b
 This build specifically targets the following GPU architectures:
 - **gfx1151** (STX Halo APU) - Ryzen AI MAX+ Pro 395
 - **gfx1150** (STX Point APU) - Ryzen AI 300
+- **gfx1152** (Krackan Point APU) - Ryzen AI 7 350
 - **gfx120X** (RDNA4 GPUs) - includes AMD Radeon RX 9070 XT/GRE/9070, RX 9060 XT/9060
 - **gfx110X** (RDNA3 GPUs) - includes AMD Radeon dGPUs: PRO W7900/W7800/W7700/W7600, RX 7900 XTX/XT/GRE, RX 7800 XT, RX 7700 XT/7700, RX 7600 XT/7600 and iGPUs: Radeon 780M/760M/740M
-- **gfx103X** (RDNA2 GPUs) - includes AMD Radeon dGPUs: RX 6800 XT/6800, RX 6700 XT/6700, RX 6600 XT/6600, RX 6500 XT/6500
+- **gfx103X** (RDNA2 GPUs) - includes AMD Radeon dGPUs: RX 6800 XT/6800, RX 6700 XT/6700, RX 6600 XT/6600, RX 6500 XT/6500 and iGPUs: 680M, Van Gogh, Raphael
+- **gfx101X** (RDNA1 GPUs) - includes AMD Radeon dGPUs: RX 5700 XT/5700, Pro V520, Pro W5500
 
 **All builds include ROCm™ 7 built-in** - no separate ROCm™ installation required!
 
@@ -43,17 +45,19 @@ This build specifically targets the following GPU architectures:
 
 Our automated GitHub Actions workflow creates nightly builds for:
 - **Windows** and **Ubuntu** operating systems
-- **Multiple GPU targets**: `gfx1151`, `gfx1150`, `gfx110X`, `gfx120X`, `gfx103X`
+- **Multiple GPU targets**: `gfx1151`, `gfx1150`, `gfx110X`, `gfx120X`, `gfx103X`, `gfx101X`
 - **ROCm™ 7 built-in** - complete runtime libraries included
 
 
-| GPU Target | Ubuntu | Windows |
+| GPU Target  | Ubuntu | Windows |
 |-------------|--------|---------|
 | **gfx110X** | [![Download Ubuntu gfx110X](https://img.shields.io/badge/Download-Ubuntu%20gfx110X-blue)](https://github.com/aigdat/llamacpp-rocm/releases/latest) | [![Download Windows gfx110X](https://img.shields.io/badge/Download-Windows%20gfx110X-green)](https://github.com/aigdat/llamacpp-rocm/releases/latest) |
 | **gfx1150** | [![Download Ubuntu gfx1150](https://img.shields.io/badge/Download-Ubuntu%20gfx1150-blue)](https://github.com/aigdat/llamacpp-rocm/releases/latest) | [![Download Windows gfx1150](https://img.shields.io/badge/Download-Windows%20gfx1150-green)](https://github.com/aigdat/llamacpp-rocm/releases/latest) |
 | **gfx1151** | [![Download Ubuntu gfx1151](https://img.shields.io/badge/Download-Ubuntu%20gfx1151-blue)](https://github.com/aigdat/llamacpp-rocm/releases/latest) | [![Download Windows gfx1151](https://img.shields.io/badge/Download-Windows%20gfx1151-green)](https://github.com/aigdat/llamacpp-rocm/releases/latest) |
+| **gfx1152** | [![Download Ubuntu gfx1151](https://img.shields.io/badge/Download-Ubuntu%20gfx1152-blue)](https://github.com/aigdat/llamacpp-rocm/releases/latest) | [![Download Windows gfx1152](https://img.shields.io/badge/Download-Windows%20gfx1152-green)](https://github.com/aigdat/llamacpp-rocm/releases/latest) |
 | **gfx120X** | [![Download Ubuntu gfx120X](https://img.shields.io/badge/Download-Ubuntu%20gfx120X-blue)](https://github.com/aigdat/llamacpp-rocm/releases/latest) | [![Download Windows gfx120X](https://img.shields.io/badge/Download-Windows%20gfx120X-green)](https://github.com/aigdat/llamacpp-rocm/releases/latest) |
 | **gfx103X** | [![Download Ubuntu gfx103X](https://img.shields.io/badge/Download-Ubuntu%20gfx103X-blue)](https://github.com/aigdat/llamacpp-rocm/releases/latest) | [![Download Windows gfx103X](https://img.shields.io/badge/Download-Windows%20gfx103X-green)](https://github.com/aigdat/llamacpp-rocm/releases/latest) |
+| **gfx101X** | [![Download Ubuntu gfx101X](https://img.shields.io/badge/Download-Ubuntu%20gfx101X-blue)](https://github.com/aigdat/llamacpp-rocm/releases/latest) | [![Download Windows gfx101X](https://img.shields.io/badge/Download-Windows%20gfx101X-green)](https://github.com/aigdat/llamacpp-rocm/releases/latest) |
 
 > **⚡ Ready to Run**: All releases include complete ROCm™ 7 runtime libraries - just download and go!
 
