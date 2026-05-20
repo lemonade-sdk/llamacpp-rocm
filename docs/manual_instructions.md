@@ -184,7 +184,7 @@ When building llama.cpp with ROCm, the `-DGPU_TARGETS` parameter must be set bas
 - **`gfx103X`** maps to `gfx1030, gfx1031, gfx1032, gfx1034` (RDNA2 dGPU series like: RX 6800 XT/6800, RX 6700 XT/6700, RX 6600 XT/6600, RX 6500 XT/6500)
 - **`gfx1150`** remains as `gfx1150` (Strix Point)
 - **`gfx1151`** remains as `gfx1151` (Strix Halo)
-- **`gfx1152`** remains as `gfx1152` (Krackan Point - Radeon 860M/840M iGPUs in Ryzen AI 300 series)
+- **`gfx1152`** remains as `gfx1152` (Krackan Point)
 
 For a complete list of GPU targets and their mappings, see the [automated workflow](../.github/workflows/build-llamacpp-rocm.yml).
 
