@@ -89,7 +89,7 @@ jobs:
         echo "Generated matrix: $matrix_targets"
 
   build-windows:
-    runs-on: windows-latest
+    runs-on: windows-2025
     needs: prepare-matrix
     if: needs.prepare-matrix.outputs.should_build_windows == 'true'
     strategy:
