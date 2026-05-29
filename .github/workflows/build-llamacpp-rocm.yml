@@ -89,7 +89,7 @@ jobs:
         echo "Generated matrix: $matrix_targets"
 
   build-windows:
-    runs-on: windows-2025
+    runs-on: windows-latest
     needs: prepare-matrix
     if: needs.prepare-matrix.outputs.should_build_windows == 'true'
     strategy:
@@ -296,7 +296,7 @@ jobs:
         set PATH=%HIP_PATH%\lib\llvm\bin;%HIP_PATH%\bin;%PATH%
 
         REM Set up x64 Native Tools Command Prompt environment
-        call "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath > vs_path.txt
+        call "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -latest -version "[17.0,18.0)" -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath > vs_path.txt
         set /p VS_PATH=<vs_path.txt
         call "%VS_PATH%\VC\Auxiliary\Build\vcvars64.bat"
 
