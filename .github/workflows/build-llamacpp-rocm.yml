@@ -962,6 +962,8 @@ jobs:
       pull-requests: write
     if: |
       always() &&
+      (needs.build-windows.result == 'success' || needs.build-windows.result == 'skipped') &&
+      (needs.build-ubuntu.result == 'success' || needs.build-ubuntu.result == 'skipped') &&
       (needs.build-windows.result == 'success' || needs.build-ubuntu.result == 'success') &&
       (needs.test-stx-halo.result == 'success' || needs.test-stx-halo.result == 'skipped') &&
       (needs.test-stx.result == 'success' || needs.test-stx.result == 'skipped') &&
