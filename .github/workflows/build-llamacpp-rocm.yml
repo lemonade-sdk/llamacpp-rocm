@@ -89,7 +89,11 @@ jobs:
         echo "Generated matrix: $matrix_targets"
 
   build-windows:
-    runs-on: windows-latest
+    # Pinned to windows-2022 (VS 2022 / MSVC 14.4x). The windows-latest image moved to
+    # VS 2026 (MSVC 14.51) on 2026-06-08, whose <cmath> declares isgreater/isless/etc. as
+    # constexpr (implicitly __host__ __device__), which collides with ROCm clang's
+    # __device__-only HIP math wrappers and breaks the HIP build. See llama.cpp#22570.
+    runs-on: windows-2022
     needs: prepare-matrix
     if: needs.prepare-matrix.outputs.should_build_windows == 'true'
     strategy:
