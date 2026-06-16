@@ -63,6 +63,12 @@ Our automated GitHub Actions workflow creates nightly builds for:
 
 > **Linux (gfx1150/APU):** OOM despite free VRAM? Add `ttm.pages_limit=12582912` (48 GB) to the kernel cmdline (e.g. GRUB), run `update-grub`, then reboot. See [TheRock FAQ](https://github.com/ROCm/TheRock/blob/main/docs/faq.md#gfx1151-strix-halo-specific-questions) for more.
 
+> **Linux (gfx1151/Strix Halo):** Immediate `Segmentation fault (core dumped)` with no output on startup? On recent kernels (6.19.x) the iGPU is misidentified as `gfx1100` and the ROCm runtime crashes during GPU init. Export these before running:
+> ```bash
+> export HSA_OVERRIDE_GFX_VERSION=11.5.1
+> export HSA_ENABLE_SDMA=0
+> ```
+
 ---
 
 ## 🧪 Quick Smoketest

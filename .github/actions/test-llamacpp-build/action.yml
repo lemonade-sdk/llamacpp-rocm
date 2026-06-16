@@ -162,7 +162,28 @@ runs:
         llama_cli_path="./llama-binaries/llama-cli"
         model_path="Qwen3-0.6B-Q4_0.gguf"
         output_file="llama_output.txt"
-        
+
+        # Strix Halo (gfx1151) ROCm startup workaround.
+        # On recent kernels (6.19.x) the iGPU is misidentified as gfx1100, and the
+        # ROCm runtime SIGSEGVs inside libhsa-runtime64.so during GPU-agent init
+        # (immediate crash, empty output, exit 139) before llama.cpp prints anything.
+        # Forcing the gfx version and disabling SDMA queues fixes the crash.
+        # Refs: ROCm on kernel 6.19.x (strix-halo guide), unslothai/unsloth#6276.
+        if [ "${{ inputs.gfx_target }}" = "gfx1151" ]; then
+          export HSA_OVERRIDE_GFX_VERSION=11.5.1
+          export HSA_ENABLE_SDMA=0
+          echo "Applied Strix Halo (gfx1151) ROCm workarounds:"
+          echo "  HSA_OVERRIDE_GFX_VERSION=$HSA_OVERRIDE_GFX_VERSION"
+          echo "  HSA_ENABLE_SDMA=$HSA_ENABLE_SDMA"
+        fi
+
+        # Environment diagnostics (useful when the runtime crashes on startup)
+        echo "=== ENVIRONMENT ==="
+        echo "Kernel: $(uname -r)"
+        echo "KFD device present: $( [ -e /dev/kfd ] && echo yes || echo 'NO (ROCm cannot run without /dev/kfd)' )"
+        echo "DRI render nodes: $(ls /dev/dri/renderD* 2>/dev/null | tr '\n' ' ' || echo none)"
+        echo "==================="
+
         # Make llama-cli executable
         chmod +x "$llama_cli_path"
         
@@ -202,6 +223,27 @@ runs:
           echo ""
           echo "Checking for missing library dependencies..."
           ldd "$llama_cli_path" || echo "ldd command failed"
+
+          # On a segfault (139), capture a backtrace so we can tell whether the crash
+          # is inside the bundled ROCm runtime (libhsa-runtime64 / libamdhip64). If so,
+          # the bundled runtime is incompatible with this host and the binaries should
+          # fall back to the system ROCm install instead.
+          if [ "$exit_code" -eq 139 ]; then
+            echo ""
+            echo "Segmentation fault detected - attempting to capture a backtrace..."
+            if command -v gdb >/dev/null 2>&1; then
+              gdb -batch -nx \
+                -ex "set pagination off" \
+                -ex "run" \
+                -ex "bt" \
+                --args "$llama_cli_path" -m "$model_path" -ngl 99 \
+                -p "I believe the meaning of life is" -st -v 2>&1 | tail -n 40 || true
+            else
+              echo "gdb not installed on runner; skipping backtrace."
+              echo "Install it (e.g. 'sudo apt-get install -y gdb') for crash diagnostics."
+            fi
+          fi
+
           echo ""
           echo "Please check the output above for specific error messages."
           rm -f "$output_file"
