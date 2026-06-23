@@ -643,7 +643,40 @@ jobs:
         
         # Stream download directly into tar extraction (no intermediate file)
         curl -sL "$rocm_url" | sudo tar --use-compress-program=gzip -xf - -C /opt/rocm --strip-components=1
-        
+
+    - name: Patch libhsa-runtime64 InitDma regression (gfx1151/gfx1150)
+      # TheRock nightlies from 7.14.0a20260609 onward ship a libhsa-runtime64 that
+      # segfaults in rocr::AMD::GpuAgent::InitDma() during hsa_init on gfx1151/gfx1150
+      # (Strix Halo). Apply the upstream byte fix (SDMA engine-count underflow) in place.
+      # Idempotent and safe on already-fixed builds: the bad pattern simply won't match.
+      # https://github.com/ROCm/TheRock/issues/5763 / ROCm/rocm-systems#7053
+      if: matrix.gfx_target == 'gfx1151' || matrix.gfx_target == 'gfx1150'
+      run: |
+        python3 - <<'PYEOF'
+        import glob, os, sys
+
+        bad = bytes.fromhex("8b83cc01000089c183e902ba020000000f42d08b83d001000085c00f45c84889933003000048898b38030000")
+        good = bytes.fromhex("8b83cc01000031c983f8028d50fe0f47ca29c8488983300300008b83d001000085c00f45c848898b38030000")
+
+        libs = [p for p in glob.glob("/opt/rocm/lib/libhsa-runtime64.so*")
+                if os.path.isfile(p) and not os.path.islink(p)]
+        if not libs:
+            sys.exit("Error: no libhsa-runtime64.so* found under /opt/rocm/lib")
+
+        for path in libs:
+            with open(path, "rb") as f:
+                data = f.read()
+            count = data.count(bad)
+            if count == 0:
+                print(f"{path}: pattern not present, nothing to patch (already good).")
+            elif count > 1:
+                sys.exit(f"Error: pattern found {count}x in {path}; aborting to avoid corruption.")
+            else:
+                with open(path, "wb") as f:
+                    f.write(data.replace(bad, good))
+                print(f"{path}: patched InitDma regression at offset {hex(data.find(bad))}.")
+        PYEOF
+
     - name: Set ROCm environment variables
       run: |
         echo "Setting ROCm environment variables..."
