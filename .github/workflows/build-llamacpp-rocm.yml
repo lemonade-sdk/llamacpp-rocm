@@ -313,6 +313,7 @@ jobs:
           -DBUILD_SHARED_LIBS=ON ^
           -DLLAMA_BUILD_TESTS=OFF ^
           -DGGML_HIP=ON ^
+          -DGGML_HIP_NO_VMM=OFF ^
           -DGGML_OPENMP=OFF ^
           -DGGML_CUDA_FORCE_CUBLAS=OFF ^
           -DGGML_RPC=ON ^
@@ -687,6 +688,7 @@ jobs:
           -DBUILD_SHARED_LIBS=ON \
           -DLLAMA_BUILD_TESTS=OFF \
           -DGGML_HIP=ON \
+          -DGGML_HIP_NO_VMM=OFF \
           -DGGML_OPENMP=OFF \
           -DGGML_CUDA_FORCE_CUBLAS=OFF \
           -DGGML_RPC=ON \
