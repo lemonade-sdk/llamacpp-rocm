@@ -202,8 +202,12 @@ jobs:
           # Assign before piping so the parsed array enumerates element-by-element.
           $allFiles = $filesMatch.Groups[1].Value | ConvertFrom-Json
           $prefix = "therock-dist-windows-$s3Target-"
+          # Anchor the match so the version comes immediately after the prefix.
+          # This excludes variants like "...-all-tests-<version>.tar.gz" that
+          # TheRock also publishes and share the same prefix/date.
+          $versionPattern = "^$([regex]::Escape($prefix))\d+\.\d+\.\d+(a|rc)\d+\.tar\.gz$"
           $latest = $allFiles |
-            Where-Object { $_.name -like "$prefix*" -and $_.name -match '\d{8}\.tar\.gz$' } |
+            Where-Object { $_.name -match $versionPattern } |
             Sort-Object { [regex]::Match($_.name, '(\d{8})\.tar\.gz$').Groups[1].Value } |
             Select-Object -Last 1
           if (-not $latest) {
@@ -568,8 +572,11 @@ jobs:
           fi
 
           # Pick the newest by the YYYYMMDD build date embedded in the filename.
+          # Anchor the match so the version comes immediately after the prefix.
+          # This excludes variants like "...-all-tests-<version>.tar.gz" that
+          # TheRock also publishes and share the same prefix/date.
           latest_file=$(echo "$files_json" | jq -r --arg p "$prefix" \
-            '[.[] | select(.name | startswith($p)) | select(.name | test("[0-9]{8}\\.tar\\.gz$"))] | sort_by(.name | capture("(?<d>[0-9]{8})\\.tar\\.gz$").d) | last | .name // empty')
+            '[.[] | select(.name | test("^" + $p + "[0-9]+\\.[0-9]+\\.[0-9]+(a|rc)[0-9]+\\.tar\\.gz$"))] | sort_by(.name | capture("(?<d>[0-9]{8})\\.tar\\.gz$").d) | last | .name // empty')
           if [ -z "$latest_file" ]; then
             echo "No tarball found for prefix '$prefix' at $base_url/"
             exit 1
