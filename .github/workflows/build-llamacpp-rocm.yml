@@ -341,10 +341,6 @@ jobs:
         
         if (Test-Path $rocmBinPath) {
           # Copy files matching patterns and specific names.
-          # NOTE: origami.dll is a runtime dependency of libhipblaslt.dll that
-          # recent ROCm nightlies introduced. Without it, llama-cli.exe fails to
-          # start with exit code 0xC0000135 (STATUS_DLL_NOT_FOUND). If a future
-          # ROCm/llama.cpp bump adds another dependency, add it here as well.
           $filesToCopy = @(
             "amdhip64_*.dll",
             "rocm_kpack.dll",
@@ -766,9 +762,6 @@ jobs:
         cp -v /opt/rocm/lib/libhsa-runtime64.so* "$build_bin_path/" 2>/dev/null || echo "libhsa-runtime64.so* not found"
         cp -v /opt/rocm/lib/rocm_sysdeps/lib/librocm_sysdeps_numa.so* "$build_bin_path/" 2>/dev/null || echo "librocm_sysdeps_numa.so* not found"
         cp -v /opt/rocm/lib/librocroller.so* "$build_bin_path/" 2>/dev/null || echo "librocroller.so* not found"
-        # liborigami.so is a runtime dependency of libhipblaslt.so that recent
-        # ROCm nightlies introduced. Without it llama-cli fails at startup with
-        # "error while loading shared libraries: liborigami.so.1".
         cp -v /opt/rocm/lib/liborigami.so* "$build_bin_path/" 2>/dev/null || echo "liborigami.so* not found"
         cp -v /opt/rocm/lib/librocm_kpack.so* "$build_bin_path/" 2>/dev/null || echo "librocm_kpack.so* not found"
         cp -v /opt/rocm/lib/rocm_sysdeps/lib/librocm_sysdeps_z.so* "$build_bin_path/" 2>/dev/null || echo "librocm_sysdeps_z.so* not found"
