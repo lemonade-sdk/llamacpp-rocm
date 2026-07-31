@@ -340,31 +340,24 @@ jobs:
         Write-Host "Destination: $buildBinPath"
         
         if (Test-Path $rocmBinPath) {
-          # Copy files matching patterns and specific names
-          $filesToCopy = @(
-            "amdhip64_*.dll",
-            "rocm_kpack.dll",
-            "amd_comgr*.dll", 
-            "libhipblas.dll",
-            "rocblas.dll",
-            "rocsolver.dll",
-            "hipblaslt.dll",
-            "libhipblaslt.dll",
-            "hipblas.dll"
-          )
-          
-          foreach ($pattern in $filesToCopy) {
-            $matchingFiles = Get-ChildItem -Path $rocmBinPath -Name $pattern -ErrorAction SilentlyContinue
-            if ($matchingFiles) {
-              foreach ($file in $matchingFiles) {
-                $sourcePath = Join-Path $rocmBinPath $file
-                $destPath = Join-Path $buildBinPath $file
-                Copy-Item $sourcePath $destPath
-                Write-Host "Copied: $file"
-              }
-            } else {
-              Write-Host "Warning: No files found matching pattern: $pattern"
+          # Copy every runtime DLL that ROCm ships in its bin directory.
+          #
+          # We intentionally copy the whole set instead of a hardcoded list:
+          # ROCm nightlies periodically introduce new runtime dependencies
+          # (e.g. origami.dll, pulled in by the rocRoller/rocBLAS stack). A
+          # hardcoded list silently misses these, and the resulting llama-cli.exe
+          # fails to start with exit code 0xC0000135 (STATUS_DLL_NOT_FOUND).
+          # Copying all bin DLLs guarantees the runtime dependency closure ships.
+          $dllFiles = Get-ChildItem -Path $rocmBinPath -Filter "*.dll" -File -ErrorAction SilentlyContinue
+          if ($dllFiles) {
+            foreach ($file in $dllFiles) {
+              $destPath = Join-Path $buildBinPath $file.Name
+              Copy-Item $file.FullName $destPath -Force
+              Write-Host "Copied: $($file.Name)"
             }
+            Write-Host "Copied $($dllFiles.Count) DLL(s) from $rocmBinPath"
+          } else {
+            Write-Host "Warning: No DLL files found in: $rocmBinPath"
           }
           
           # Copy the rocblas\library folder and all its contents
@@ -771,6 +764,43 @@ jobs:
         cp -v /opt/rocm/lib/rocm_sysdeps/lib/librocm_sysdeps_drm.so* "$build_bin_path/" 2>/dev/null || echo "librocm_sysdeps_drm.so* not found"
         cp -v /opt/rocm/lib/rocm_sysdeps/lib/librocm_sysdeps_drm_amdgpu.so* "$build_bin_path/" 2>/dev/null || echo "librocm_sysdeps_drm_amdgpu.so* not found"
         cp -v /opt/rocm/lib/rocm_sysdeps/lib/librocm_sysdeps_bz2.so* "$build_bin_path/" 2>/dev/null || echo "librocm_sysdeps_bz2.so* not found"
+
+        echo "Finished copying explicitly listed ROCm libraries"
+
+        # Automatically resolve any remaining shared-library dependencies.
+        # ROCm nightlies periodically introduce new transitive dependencies
+        # (e.g. liborigami.so, pulled in by the rocRoller/rocBLAS stack). The
+        # hardcoded list above can silently miss these, which makes llama-cli
+        # fail at runtime with "error while loading shared libraries".
+        # Walk ldd for every binary/lib we ship and copy any dependency that is
+        # still "not found" but exists somewhere under /opt/rocm. Repeat until
+        # the dependency closure is stable so future new libs are picked up too.
+        bin_dir="$(pwd)/$build_bin_path"
+        echo "Resolving remaining shared-library dependencies..."
+        for iteration in $(seq 1 25); do
+          missing=$(
+            for f in "$bin_dir"/llama-* "$bin_dir"/*.so*; do
+              [ -f "$f" ] || continue
+              LD_LIBRARY_PATH="$bin_dir" ldd "$f" 2>/dev/null
+            done | awk '/not found/ {print $1}' | sort -u
+          )
+          if [ -z "$missing" ]; then
+            echo "All shared-library dependencies resolved after $((iteration - 1)) iteration(s)."
+            break
+          fi
+          echo "Iteration $iteration: unresolved -> $missing"
+          for soname in $missing; do
+            # Match a file/symlink named exactly like the requested soname, then
+            # copy the dereferenced content (-L) so we ship a real file that
+            # carries the exact name the dynamic loader is looking for.
+            src=$(find /opt/rocm -name "$soname" -print -quit 2>/dev/null)
+            if [ -n "$src" ]; then
+              cp -Lv "$src" "$build_bin_path/$soname"
+            else
+              echo "WARNING: $soname is required but was not found anywhere under /opt/rocm"
+            fi
+          done
+        done
 
         echo "Finished copying required ROCm libraries"
 
