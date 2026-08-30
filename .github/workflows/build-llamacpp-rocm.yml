@@ -18,6 +18,14 @@ on:
         description: 'Llama.cpp version (e.g., tag, branch, or commit hash) or "latest" for master branch'
         required: false
         default: 'latest'
+      windows_no_peer_copy:
+        description: 'Set GGML_CUDA_NO_PEER_COPY for Windows ROCm builds'
+        required: false
+        default: 'ON'
+        type: choice
+        options:
+          - 'ON'
+          - 'OFF'
       create_release:
         description: 'Create a GitHub release after successful build'
         required: false
@@ -96,6 +104,9 @@ jobs:
     runs-on: windows-2022
     needs: prepare-matrix
     if: needs.prepare-matrix.outputs.should_build_windows == 'true'
+    env:
+      # Temporary workaround for https://github.com/ROCm/rocm-systems/issues/5109.
+      WINDOWS_CMAKE_NO_PEER_COPY: ${{ github.event.inputs.windows_no_peer_copy || 'ON' }}
     strategy:
       matrix: ${{fromJson(needs.prepare-matrix.outputs.windows_matrix)}}
       fail-fast: false
@@ -317,6 +328,7 @@ jobs:
           -DBUILD_SHARED_LIBS=ON ^
           -DLLAMA_BUILD_TESTS=OFF ^
           -DGGML_HIP=ON ^
+          -DGGML_CUDA_NO_PEER_COPY=%WINDOWS_CMAKE_NO_PEER_COPY% ^
           -DGGML_OPENMP=OFF ^
           -DGGML_CUDA_FORCE_CUBLAS=OFF ^
           -DGGML_RPC=ON ^
@@ -325,6 +337,8 @@ jobs:
           -DGGML_NATIVE=OFF ^
           -DGGML_STATIC=OFF ^
           -DCMAKE_SYSTEM_NAME=Windows
+
+        findstr /x /c:"GGML_CUDA_NO_PEER_COPY:BOOL=%WINDOWS_CMAKE_NO_PEER_COPY%" CMakeCache.txt >nul || exit /b 1
 
         REM Build the project
         cmake --build . -j %NUMBER_OF_PROCESSORS%
@@ -445,6 +459,7 @@ jobs:
         - **llama.cpp Commit Hash**: ${{ env.LLAMACPP_COMMIT_HASH }}
         - **Build Type**: Release
         - **Platform**: Windows
+        - **GGML_CUDA_NO_PEER_COPY**: ${{ env.WINDOWS_CMAKE_NO_PEER_COPY }}
         
         ## Build Artifacts
         The compiled binaries are available in the build artifacts.
