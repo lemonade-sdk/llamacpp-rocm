@@ -1,126 +1,136 @@
-# 🔧 Manual Build Instructions
+# Manual Build Instructions
 
-> **⚠️ Important Notice**
-> 
-> These manual build instructions are provided for reference purposes only and may not reflect the most current build process. We cannot guarantee that these instructions are up-to-date or will work in all environments. 
-> 
-> For the most reliable and current build process, please refer to our [automated GitHub Actions workflow](../.github/workflows/build-llamacpp-rocm.yml). The workflow represents our recommended approach for building Llama.cpp with ROCm support.
+> These steps are a simplified local-build path. For the exact flags, packaging, and GPU matrix used in releases, see the [GitHub Actions workflow](../.github/workflows/build-llamacpp-rocm.yml).
+>
+> Prefer a [prebuilt release](https://github.com/lemonade-sdk/llamacpp-rocm/releases/latest) unless you need to compile locally.
 
----
+- [Windows](#windows)
+- [Ubuntu](#ubuntu)
+- [GPU targets](#gpu-targets)
 
-Choose your operating system:
-- [🪟 Windows Build Instructions](#windows-build-instructions)
-- [🐧 Ubuntu Build Instructions](#ubuntu-build-instructions)
+## Download a ROCm nightly tarball
 
-## 🪟 Windows Build Instructions
+TheRock publishes nightlies at [rocm.nightlies.amd.com/tarball-multi-arch](https://rocm.nightlies.amd.com/tarball-multi-arch/). Open that index, pick the newest tarball for your OS and GPU family, and download it.
 
-If you prefer to build locally on Windows, follow these steps:
+| GPU family | Filename slot |
+| --- | --- |
+| gfx1151 | `gfx1151` |
+| gfx1150 | `gfx1150` |
+| gfx120X | `gfx120X-all` |
+| gfx110X | `gfx110X-all` |
+| gfx103X | `gfx103X-all` |
+| gfx90a | `gfx90a` |
+| gfx908 | `gfx908` |
 
-### Part 1: Download required software
-
-I used chocolatey, but you can also install those manually.
-  ```
-  choco install visualstudio2022buildtools -y --params "--add Microsoft.VisualStudio.Component.VC.Tools.x86.x64 --add Microsoft.VisualStudio.Component.VC.CMake.Project --add Microsoft.VisualStudio.Component.VC.ATL --add Microsoft.VisualStudio.Component.Windows11SDK.22621"
-  choco install cmake --version=3.31.0 -y
-  choco install ninja -y
-  choco install ccache -y
-  choco install python -y
-  choco install strawberryperl -y
-  ```
-> Note: cmake is not strictly needed, as we 
-
-### Part 2: Organizing artifacts
-* Step 1: Get the latest run id from main [here](https://github.com/ROCm/TheRock/actions/workflows/release_windows_packages.yml).
-  * Example: [TheRock/actions/runs/19952310972/job/57214748637](https://github.com/ROCm/TheRock/actions/runs/19952310972/job/57214748637)
-* Step 2: Look at the upload logs for your target GPU (e.g., `gfx1151`), and note the Windows URL:
-* Step 3: Download the nightly tarball for Windows
-  * Example: [therock-nightly-tarball.s3.amazonaws.com/YOUR_WINDOWS_FILE](https://therock-nightly-tarball.s3.amazonaws.com/therock-dist-windows-gfx1151-7.11.0a20251205.tar.gz)
-* Step 4: Extract the contents of this tar.gz file to `C:\opt\rocm`
-* Setp 5: Add `C:\opt\rocm\lib\llvm\bin` to path
-* Step 6: clone llamacpp
-
-### Part 3: Building Llama.cpp + ROCm
-
-Open `x64 Native Tools Command Prompt` and run the following commands:
+Examples (replace the version with the newest file on the index):
 
 ```
-set HIP_PATH=C:/opt/rocm
-set PATH=%HIP_PATH%/bin;%PATH%
+https://rocm.nightlies.amd.com/tarball-multi-arch/therock-dist-windows-gfx1151-<version>.tar.gz
+https://rocm.nightlies.amd.com/tarball-multi-arch/therock-dist-linux-gfx1151-<version>.tar.gz
+```
+
+Skip files with `-tests-` in the name.
+
+## Windows
+
+### 1. Install build tools
+
+Chocolatey is optional; you can install the same tools by hand.
+
+```
+choco install visualstudio2022buildtools -y --params "--add Microsoft.VisualStudio.Component.VC.Tools.x86.x64 --add Microsoft.VisualStudio.Component.VC.CMake.Project --add Microsoft.VisualStudio.Component.VC.ATL --add Microsoft.VisualStudio.Component.Windows11SDK.22621"
+choco install cmake ninja python strawberryperl -y
+```
+
+### 2. Extract ROCm
+
+Download the Windows tarball for your GPU (see [above](#download-a-rocm-nightly-tarball)), then:
+
+```
+mkdir C:\opt\rocm
+tar -xzf therock-dist-windows-<family>-<version>.tar.gz -C C:\opt\rocm --strip-components=1
+```
+
+Clone llama.cpp:
+
+```
+git clone --depth 1 --single-branch --branch master https://github.com/ggerganov/llama.cpp.git
+```
+
+### 3. Build
+
+Open **x64 Native Tools Command Prompt** and run:
+
+```
+set HIP_PATH=C:\opt\rocm
 set HIP_PLATFORM=amd
-cd "C:\<YOUR_LLAMACPP_PATH>\llama.cpp"
+set PATH=%HIP_PATH%\lib\llvm\bin;%HIP_PATH%\bin;%PATH%
+
+cd llama.cpp
 mkdir build
 cd build
-cmake .. -G Ninja -DCMAKE_C_COMPILER="C:\opt\rocm\lib\llvm\bin\clang.exe" -DCMAKE_CXX_COMPILER="C:\opt\rocm\lib\llvm\bin\clang++.exe" -DCMAKE_CXX_FLAGS="-IC:\opt\rocm\include" -DCMAKE_CROSSCOMPILING=ON -DCMAKE_BUILD_TYPE=Release -DGPU_TARGETS="gfx1151" -DBUILD_SHARED_LIBS=ON -DLLAMA_BUILD_TESTS=OFF -DGGML_HIP=ON -DGGML_OPENMP=OFF -DGGML_CUDA_FORCE_CUBLAS=OFF -DGGML_HIP_ROCWMMA_FATTN=OFF -DLLAMA_CURL=OFF -DGGML_NATIVE=OFF -DGGML_STATIC=OFF -DCMAKE_SYSTEM_NAME=Windows
-cmake --build . -j 24 2>&1 | findstr /i "error"
+
+cmake .. -G Ninja ^
+  -DCMAKE_C_COMPILER="C:\opt\rocm\lib\llvm\bin\clang.exe" ^
+  -DCMAKE_CXX_COMPILER="C:\opt\rocm\lib\llvm\bin\clang++.exe" ^
+  -DCMAKE_CXX_FLAGS="-IC:\opt\rocm\include" ^
+  -DCMAKE_CROSSCOMPILING=ON ^
+  -DCMAKE_BUILD_TYPE=Release ^
+  -DGPU_TARGETS="gfx1151" ^
+  -DBUILD_SHARED_LIBS=ON ^
+  -DLLAMA_BUILD_TESTS=OFF ^
+  -DGGML_HIP=ON ^
+  -DGGML_OPENMP=OFF ^
+  -DGGML_CUDA_FORCE_CUBLAS=OFF ^
+  -DGGML_RPC=ON ^
+  -DGGML_HIP_ROCWMMA_FATTN=OFF ^
+  -DLLAMA_BUILD_BORINGSSL=ON ^
+  -DGGML_NATIVE=OFF ^
+  -DGGML_STATIC=OFF ^
+  -DCMAKE_SYSTEM_NAME=Windows
+
+cmake --build . -j %NUMBER_OF_PROCESSORS%
 ```
 
-> **Note**: Adjust the `-DGPU_TARGETS="gfx1151"` parameter for your specific GPU. See the [GPU Target Reference](#gpu-target-reference) section for details.
+Adjust `-DGPU_TARGETS` for your GPU (see [GPU targets](#gpu-targets)). Binaries land in `llama.cpp\build\bin`. Keep `C:\opt\rocm\bin` on `PATH` when you run them.
 
-If you see no errors, that means that llama.cpp has correctly been built and files are available inside your `build\bin` folder. 
+## Ubuntu
 
----
+### 1. Install build tools
 
-## 🐧 Ubuntu Build Instructions
-
-If you prefer to build locally on Ubuntu, follow these steps:
-
-### Part 1: Install required software
-
-Update your package manager and install the build dependencies:
 ```bash
 sudo apt update
 sudo apt install -y cmake ninja-build git wget
 ```
 
-### Part 2: Organizing artifacts
+### 2. Extract ROCm
 
-> **Note**: The process for finding and downloading the ROCm nightly tarball is similar to the [Windows Part 2](#part-2-organizing-artifacts) above, but with Linux-specific URLs.
-
-* Step 1: Get the latest run id from main [here](https://github.com/ROCm/TheRock/actions/workflows/release_windows_packages.yml) (same as Windows).
-* Step 2: Look at the upload logs for your target GPU (e.g., `gfx1151`), but note the Linux URLs:
-  ```
-  ://therock-nightly-tarball/therock-dist-linux-gfx1151-7.11.0a20251205.tar.gz
-  ```
-* Step 3: Download the nightly tarball for Linux
-  * Example: [therock-nightly-tarball.s3.amazonaws.com/YOUR_LINUX_FILE](https://therock-nightly-tarball.s3.amazonaws.com/therock-dist-linux-gfx1151-7.11.0a20251205.tar.gz)
-* Step 4: Extract the contents of this tar.gz file to `/opt/rocm`:
-  ```bash
-  sudo mkdir -p /opt/rocm
-  sudo tar -xzf therock-dist-linux-gfx1151-7.11.0a20251205.tar.gz -C /opt/rocm --strip-components=1
-  ```
-* Step 5: Set up ROCm environment variables:
-  ```bash
-  export HIP_PATH=/opt/rocm
-  export ROCM_PATH=/opt/rocm
-  export HIP_PLATFORM=amd
-  export HIP_CLANG_PATH=/opt/rocm/llvm/bin
-  export HIP_INCLUDE_PATH=/opt/rocm/include
-  export HIP_LIB_PATH=/opt/rocm/lib
-  export HIP_DEVICE_LIB_PATH=/opt/rocm/lib/llvm/amdgcn/bitcode
-  export PATH=/opt/rocm/bin:/opt/rocm/llvm/bin:$PATH
-  export LD_LIBRARY_PATH=/opt/rocm/lib:/opt/rocm/lib64:/opt/rocm/llvm/lib:${LD_LIBRARY_PATH:-}
-  export LIBRARY_PATH=/opt/rocm/lib:/opt/rocm/lib64:${LIBRARY_PATH:-}
-  export CPATH=/opt/rocm/include:${CPATH:-}
-  export PKG_CONFIG_PATH=/opt/rocm/lib/pkgconfig:${PKG_CONFIG_PATH:-}
-  ```
-* Step 6: Clone llama.cpp:
-  ```bash
-  git clone https://github.com/ggerganov/llama.cpp.git
-  ```
-
-### Part 3: Building Llama.cpp + ROCm
-
-Run the following commands to build llama.cpp with ROCm support:
+Download the Linux tarball for your GPU (see [above](#download-a-rocm-nightly-tarball)), then:
 
 ```bash
-# Navigate to llama.cpp directory
-cd llama.cpp
+sudo mkdir -p /opt/rocm
+sudo tar -xzf therock-dist-linux-<family>-<version>.tar.gz -C /opt/rocm --strip-components=1
+```
 
-# Create build directory
+```bash
+export HIP_PATH=/opt/rocm
+export ROCM_PATH=/opt/rocm
+export HIP_PLATFORM=amd
+export PATH=/opt/rocm/bin:/opt/rocm/llvm/bin:$PATH
+export LD_LIBRARY_PATH=/opt/rocm/lib:/opt/rocm/lib64:/opt/rocm/llvm/lib:${LD_LIBRARY_PATH:-}
+```
+
+```bash
+git clone --depth 1 --single-branch --branch master https://github.com/ggerganov/llama.cpp.git
+```
+
+### 3. Build
+
+```bash
+cd llama.cpp
 mkdir build
 cd build
 
-# Configure the project
 cmake .. -G Ninja \
   -DCMAKE_C_COMPILER=/opt/rocm/llvm/bin/clang \
   -DCMAKE_CXX_COMPILER=/opt/rocm/llvm/bin/clang++ \
@@ -133,81 +143,30 @@ cmake .. -G Ninja \
   -DGGML_HIP=ON \
   -DGGML_OPENMP=OFF \
   -DGGML_CUDA_FORCE_CUBLAS=OFF \
+  -DGGML_RPC=ON \
   -DGGML_HIP_ROCWMMA_FATTN=OFF \
-  -DLLAMA_CURL=OFF \
+  -DLLAMA_BUILD_BORINGSSL=ON \
   -DGGML_NATIVE=OFF \
   -DGGML_STATIC=OFF \
   -DCMAKE_SYSTEM_NAME=Linux
 
-# Build the project (adjust -j value based on your CPU cores)
 cmake --build . -j $(nproc)
 ```
 
-> **Note**: Adjust the `-DGPU_TARGETS="gfx1151"` parameter for your specific GPU. See the [GPU Target Reference](#gpu-target-reference) section for details.
+Adjust `-DGPU_TARGETS` for your GPU (see [GPU targets](#gpu-targets)). Binaries land in `llama.cpp/build/bin`. Keep the ROCm `LD_LIBRARY_PATH` set when you run them.
 
-### Part 4: Copy required ROCm libraries
+To produce a portable folder with ROCm libraries copied next to the binaries (as in releases), copy the corresponding steps from the [workflow](../.github/workflows/build-llamacpp-rocm.yml) rather than duplicating that list here.
 
-After successful compilation, copy the required ROCm libraries to the build directory:
+## GPU targets
 
-```bash
-# Navigate to the build/bin directory
-cd bin
+Use the mapped architectures in `-DGPU_TARGETS`, not the tarball family name:
 
-# Copy all required ROCm libraries
-echo "Copying ROCm shared libraries..."
-
-# Copy all shared libraries from main ROCm lib directories
-cp -v /opt/rocm/lib/*.so* .
-cp -v /opt/rocm/lib64/*.so* .
-cp -v /opt/rocm/lib/llvm/lib/*.so* .
-cp -v /opt/rocm/lib/rocm_sysdeps/lib/*.so* .
-
-# Copy the rocblas library folder
-mkdir -p rocblas
-cp -r /opt/rocm/lib/rocblas/library rocblas/
-
-# Copy the hipblaslt library folder
-mkdir -p hipblaslt
-cp -r /opt/rocm/lib/hipblaslt/library hipblaslt/
-```
-
-If you see no errors during the build process, llama.cpp has been successfully compiled and all files are available in your `build/bin` folder.
-
----
-
-## 🎯 GPU Target Reference
-
-When building llama.cpp with ROCm, the `-DGPU_TARGETS` parameter must be set based on your specific GPU architecture. Our automated workflow uses generic targets that get mapped to specific architectures:
-
-- **`gfx120X`** maps to `gfx1200, gfx1201` (RDNA4 series like: RX 9070 XT/GRE/9070, RX 9060 XT/9060)
-- **`gfx110X`** maps to `gfx1100, gfx1101, gfx1102, gfx1103` (RDNA3 dGPU series like: PRO W7900/W7800/W7700/W7600, RX 7900 XTX/XT/GRE, RX 7800 XT, RX 7700 XT/7700, RX 7600 XT/7600 and RDNA3 iGPU series like Radeon 780M/760M/740M)
-- **`gfx103X`** maps to `gfx1030, gfx1031, gfx1032, gfx1034` (RDNA2 dGPU series like: RX 6800 XT/6800, RX 6700 XT/6700, RX 6600 XT/6600, RX 6500 XT/6500)
-- **`gfx1150`** remains as `gfx1150` (Strix Point)
-- **`gfx1151`** remains as `gfx1151` (Strix Halo)
-
-For a complete list of GPU targets and their mappings, see the [automated workflow](../.github/workflows/build-llamacpp-rocm.yml).
-
-### How to Use
-
-Replace the `-DGPU_TARGETS="gfx1151"` parameter in your cmake command with the appropriate target for your GPU:
-
-```bash
-# For RDNA4 series (RX 9070 XT/GRE/9070, RX 9060 XT/9060)
--DGPU_TARGETS="gfx1200, gfx1201"
-
-# For RDNA3 series:
-# dGPUs: PRO W7900/W7800/W7700/W7600, RX 7900 XTX/XT/GRE, RX 7800 XT, RX 7700 XT/7700, RX 7600 XT/7600
-# iGPUs: Radeon 780M/760M/740M
--DGPU_TARGETS="gfx1100;gfx1101;gfx1102;gfx1103"
-
-# For RDNA2 series: 
-# dGPUs: RX 6800 XT/6800, RX 6700 XT/6700, RX 6600 XT/6600, RX 6500 XT/6500)
--DGPU_TARGETS="gfx1030;gfx1031;gfx1032;gfx1034"
-
-# For Strix Point
--DGPU_TARGETS="gfx1150"
-
-# For Strix Halo
--DGPU_TARGETS="gfx1151"
-```
-
+| Family | `-DGPU_TARGETS` | Examples |
+| --- | --- | --- |
+| gfx120X | `gfx1200;gfx1201` | RX 9070 XT/GRE/9070, RX 9060 XT/9060 |
+| gfx110X | `gfx1100;gfx1101;gfx1102;gfx1103` | RX 7900/7800/7700/7600, Radeon 780M/760M/740M |
+| gfx103X | `gfx1030;gfx1031;gfx1032;gfx1034` | RX 6800/6700/6600/6500 |
+| gfx1150 | `gfx1150` | Strix Point |
+| gfx1151 | `gfx1151` | Strix Halo |
+| gfx90a | `gfx90a` | Instinct MI210 |
+| gfx908 | `gfx908` | Instinct MI100 |
