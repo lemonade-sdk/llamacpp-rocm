@@ -185,10 +185,10 @@ jobs:
           Write-Host "Using target with -all suffix: $s3Target"
         }
         
-        # TheRock now publishes nightlies to the multi-arch tarball index. That
+        # TheRock now publishes nightlies to the ROCm core tarball index. That
         # index is a static HTML page with an embedded JSON `files` array (name +
         # mtime), so we parse that instead of the retired S3 XML bucket listing.
-        $baseUrl = "https://rocm.nightlies.amd.com/tarball-multi-arch"
+        $baseUrl = "https://nightly.repo.amd.com/rocm/core/tarball"
         if ($rocmVersion -eq "latest") {
           Write-Host "Auto-detecting latest ROCm version for target: $currentTarget"
           $indexHtml = (Invoke-WebRequest "$baseUrl/" -UseBasicParsing).Content
@@ -558,10 +558,10 @@ jobs:
           echo "Using target with -all suffix: $s3_target"
         fi
         
-        # TheRock now publishes nightlies to the multi-arch tarball index. That
+        # TheRock now publishes nightlies to the ROCm core tarball index. That
         # index is a static HTML page with an embedded JSON `files` array (name +
         # mtime), so we parse that instead of the retired S3 XML bucket listing.
-        base_url="https://rocm.nightlies.amd.com/tarball-multi-arch"
+        base_url="https://nightly.repo.amd.com/rocm/core/tarball"
         if [ "$rocm_version" = "latest" ]; then
           echo "Auto-detecting latest ROCm version for target: $current_target"
           prefix="therock-dist-linux-${s3_target}-"
