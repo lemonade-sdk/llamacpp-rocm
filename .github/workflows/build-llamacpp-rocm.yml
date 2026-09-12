@@ -879,14 +879,19 @@ jobs:
     strategy:
       matrix:
         include:
+          # Moved from the static `stx-halo` box to AMD DevLab's ephemeral
+          # pool. `devlab-dispatch` is the opt-in that reaches the pool;
+          # `strix-halo` narrows it to Halo silicon, which is what gfx1151 is.
+          # The gfx1150 leg in test-stx below is deliberately NOT moved -- that
+          # is Strix Point, and this pool has none. See llamacpp-rocm#138.
           - os: Windows
             gfx_target: gfx1151
             artifact_prefix: windows
-            runner: ["stx-halo", "Windows"]
+            runner: ["self-hosted", "Windows", "devlab-dispatch", "strix-halo"]
           - os: Linux
             gfx_target: gfx1151
             artifact_prefix: ubuntu
-            runner: ["stx-halo", "Linux"]
+            runner: ["self-hosted", "Linux", "devlab-dispatch", "strix-halo"]
       fail-fast: false
 
     steps:

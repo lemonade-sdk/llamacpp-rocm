@@ -102,7 +102,13 @@ jobs:
         echo "Ubuntu test: $should_test_ubuntu"
         echo "Generated matrix: $matrix_targets"
   test-windows:
-    runs-on: [stx-halo, Windows]
+    # Moved from the static `stx-halo` box to AMD DevLab's ephemeral pool.
+    # `devlab-dispatch` is the opt-in that reaches the pool at all; `strix-halo`
+    # then narrows it to Halo silicon. Both are needed: the token alone would
+    # take any pool host, and `strix-halo` alone reaches nothing, because
+    # naming only labels a runner supplies for itself is refused on purpose.
+    # See lemonade-sdk/llamacpp-rocm#138.
+    runs-on: [self-hosted, Windows, devlab-dispatch, strix-halo]
     needs: prepare-matrix
     if: needs.prepare-matrix.outputs.should_test_windows == 'true'
     strategy:
@@ -240,7 +246,8 @@ jobs:
           exit 1
         }
   test-ubuntu:
-    runs-on: [stx-halo, Linux]
+    # See test-windows above: same move to the DevLab ephemeral pool.
+    runs-on: [self-hosted, Linux, devlab-dispatch, strix-halo]
     needs: prepare-matrix
     if: needs.prepare-matrix.outputs.should_test_ubuntu == 'true'
     strategy:
