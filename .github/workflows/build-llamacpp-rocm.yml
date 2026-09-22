@@ -251,11 +251,11 @@ jobs:
       run: |
         $llamacppVersion = "${{ env.LLAMACPP_VERSION }}"
         if ($llamacppVersion -eq "latest") {
-          Write-Host "Cloning master branch (latest) with shallow clone"
-          git clone --depth 1 --single-branch --branch master https://github.com/ggerganov/llama.cpp.git
+          Write-Host "Cloning master branch (latest) with blobless clone"
+          git clone --filter=blob:none --single-branch --branch master https://github.com/ggerganov/llama.cpp.git
         } else {
-          Write-Host "Cloning llama.cpp version: $llamacppVersion with shallow clone"
-          git clone --depth 1 --single-branch --branch $llamacppVersion https://github.com/ggerganov/llama.cpp.git
+          Write-Host "Cloning llama.cpp version: $llamacppVersion with blobless clone"
+          git clone --filter=blob:none --single-branch --branch $llamacppVersion https://github.com/ggerganov/llama.cpp.git
         }
         cd llama.cpp
         
@@ -640,11 +640,11 @@ jobs:
       run: |
         llamacpp_version="${{ env.LLAMACPP_VERSION }}"
         if [ "$llamacpp_version" = "latest" ]; then
-          echo "Cloning master branch (latest) with shallow clone"
-          git clone --depth 1 --single-branch --branch master https://github.com/ggerganov/llama.cpp.git
+          echo "Cloning master branch (latest) with blobless clone"
+          git clone --filter=blob:none --single-branch --branch master https://github.com/ggerganov/llama.cpp.git
         else
-          echo "Cloning llama.cpp version: $llamacpp_version with shallow clone"
-          git clone --depth 1 --single-branch --branch "$llamacpp_version" https://github.com/ggerganov/llama.cpp.git
+          echo "Cloning llama.cpp version: $llamacpp_version with blobless clone"
+          git clone --filter=blob:none --single-branch --branch "$llamacpp_version" https://github.com/ggerganov/llama.cpp.git
         fi
         cd llama.cpp
         

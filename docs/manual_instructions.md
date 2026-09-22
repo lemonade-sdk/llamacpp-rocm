@@ -54,7 +54,7 @@ tar -xzf therock-dist-windows-<family>-<version>.tar.gz -C C:\opt\rocm --strip-c
 Clone llama.cpp:
 
 ```
-git clone --depth 1 --single-branch --branch master https://github.com/ggerganov/llama.cpp.git
+git clone --filter=blob:none --single-branch --branch master https://github.com/ggerganov/llama.cpp.git
 ```
 
 ### 3. Build
@@ -121,7 +121,7 @@ export LD_LIBRARY_PATH=/opt/rocm/lib:/opt/rocm/lib64:/opt/rocm/llvm/lib:${LD_LIB
 ```
 
 ```bash
-git clone --depth 1 --single-branch --branch master https://github.com/ggerganov/llama.cpp.git
+git clone --filter=blob:none --single-branch --branch master https://github.com/ggerganov/llama.cpp.git
 ```
 
 ### 3. Build
