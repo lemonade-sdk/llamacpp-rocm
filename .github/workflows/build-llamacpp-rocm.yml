@@ -351,7 +351,8 @@ jobs:
             "hipblaslt.dll",
             "libhipblaslt.dll",
             "hipblas.dll",
-            "origami.dll"
+            "origami.dll",
+            "libtensilelite-host.dll"
           )
           
           foreach ($pattern in $filesToCopy) {
@@ -755,6 +756,7 @@ jobs:
         cp -v /opt/rocm/lib/librocsolver.so* "$build_bin_path/" 2>/dev/null || echo "librocsolver.so* not found"
         cp -v /opt/rocm/lib/libroctx64.so* "$build_bin_path/" 2>/dev/null || echo "libroctx64.so* not found"
         cp -v /opt/rocm/lib/libhipblaslt.so* "$build_bin_path/" 2>/dev/null || echo "libhipblaslt.so* not found"
+        cp -v /opt/rocm/lib/libtensilelite-host.so* "$build_bin_path/" 2>/dev/null || echo "libtensilelite-host.so* not found"
         cp -v /opt/rocm/lib/rocm_sysdeps/lib/librocm_sysdeps_liblzma.so* "$build_bin_path/" 2>/dev/null || echo "librocm_sysdeps_liblzma.so* not found"
         cp -v /opt/rocm/lib/librocprofiler-register.so* "$build_bin_path/" 2>/dev/null || echo "librocprofiler-register.so* not found"
         cp -v /opt/rocm/lib/libamd_comgr.so* "$build_bin_path/" 2>/dev/null || echo "libamd_comgr.so* not found"
