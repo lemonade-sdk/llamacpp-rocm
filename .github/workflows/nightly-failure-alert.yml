@@ -1,0 +1,65 @@
+name: Nightly Failure Alert
+on:
+  workflow_run:
+    workflows: ["Build Llama.cpp + ROCm"]
+    types: [completed]
+
+env:
+  # GitHub user(s) to alert, space-separated
+  ALERT_USERS: danielholanda
+  ALERT_LABEL: nightly-failure
+
+jobs:
+  alert:
+    if: |
+      github.event.workflow_run.event == 'schedule' &&
+      github.event.workflow_run.conclusion != 'success'
+    runs-on: ubuntu-22.04
+    permissions:
+      issues: write
+      actions: read
+    steps:
+    - name: Open or update failure issue
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GH_REPO: ${{ github.repository }}
+        RUN_ID: ${{ github.event.workflow_run.id }}
+        RUN_URL: ${{ github.event.workflow_run.html_url }}
+        CONCLUSION: ${{ github.event.workflow_run.conclusion }}
+        RUN_DATE: ${{ github.event.workflow_run.run_started_at }}
+      run: |
+        failed_jobs=$(gh api --paginate "repos/$GH_REPO/actions/runs/$RUN_ID/jobs?per_page=100" \
+          --jq '.jobs[] | select(.conclusion != "success" and .conclusion != "skipped") | "- [\(.name)](\(.html_url)) — \(.conclusion)"')
+        [ -z "$failed_jobs" ] && failed_jobs="- (no individual job failures reported)"
+
+        mentions=$(for u in $ALERT_USERS; do printf '@%s ' "$u"; done)
+        assignees=$(echo $ALERT_USERS | tr ' ' ',')
+
+        body=$(cat <<EOF
+        $mentions the nightly llama.cpp + ROCm build **${CONCLUSION}** (started ${RUN_DATE}). No release was published.
+
+        **Run:** $RUN_URL
+
+        **Failed jobs:**
+        $failed_jobs
+        EOF
+        )
+
+        gh label create "$ALERT_LABEL" --color B60205 \
+          --description "Scheduled nightly build failed" --force
+
+        existing=$(gh issue list --label "$ALERT_LABEL" --state open --limit 1 --json number --jq '.[0].number // empty')
+
+        if [ -n "$existing" ]; then
+          echo "Commenting on existing issue #$existing"
+          gh issue comment "$existing" --body "$body"
+        else
+          echo "Opening new issue"
+          gh issue create \
+            --title "Nightly build failed ($(date -u -d "$RUN_DATE" '+%Y-%m-%d'))" \
+            --label "$ALERT_LABEL" \
+            --assignee "$assignees" \
+            --body "$body
+
+        Close this issue once the nightly is fixed. Further failures while it is open are added as comments."
+        fi
