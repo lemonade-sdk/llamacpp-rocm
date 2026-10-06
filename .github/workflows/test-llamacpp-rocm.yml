@@ -240,7 +240,28 @@ jobs:
           exit 1
         }
   test-ubuntu:
-    runs-on: [stx-halo, Linux]
+    # The DevLab ephemeral pool, selected by a label only it carries.
+    #
+    # This replaces [stx-halo, Linux]. Same silicon -- every host in the pool is
+    # a Ryzen AI MAX+ 395 (gfx1151), which is what the gfx1151 matrix target
+    # below needs -- but a different machine lifecycle: the runner is registered
+    # when this job is picked up and unregistered when it finishes, so the
+    # workspace is empty at the start of every run and nothing is left behind at
+    # the end. Anything this job relied on a previous run having left in place
+    # has to be fetched or installed by the job itself. Everything it currently
+    # uses -- curl, unzip, jq, git, python3, rocm-smi -- is present on the image,
+    # and the jq step above already installs its own if it is not.
+    #
+    # 'devlab-ephemeral' rather than 'stx-halo' on purpose. 'stx-halo' names the
+    # existing static runners; if the pool answered to it too, the two would
+    # contend for this job silently and which one you got would depend on who
+    # was idle. A distinct label makes the routing a choice visible in this file,
+    # and leaves the static runners reachable by anything that still asks for
+    # them -- test-windows below is unchanged for exactly that reason.
+    #
+    # 'halo' is spelled out alongside it because this job needs the GPU, not
+    # just network and disk.
+    runs-on: [self-hosted, Linux, devlab-ephemeral, halo]
     needs: prepare-matrix
     if: needs.prepare-matrix.outputs.should_test_ubuntu == 'true'
     strategy:
