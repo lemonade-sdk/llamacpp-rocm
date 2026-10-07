@@ -399,6 +399,21 @@ jobs:
             Write-Host "Warning: rocblas\library folder not found at: $rocblasLibPath"
           }
           
+          # Copy the .kpack folder and all its contents
+          $kpackPath = Join-Path $rocmBinPath "..\.kpack"
+          if (Test-Path $kpackPath) {
+            Write-Host "Copying .kpack folder and all contents..."
+            $destKpackPath = Join-Path $buildBinPath ".kpack"
+            Copy-Item -Path $kpackPath -Destination $destKpackPath -Recurse -Force
+            Write-Host "Copied: .kpack folder with all contents"
+
+            # List the contents of the copied .kpack folder
+            Write-Host "Contents of .kpack:"
+            Get-ChildItem $destKpackPath -Recurse | Select-Object FullName, Length | Format-Table -AutoSize
+          } else {
+            Write-Host "Warning: .kpack folder not found at: $kpackPath"
+          }
+
           Write-Host "ROCm core files successfully copied to build directory"
         } else {
           Write-Error "ROCm bin directory not found: $rocmBinPath"
@@ -417,6 +432,7 @@ jobs:
       with:
         name: llama-windows-rocm-${{ matrix.gfx_target }}-x64
         path: llama.cpp/build/bin/
+        include-hidden-files: true
         retention-days: 30
         
     - name: Set job outputs
@@ -744,6 +760,22 @@ jobs:
         else
           echo "Warning: hipblaslt/library folder not found at: $hipblaslt_lib_path"
         fi
+
+        # Copy the .kpack folder and all its contents
+        kpack_path="/opt/rocm/.kpack"
+        if [ -d "$kpack_path" ]; then
+          echo "Copying .kpack folder and all contents..."
+          dest_kpack_path="$build_bin_path/.kpack"
+          mkdir -p "$(dirname "$dest_kpack_path")"
+          cp -r "$kpack_path" "$(dirname "$dest_kpack_path")/"
+          echo "Copied: .kpack folder with all contents"
+
+          # List the contents of the copied .kpack folder
+          echo "Contents of .kpack:"
+          find "$dest_kpack_path" -type f -exec ls -la {} \; | head -20
+        else
+          echo "Warning: .kpack folder not found at: $kpack_path"
+        fi
  
         # Copy required ROCm libraries to build directory
         # If artifacts from ROCm or Llama.cpp change, you may need to update this list
@@ -800,6 +832,7 @@ jobs:
       with:
         name: llama-ubuntu-rocm-${{ matrix.gfx_target }}-x64
         path: llama.cpp/build/bin/
+        include-hidden-files: true
         retention-days: 30
         
     - name: Set job outputs
@@ -1030,7 +1063,7 @@ jobs:
             if [ -d "$artifact_dir" ]; then
               echo "Creating archive: ${final_archive_name}.zip"
               cd "$artifact_dir"
-              zip -r "../../${final_archive_name}.zip" *
+              zip -r "../../${final_archive_name}.zip" .
               cd ../../
             else
               echo "Warning: Artifact directory not found: $artifact_dir"
