@@ -185,10 +185,10 @@ jobs:
           Write-Host "Using target with -all suffix: $s3Target"
         }
         
-        # TheRock now publishes nightlies to the multi-arch tarball index. That
+        # TheRock now publishes nightlies to the ROCm core tarball index. That
         # index is a static HTML page with an embedded JSON `files` array (name +
         # mtime), so we parse that instead of the retired S3 XML bucket listing.
-        $baseUrl = "https://rocm.nightlies.amd.com/tarball-multi-arch"
+        $baseUrl = "https://nightly.repo.amd.com/rocm/core/tarball"
         if ($rocmVersion -eq "latest") {
           Write-Host "Auto-detecting latest ROCm version for target: $currentTarget"
           $indexHtml = (Invoke-WebRequest "$baseUrl/" -UseBasicParsing).Content
@@ -251,11 +251,11 @@ jobs:
       run: |
         $llamacppVersion = "${{ env.LLAMACPP_VERSION }}"
         if ($llamacppVersion -eq "latest") {
-          Write-Host "Cloning master branch (latest) with shallow clone"
-          git clone --depth 1 --single-branch --branch master https://github.com/ggerganov/llama.cpp.git
+          Write-Host "Cloning master branch (latest) with blobless clone"
+          git clone --filter=blob:none --single-branch --branch master https://github.com/ggerganov/llama.cpp.git
         } else {
-          Write-Host "Cloning llama.cpp version: $llamacppVersion with shallow clone"
-          git clone --depth 1 --single-branch --branch $llamacppVersion https://github.com/ggerganov/llama.cpp.git
+          Write-Host "Cloning llama.cpp version: $llamacppVersion with blobless clone"
+          git clone --filter=blob:none --single-branch --branch $llamacppVersion https://github.com/ggerganov/llama.cpp.git
         }
         cd llama.cpp
         
@@ -351,7 +351,8 @@ jobs:
             "hipblaslt.dll",
             "libhipblaslt.dll",
             "hipblas.dll",
-            "origami.dll"
+            "origami.dll",
+            "libtensilelite-host.dll"
           )
           
           foreach ($pattern in $filesToCopy) {
@@ -398,6 +399,21 @@ jobs:
             Write-Host "Warning: rocblas\library folder not found at: $rocblasLibPath"
           }
           
+          # Copy the .kpack folder and all its contents
+          $kpackPath = Join-Path $rocmBinPath "..\.kpack"
+          if (Test-Path $kpackPath) {
+            Write-Host "Copying .kpack folder and all contents..."
+            $destKpackPath = Join-Path $buildBinPath ".kpack"
+            Copy-Item -Path $kpackPath -Destination $destKpackPath -Recurse -Force
+            Write-Host "Copied: .kpack folder with all contents"
+
+            # List the contents of the copied .kpack folder
+            Write-Host "Contents of .kpack:"
+            Get-ChildItem $destKpackPath -Recurse | Select-Object FullName, Length | Format-Table -AutoSize
+          } else {
+            Write-Host "Warning: .kpack folder not found at: $kpackPath"
+          }
+
           Write-Host "ROCm core files successfully copied to build directory"
         } else {
           Write-Error "ROCm bin directory not found: $rocmBinPath"
@@ -416,6 +432,7 @@ jobs:
       with:
         name: llama-windows-rocm-${{ matrix.gfx_target }}-x64
         path: llama.cpp/build/bin/
+        include-hidden-files: true
         retention-days: 30
         
     - name: Set job outputs
@@ -558,10 +575,10 @@ jobs:
           echo "Using target with -all suffix: $s3_target"
         fi
         
-        # TheRock now publishes nightlies to the multi-arch tarball index. That
+        # TheRock now publishes nightlies to the ROCm core tarball index. That
         # index is a static HTML page with an embedded JSON `files` array (name +
         # mtime), so we parse that instead of the retired S3 XML bucket listing.
-        base_url="https://rocm.nightlies.amd.com/tarball-multi-arch"
+        base_url="https://nightly.repo.amd.com/rocm/core/tarball"
         if [ "$rocm_version" = "latest" ]; then
           echo "Auto-detecting latest ROCm version for target: $current_target"
           prefix="therock-dist-linux-${s3_target}-"
@@ -640,11 +657,11 @@ jobs:
       run: |
         llamacpp_version="${{ env.LLAMACPP_VERSION }}"
         if [ "$llamacpp_version" = "latest" ]; then
-          echo "Cloning master branch (latest) with shallow clone"
-          git clone --depth 1 --single-branch --branch master https://github.com/ggerganov/llama.cpp.git
+          echo "Cloning master branch (latest) with blobless clone"
+          git clone --filter=blob:none --single-branch --branch master https://github.com/ggerganov/llama.cpp.git
         else
-          echo "Cloning llama.cpp version: $llamacpp_version with shallow clone"
-          git clone --depth 1 --single-branch --branch "$llamacpp_version" https://github.com/ggerganov/llama.cpp.git
+          echo "Cloning llama.cpp version: $llamacpp_version with blobless clone"
+          git clone --filter=blob:none --single-branch --branch "$llamacpp_version" https://github.com/ggerganov/llama.cpp.git
         fi
         cd llama.cpp
         
@@ -743,6 +760,22 @@ jobs:
         else
           echo "Warning: hipblaslt/library folder not found at: $hipblaslt_lib_path"
         fi
+
+        # Copy the .kpack folder and all its contents
+        kpack_path="/opt/rocm/.kpack"
+        if [ -d "$kpack_path" ]; then
+          echo "Copying .kpack folder and all contents..."
+          dest_kpack_path="$build_bin_path/.kpack"
+          mkdir -p "$(dirname "$dest_kpack_path")"
+          cp -r "$kpack_path" "$(dirname "$dest_kpack_path")/"
+          echo "Copied: .kpack folder with all contents"
+
+          # List the contents of the copied .kpack folder
+          echo "Contents of .kpack:"
+          find "$dest_kpack_path" -type f -exec ls -la {} \; | head -20
+        else
+          echo "Warning: .kpack folder not found at: $kpack_path"
+        fi
  
         # Copy required ROCm libraries to build directory
         # If artifacts from ROCm or Llama.cpp change, you may need to update this list
@@ -755,6 +788,7 @@ jobs:
         cp -v /opt/rocm/lib/librocsolver.so* "$build_bin_path/" 2>/dev/null || echo "librocsolver.so* not found"
         cp -v /opt/rocm/lib/libroctx64.so* "$build_bin_path/" 2>/dev/null || echo "libroctx64.so* not found"
         cp -v /opt/rocm/lib/libhipblaslt.so* "$build_bin_path/" 2>/dev/null || echo "libhipblaslt.so* not found"
+        cp -v /opt/rocm/lib/libtensilelite-host.so* "$build_bin_path/" 2>/dev/null || echo "libtensilelite-host.so* not found"
         cp -v /opt/rocm/lib/rocm_sysdeps/lib/librocm_sysdeps_liblzma.so* "$build_bin_path/" 2>/dev/null || echo "librocm_sysdeps_liblzma.so* not found"
         cp -v /opt/rocm/lib/librocprofiler-register.so* "$build_bin_path/" 2>/dev/null || echo "librocprofiler-register.so* not found"
         cp -v /opt/rocm/lib/libamd_comgr.so* "$build_bin_path/" 2>/dev/null || echo "libamd_comgr.so* not found"
@@ -768,6 +802,7 @@ jobs:
         cp -v /opt/rocm/lib/rocm_sysdeps/lib/librocm_sysdeps_zstd.so* "$build_bin_path/" 2>/dev/null || echo "librocm_sysdeps_zstd.so* not found"
         cp -v /opt/rocm/lib/llvm/lib/libLLVM.so* "$build_bin_path/" 2>/dev/null || echo "libLLVM.so* not found"
         cp -v /opt/rocm/lib/llvm/lib/libclang-cpp.so* "$build_bin_path/" 2>/dev/null || echo "libclang-cpp.so* not found"
+        cp -v /opt/rocm/lib/llvm/lib/libomp.so* "$build_bin_path/" 2>/dev/null || echo "libomp.so* not found"
         
         cp -v /opt/rocm/lib/rocm_sysdeps/lib/librocm_sysdeps_elf.so* "$build_bin_path/" 2>/dev/null || echo "librocm_sysdeps_elf.so* not found"
         cp -v /opt/rocm/lib/rocm_sysdeps/lib/librocm_sysdeps_drm.so* "$build_bin_path/" 2>/dev/null || echo "librocm_sysdeps_drm.so* not found"
@@ -797,6 +832,7 @@ jobs:
       with:
         name: llama-ubuntu-rocm-${{ matrix.gfx_target }}-x64
         path: llama.cpp/build/bin/
+        include-hidden-files: true
         retention-days: 30
         
     - name: Set job outputs
@@ -1027,7 +1063,7 @@ jobs:
             if [ -d "$artifact_dir" ]; then
               echo "Creating archive: ${final_archive_name}.zip"
               cd "$artifact_dir"
-              zip -r "../../${final_archive_name}.zip" *
+              zip -r "../../${final_archive_name}.zip" .
               cd ../../
             else
               echo "Warning: Artifact directory not found: $artifact_dir"
