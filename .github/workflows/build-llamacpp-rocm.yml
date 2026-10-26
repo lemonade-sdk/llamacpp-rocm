@@ -136,7 +136,7 @@ jobs:
         $vsInstallerPath = "$env:TEMP\vs_buildtools.exe"
         
         Write-Host "Downloading Visual Studio Build Tools..."
-        Invoke-WebRequest -Uri $vsInstallerUrl -OutFile $vsInstallerPath
+        Invoke-WebRequest -Uri $vsInstallerUrl -OutFile $vsInstallerPath -MaximumRetryCount 5 -RetryIntervalSec 10
         
         Write-Host "Installing Visual Studio Build Tools..."
         Start-Process -FilePath $vsInstallerPath -ArgumentList "--quiet", "--wait", "--norestart", "--add", "Microsoft.VisualStudio.Component.VC.Tools.x86.x64", "--add", "Microsoft.VisualStudio.Component.VC.CMake.Project", "--add", "Microsoft.VisualStudio.Component.VC.ATL", "--add", "Microsoft.VisualStudio.Component.Windows11SDK.22621" -Wait
@@ -154,14 +154,14 @@ jobs:
         $ninjaPath = "$env:TEMP\ninja-win.zip"
         $ninjaDir = "C:\ninja"
         New-Item -ItemType Directory -Force -Path $ninjaDir
-        Invoke-WebRequest -Uri $ninjaUrl -OutFile $ninjaPath
+        Invoke-WebRequest -Uri $ninjaUrl -OutFile $ninjaPath -MaximumRetryCount 5 -RetryIntervalSec 10
         Expand-Archive -Path $ninjaPath -DestinationPath $ninjaDir -Force
         
         # Install Strawberry Perl
         Write-Host "Installing Strawberry Perl..."
         $perlUrl = "http://strawberryperl.com/download/5.32.1.1/strawberry-perl-5.32.1.1-64bit.msi"
         $perlPath = "$env:TEMP\strawberry-perl-5.32.1.1-64bit.msi"
-        Invoke-WebRequest -Uri $perlUrl -OutFile $perlPath
+        Invoke-WebRequest -Uri $perlUrl -OutFile $perlPath -MaximumRetryCount 5 -RetryIntervalSec 10
         Start-Process msiexec.exe -ArgumentList "/i $perlPath /quiet /norestart" -Wait
         
         # Verify installations
@@ -191,7 +191,7 @@ jobs:
         $baseUrl = "https://nightly.repo.amd.com/rocm/core/tarball"
         if ($rocmVersion -eq "latest") {
           Write-Host "Auto-detecting latest ROCm version for target: $currentTarget"
-          $indexHtml = (Invoke-WebRequest "$baseUrl/" -UseBasicParsing).Content
+          $indexHtml = (Invoke-WebRequest "$baseUrl/" -UseBasicParsing -MaximumRetryCount 5 -RetryIntervalSec 10).Content
           $filesMatch = [regex]::Match($indexHtml, 'const files = (\[.*?\]);', [System.Text.RegularExpressions.RegexOptions]::Singleline)
           if (-not $filesMatch.Success) {
             Write-Error "Failed to parse file index from $baseUrl/"
@@ -237,7 +237,7 @@ jobs:
         echo "DETECTED_ROCM_VERSION=$rocmVersion" >> $env:GITHUB_ENV
         
         Write-Host "Downloading ROCm from: $rocmUrl"
-        Invoke-WebRequest -Uri $rocmUrl -OutFile "rocm.tar.gz"
+        Invoke-WebRequest -Uri $rocmUrl -OutFile "rocm.tar.gz" -MaximumRetryCount 5 -RetryIntervalSec 10
         
     - name: Extract ROCm to C:\opt\rocm
       run: |
