@@ -78,7 +78,7 @@ SERVER_ARGS = ["--ctx-size", "4096", "--jinja", "--metrics", "-lv", "4"]
 # The buffer size must be above zero: llama.cpp first sizes everything up in a
 # dry run that prints "ROCm0 model buffer size = 0.00 MiB" before any memory is
 # actually allocated.
-DEVICE_RE = re.compile(r"using device (ROCm\d+)(?: \(([^)]*)\))?")
+DEVICE_RE = re.compile(r"using device (ROCm\d+)(?: \((.*?)\)(?= \(| -|$))?", re.M)
 BUFFER_RE = re.compile(r"(ROCm\d+) model buffer size\s*=\s*([0-9.]+) MiB")
 
 # Deliberately NOT treated as proof, despite how it reads. llama.cpp prints

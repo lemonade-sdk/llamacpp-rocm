@@ -514,7 +514,7 @@ def check_server_flags(root, os_name, run_binaries):
         return (report.STATUS_FAIL, "llama-server missing (see T0.1)", {})
 
     returncode, text = run_server(root, os_name, "--help")
-    details = {"returncode": returncode, "help_bytes": len(text)}
+    details: dict = {"returncode": returncode, "help_bytes": len(text)}
     if returncode != 0 or not text.strip():
         details["output_tail"] = text[-1500:]
         return (report.STATUS_FAIL,
@@ -545,19 +545,26 @@ def check_provenance(root, os_name, info, expected_sha, expected_rocm, run_binar
     """
     archive_sha = info.get("upstream_sha")
     archive_rocm = info.get("rocm_version")
-    details = {
+    details: dict = {
         "archive_upstream_sha": archive_sha,
         "expected_upstream_sha": expected_sha,
         "archive_rocm_version": archive_rocm,
         "expected_rocm_version": expected_rocm,
     }
+    # What was actually compared. A pass is only claimed when at least one
+    # comparison happened; otherwise the check reports itself skipped.
+    compared = []
     problems, notes = [], []
 
-    if expected_sha and archive_sha and not same_commit(archive_sha, expected_sha):
-        problems.append(f"built from llama.cpp {archive_sha[:12]}, but this run pinned "
-                        f"{expected_sha[:12]}")
-    if expected_rocm and archive_rocm and archive_rocm != expected_rocm:
-        problems.append(f"bundles ROCm {archive_rocm}, but this run pinned {expected_rocm}")
+    if expected_sha and archive_sha:
+        compared.append("archive commit")
+        if not same_commit(archive_sha, expected_sha):
+            problems.append(f"built from llama.cpp {archive_sha[:12]}, but this run "
+                            f"pinned {expected_sha[:12]}")
+    if expected_rocm and archive_rocm:
+        compared.append("archive ROCm version")
+        if archive_rocm != expected_rocm:
+            problems.append(f"bundles ROCm {archive_rocm}, but this run pinned {expected_rocm}")
 
     reference = expected_sha or archive_sha
     if run_binaries and os.path.exists(os.path.join(root, exe("llama-server", os_name))):
@@ -574,15 +581,18 @@ def check_provenance(root, os_name, info, expected_sha, expected_rocm, run_binar
         details["binary_build_number"] = int(build.group(1)) if build else None
         if not commit:
             notes.append("could not read a commit from `llama-server --version`")
-        elif reference and not same_commit(commit.group(1), reference):
-            problems.append(f"llama-server reports commit {commit.group(1)}, but the "
-                            f"archive is supposed to be {reference[:12]}")
+        elif reference:
+            compared.append("binary commit")
+            if not same_commit(commit.group(1), reference):
+                problems.append(f"llama-server reports commit {commit.group(1)}, but the "
+                                f"archive is supposed to be {reference[:12]}")
 
+    details["compared"] = compared
     if problems:
         return (report.STATUS_FAIL, "; ".join(problems), details)
-    if not reference and not expected_rocm:
-        return (report.STATUS_SKIP, "no pinned commit or ROCm version to compare against",
-                details)
+    if not compared and not notes:
+        return (report.STATUS_SKIP, "nothing to compare: no recorded versions in the "
+                "archive's metadata and the binary was not run", details)
     if notes:
         return (report.STATUS_WARN, "; ".join(notes), details)
     return (report.STATUS_PASS, None, details)
