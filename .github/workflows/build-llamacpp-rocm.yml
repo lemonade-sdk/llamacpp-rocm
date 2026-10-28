@@ -48,45 +48,28 @@ jobs:
       ubuntu_matrix: ${{ steps.set-matrix.outputs.ubuntu_matrix }}
       should_build_windows: ${{ steps.set-matrix.outputs.should_build_windows }}
       should_build_ubuntu: ${{ steps.set-matrix.outputs.should_build_ubuntu }}
+      tier0_matrix: ${{ steps.set-matrix.outputs.tier0_matrix }}
+      tier1_matrix: ${{ steps.set-matrix.outputs.tier1_matrix }}
+      run_tier1: ${{ steps.set-matrix.outputs.run_tier1 }}
+      rocm_version: ${{ steps.set-matrix.outputs.rocm_version }}
+      llamacpp_sha: ${{ steps.set-matrix.outputs.llamacpp_sha }}
+      llamacpp_short: ${{ steps.set-matrix.outputs.llamacpp_short }}
+      gfx_targets: ${{ steps.set-matrix.outputs.gfx_targets }}
+      operating_systems: ${{ steps.set-matrix.outputs.operating_systems }}
     steps:
-    - name: Set matrix
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    # Every build leg must compile the same llama.cpp commit against the same ROCm nightly.
+    # The family -> gfx target list comes from .github/qualify-rocm/families.py.
+    - name: Pin llama.cpp and ROCm, and set the matrices
       id: set-matrix
-      run: |
-        targets="${{ env.GFX_TARGETS }}"
-        operating_systems="${{ env.OPERATING_SYSTEMS }}"
-        
-        echo "Input targets: $targets"
-        echo "Input operating systems: $operating_systems"
-
-        # Convert targets to JSON array
-        matrix_targets=$(echo "$targets" \
-          | tr ',' '\n' \
-          | sed 's/^ *//;s/ *$//' \
-          | sed 's/^"//;s/"$//' \
-          | jq -R . \
-          | jq -s '{gfx_target: .}' \
-          | jq -c)
-
-        # Check which operating systems to build
-        should_build_windows="false"
-        should_build_ubuntu="false"
-        
-        if [[ "$operating_systems" == *"windows"* ]]; then
-          should_build_windows="true"
-          echo "windows_matrix=$matrix_targets" >> $GITHUB_OUTPUT
-        fi
-        
-        if [[ "$operating_systems" == *"ubuntu"* ]]; then
-          should_build_ubuntu="true"
-          echo "ubuntu_matrix=$matrix_targets" >> $GITHUB_OUTPUT
-        fi
-        
-        echo "should_build_windows=$should_build_windows" >> $GITHUB_OUTPUT
-        echo "should_build_ubuntu=$should_build_ubuntu" >> $GITHUB_OUTPUT
-        
-        echo "Windows build: $should_build_windows"
-        echo "Ubuntu build: $should_build_ubuntu"
-        echo "Generated matrix: $matrix_targets"
+      run: >-
+        python3 .github/qualify-rocm/resolve_build_inputs.py
+        --gfx-targets "$GFX_TARGETS"
+        --operating-systems "$OPERATING_SYSTEMS"
+        --rocm-version "$ROCM_VERSION"
+        --llamacpp-version "$LLAMACPP_VERSION"
 
   build-windows:
     # Pinned to windows-2022 (VS 2022 / MSVC 14.4x). The windows-latest image moved to
@@ -99,9 +82,9 @@ jobs:
     strategy:
       matrix: ${{fromJson(needs.prepare-matrix.outputs.windows_matrix)}}
       fail-fast: false
-    outputs:
-      rocm_version: ${{ steps.set-outputs.outputs.rocm_version }}
-      llamacpp_commit_hash: ${{ steps.set-outputs.outputs.llamacpp_commit_hash }}
+    env:
+      PINNED_ROCM_VERSION: ${{ needs.prepare-matrix.outputs.rocm_version }}
+      PINNED_LLAMACPP_SHA: ${{ needs.prepare-matrix.outputs.llamacpp_sha }}
 
     steps:
     - name: Checkout repository
@@ -174,65 +157,10 @@ jobs:
             
     - name: Download ROCm nightly tarball
       run: |
-        # Determine ROCm version to use
-        $rocmVersion = "${{ env.ROCM_VERSION }}"
-        $currentTarget = "${{ matrix.gfx_target }}"
-        
-        # Add appropriate suffixes for different GPU targets
-        $s3Target = $currentTarget
-        if ($currentTarget -eq "gfx103X" -or $currentTarget -eq "gfx110X" -or $currentTarget -eq "gfx120X") {
-          $s3Target = "$currentTarget-all"
-          Write-Host "Using target with -all suffix: $s3Target"
-        }
-        
-        # TheRock now publishes nightlies to the ROCm core tarball index. That
-        # index is a static HTML page with an embedded JSON `files` array (name +
-        # mtime), so we parse that instead of the retired S3 XML bucket listing.
-        $baseUrl = "https://nightly.repo.amd.com/rocm/core/tarball"
-        if ($rocmVersion -eq "latest") {
-          Write-Host "Auto-detecting latest ROCm version for target: $currentTarget"
-          $indexHtml = (Invoke-WebRequest "$baseUrl/" -UseBasicParsing -MaximumRetryCount 5 -RetryIntervalSec 10).Content
-          $filesMatch = [regex]::Match($indexHtml, 'const files = (\[.*?\]);', [System.Text.RegularExpressions.RegexOptions]::Singleline)
-          if (-not $filesMatch.Success) {
-            Write-Error "Failed to parse file index from $baseUrl/"
-            exit 1
-          }
+        # The version was pinned once for the whole run in prepare-matrix, so every family is built against the same ROCm nightly.
+        $rocmVersion = $env:PINNED_ROCM_VERSION
+        $rocmUrl = "https://nightly.repo.amd.com/rocm/core/tarball/therock-dist-windows-${{ matrix.tarball_target }}-$rocmVersion.tar.gz"
 
-          # Pick the newest by the YYYYMMDD build date embedded in the filename.
-          # Assign before piping so the parsed array enumerates element-by-element.
-          $allFiles = $filesMatch.Groups[1].Value | ConvertFrom-Json
-          $prefix = "therock-dist-windows-$s3Target-"
-          # Anchor the match so the version comes immediately after the prefix.
-          # This excludes variants like "...-all-tests-<version>.tar.gz" that
-          # TheRock also publishes and share the same prefix/date.
-          $versionPattern = "^$([regex]::Escape($prefix))\d+\.\d+\.\d+(a|rc)\d+\.tar\.gz$"
-          $latest = $allFiles |
-            Where-Object { $_.name -match $versionPattern } |
-            Sort-Object { [regex]::Match($_.name, '(\d{8})\.tar\.gz$').Groups[1].Value } |
-            Select-Object -Last 1
-          if (-not $latest) {
-            Write-Error "No tarball found for prefix '$prefix' at $baseUrl/"
-            exit 1
-          }
-          $latestFile = $latest.name
-          Write-Host "Found latest file: $latestFile"
-
-          # Extract version from the filename for environment variable
-          if ($latestFile -match "therock-dist-windows-$s3Target-(\d+\.\d+\.\d+(?:a|rc)\d+)\.tar\.gz") {
-            $rocmVersion = $matches[1]
-            Write-Host "Detected latest ROCm version: $rocmVersion"
-          } else {
-            Write-Error "Failed to extract ROCm version from latest file: $latestFile"
-            Write-Error "Expected pattern: therock-dist-windows-$s3Target-<version>.tar.gz"
-            exit 1
-          }
-
-          $rocmUrl = "$baseUrl/$latestFile"
-        } else {
-          # For specific versions, construct the URL directly
-          $rocmUrl = "$baseUrl/therock-dist-windows-$s3Target-$rocmVersion.tar.gz"
-        }
-        
         # Store the version for use in other steps
         echo "DETECTED_ROCM_VERSION=$rocmVersion" >> $env:GITHUB_ENV
         
@@ -249,16 +177,15 @@ jobs:
       
     - name: Clone llama.cpp
       run: |
-        $llamacppVersion = "${{ env.LLAMACPP_VERSION }}"
-        if ($llamacppVersion -eq "latest") {
-          Write-Host "Cloning master branch (latest) with blobless clone"
-          git clone --filter=blob:none --single-branch --branch master https://github.com/ggerganov/llama.cpp.git
-        } else {
-          Write-Host "Cloning llama.cpp version: $llamacppVersion with blobless clone"
-          git clone --filter=blob:none --single-branch --branch $llamacppVersion https://github.com/ggerganov/llama.cpp.git
-        }
+        # Check out the commit pinned for the whole run in prepare-matrix, with full history so llama.cpp's build number is right.
+        $commit = $env:PINNED_LLAMACPP_SHA
+        Write-Host "Cloning llama.cpp at $commit with blobless clone"
+        git clone --filter=blob:none --no-checkout https://github.com/ggml-org/llama.cpp.git
+        if ($LASTEXITCODE -ne 0) { throw "git clone failed with exit code $LASTEXITCODE" }
         cd llama.cpp
-        
+        git checkout --detach $commit
+        if ($LASTEXITCODE -ne 0) { throw "could not check out $commit" }
+
         # Get commit hash (5 digits) and store it as environment variable
         $commitHash = git rev-parse --short=5 HEAD
         echo "LLAMACPP_COMMIT_HASH=$commitHash" >> $env:GITHUB_ENV
@@ -272,23 +199,10 @@ jobs:
       shell: cmd
       run: |
 
-        REM Map GPU targets
+        REM GPU targets for this family, from .github/qualify-rocm/families.py
         set "current_target=${{ matrix.gfx_target }}"
         echo Input target: %current_target%
-        
-        if "%current_target%"=="gfx110X" (
-          set "mapped_target=gfx1100;gfx1101;gfx1102;gfx1103"
-        ) else if "%current_target%"=="gfx103X" (
-          set "mapped_target=gfx1030;gfx1031;gfx1032;gfx1034"
-        ) else if "%current_target%"=="gfx1151" (
-          set "mapped_target=gfx1151"
-        ) else if "%current_target%"=="gfx1150" (
-          set "mapped_target=gfx1150"
-        ) else if "%current_target%"=="gfx120X" (
-          set "mapped_target=gfx1200;gfx1201"
-        ) else (
-          set "mapped_target=%current_target%"
-        )
+        set "mapped_target=${{ matrix.gpu_targets }}"
         echo Mapped target: %mapped_target%
 
         REM Set up environment variables and PATH
@@ -419,38 +333,52 @@ jobs:
           Write-Error "ROCm bin directory not found: $rocmBinPath"
           exit 1
         }
-        
+
+    # llama.cpp is MIT-licensed, which requires its notice to travel with every copy. Checked by T0.1.
+    - name: Add the llama.cpp license
+      run: Copy-Item llama.cpp\LICENSE llama.cpp\build\bin\LICENSE
+
     - name: List build artifacts (including ROCm files)
       run: |
         cd llama.cpp\build\bin
         Write-Host "Final build artifacts (including ROCm core files):"
         Get-ChildItem -Recurse | Format-Table Name, Length, LastWriteTime
-        
-    - name: Upload build artifacts
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+
+    # The zip is created here, once, and every later job -- the checks and the
+    # release -- uses these exact bytes. See .github/qualify-rocm/package.py.
+    - name: Package release archive
+      run: >-
+        python .github/qualify-rocm/package.py
+        --source-dir llama.cpp/build/bin
+        --os windows
+        --gfx-target ${{ matrix.gfx_target }}
+        --gpu-targets "${{ matrix.gpu_targets }}"
+        --rocm-version $env:PINNED_ROCM_VERSION
+        --upstream-sha $env:PINNED_LLAMACPP_SHA
+        --output-dir dist
+
+    - name: Upload release archive
       id: upload-artifacts
       uses: actions/upload-artifact@v4
       with:
         name: llama-windows-rocm-${{ matrix.gfx_target }}-x64
-        path: llama.cpp/build/bin/
-        include-hidden-files: true
+        path: dist/llama-windows-rocm-${{ matrix.gfx_target }}-x64.zip
+        # Already compressed; zipping it again only costs time.
+        compression-level: 0
         retention-days: 30
-        
-    - name: Set job outputs
-      id: set-outputs
-      run: |
-        Write-Host "Setting job outputs..."
-        Write-Host "Current target: ${{ matrix.gfx_target }}"
-        Write-Host "DETECTED_ROCM_VERSION: $env:DETECTED_ROCM_VERSION"
-        Write-Host "ROCM_VERSION: $env:ROCM_VERSION"
-        Write-Host "LLAMACPP_COMMIT_HASH: $env:LLAMACPP_COMMIT_HASH"
-        
-        $rocmVersion = if ($env:DETECTED_ROCM_VERSION) { $env:DETECTED_ROCM_VERSION } else { $env:ROCM_VERSION }
-        echo "rocm_version=$rocmVersion" >> $env:GITHUB_OUTPUT
-        echo "llamacpp_commit_hash=$env:LLAMACPP_COMMIT_HASH" >> $env:GITHUB_OUTPUT
-        
-        Write-Host "Final rocm_version: $rocmVersion"
-        Write-Host "Final llamacpp_commit_hash: $env:LLAMACPP_COMMIT_HASH"
-        
+
+    - name: Upload qualification metadata
+      uses: actions/upload-artifact@v4
+      with:
+        name: qualify-meta-windows-${{ matrix.gfx_target }}
+        path: dist/qualify-meta-windows-${{ matrix.gfx_target }}.json
+        retention-days: 30
+
     - name: Create release summary
       run: |
         $summary = @"
@@ -515,9 +443,9 @@ jobs:
     strategy:
       matrix: ${{fromJson(needs.prepare-matrix.outputs.ubuntu_matrix)}}
       fail-fast: false
-    outputs:
-      rocm_version: ${{ steps.set-outputs.outputs.rocm_version }}
-      llamacpp_commit_hash: ${{ steps.set-outputs.outputs.llamacpp_commit_hash }}
+    env:
+      PINNED_ROCM_VERSION: ${{ needs.prepare-matrix.outputs.rocm_version }}
+      PINNED_LLAMACPP_SHA: ${{ needs.prepare-matrix.outputs.llamacpp_sha }}
 
 
     steps:
@@ -564,59 +492,10 @@ jobs:
             
     - name: Download and extract ROCm directly to /opt/rocm
       run: |
-        # Determine ROCm version to use
-        rocm_version="${{ env.ROCM_VERSION }}"
-        current_target="${{ matrix.gfx_target }}"
-        
-        # Add appropriate suffixes for different GPU targets
-        s3_target="$current_target"
-        if [[ "$current_target" = "gfx103X" || "$current_target" = "gfx110X" || "$current_target" = "gfx120X" ]]; then
-          s3_target="${current_target}-all"
-          echo "Using target with -all suffix: $s3_target"
-        fi
-        
-        # TheRock now publishes nightlies to the ROCm core tarball index. That
-        # index is a static HTML page with an embedded JSON `files` array (name +
-        # mtime), so we parse that instead of the retired S3 XML bucket listing.
-        base_url="https://nightly.repo.amd.com/rocm/core/tarball"
-        if [ "$rocm_version" = "latest" ]; then
-          echo "Auto-detecting latest ROCm version for target: $current_target"
-          prefix="therock-dist-linux-${s3_target}-"
+        # The version was pinned once for the whole run in prepare-matrix, so every family is built against the same ROCm nightly.
+        rocm_version="$PINNED_ROCM_VERSION"
+        rocm_url="https://nightly.repo.amd.com/rocm/core/tarball/therock-dist-linux-${{ matrix.tarball_target }}-${rocm_version}.tar.gz"
 
-          files_json=$(curl -s "$base_url/" | tr '\n' ' ' | grep -oP 'const files = \K\[.*?\](?=\s*;)')
-          if [ -z "$files_json" ]; then
-            echo "Failed to parse file index from $base_url/"
-            exit 1
-          fi
-
-          # Pick the newest by the YYYYMMDD build date embedded in the filename.
-          # Anchor the match so the version comes immediately after the prefix.
-          # This excludes variants like "...-all-tests-<version>.tar.gz" that
-          # TheRock also publishes and share the same prefix/date.
-          latest_file=$(echo "$files_json" | jq -r --arg p "$prefix" \
-            '[.[] | select(.name | test("^" + $p + "[0-9]+\\.[0-9]+\\.[0-9]+(a|rc)[0-9]+\\.tar\\.gz$"))] | sort_by(.name | capture("(?<d>[0-9]{8})\\.tar\\.gz$").d) | last | .name // empty')
-          if [ -z "$latest_file" ]; then
-            echo "No tarball found for prefix '$prefix' at $base_url/"
-            exit 1
-          fi
-          echo "Found latest file: $latest_file"
-
-          # Extract version from the filename for environment variable
-          if [[ "$latest_file" =~ therock-dist-linux-${s3_target}-([0-9]+\.[0-9]+\.[0-9]+(a|rc)[0-9]+)\.tar\.gz ]]; then
-            rocm_version="${BASH_REMATCH[1]}"
-            echo "Detected latest ROCm version: $rocm_version"
-          else
-            echo "Failed to extract ROCm version from latest file: $latest_file"
-            echo "Expected pattern: therock-dist-linux-${s3_target}-<version>.tar.gz"
-            exit 1
-          fi
-
-          rocm_url="$base_url/$latest_file"
-        else
-          # For specific versions, construct the URL directly
-          rocm_url="$base_url/therock-dist-linux-${s3_target}-${rocm_version}.tar.gz"
-        fi
-        
         # Store the version for use in other steps
         echo "DETECTED_ROCM_VERSION=$rocm_version" >> $GITHUB_ENV
         
@@ -655,15 +534,12 @@ jobs:
         
     - name: Clone llama.cpp
       run: |
-        llamacpp_version="${{ env.LLAMACPP_VERSION }}"
-        if [ "$llamacpp_version" = "latest" ]; then
-          echo "Cloning master branch (latest) with blobless clone"
-          git clone --filter=blob:none --single-branch --branch master https://github.com/ggerganov/llama.cpp.git
-        else
-          echo "Cloning llama.cpp version: $llamacpp_version with blobless clone"
-          git clone --filter=blob:none --single-branch --branch "$llamacpp_version" https://github.com/ggerganov/llama.cpp.git
-        fi
+        # Check out the commit pinned for the whole run in prepare-matrix, with full history so llama.cpp's build number is right.
+        commit="$PINNED_LLAMACPP_SHA"
+        echo "Cloning llama.cpp at $commit with blobless clone"
+        git clone --filter=blob:none --no-checkout https://github.com/ggml-org/llama.cpp.git
         cd llama.cpp
+        git checkout --detach "$commit"
         
         # Get commit hash (5 digits) and store it as environment variable
         commit_hash=$(git rev-parse --short=5 HEAD)
@@ -677,23 +553,10 @@ jobs:
         
     - name: Build Llama.cpp + ROCm
       run: |
-        # Map GPU targets
+        # GPU targets for this family, from .github/qualify-rocm/families.py
         current_target="${{ matrix.gfx_target }}"
         echo "Input target: $current_target"
-        
-        if [ "$current_target" = "gfx110X" ]; then
-          mapped_target="gfx1100;gfx1101;gfx1102;gfx1103"
-        elif [ "$current_target" = "gfx103X" ]; then
-          mapped_target="gfx1030;gfx1031;gfx1032;gfx1034"
-        elif [ "$current_target" = "gfx1151" ]; then
-          mapped_target="gfx1151"
-        elif [ "$current_target" = "gfx1150" ]; then
-          mapped_target="gfx1150"
-        elif [ "$current_target" = "gfx120X" ]; then
-          mapped_target="gfx1200;gfx1201"
-        else
-          mapped_target="$current_target"
-        fi
+        mapped_target="${{ matrix.gpu_targets }}"
         echo "Mapped target: $mapped_target"
 
         # Create build directory
@@ -811,13 +674,23 @@ jobs:
 
         echo "Finished copying required ROCm libraries"
 
+    # llama.cpp is MIT-licensed, which requires its notice to travel with every copy. Checked by T0.1.
+    - name: Add the llama.cpp license
+      run: cp llama.cpp/LICENSE llama.cpp/build/bin/LICENSE
+
     - name: Set RPATH for portable distribution
       run: |
         sudo apt-get install -y patchelf
         cd llama.cpp/build/bin
-        # Set RPATH to $ORIGIN so all libraries (including the comgr stub loader) find deps locally
-        for file in *.so* llama-*; do
-          [ -f "$file" ] && [ ! -L "$file" ] && patchelf --set-rpath '$ORIGIN' "$file" 2>/dev/null || true
+        # Set RPATH to $ORIGIN so all libraries (including the comgr stub loader) find deps locally.
+        # Every ELF file is covered, not just *.so* and llama-*: that narrower pattern missed
+        # `llama` and `ggml-rpc-server`, which then shipped with the build machine's paths.
+        # A patchelf failure now fails the build instead of being ignored. Checked by T0.7.
+        for file in *; do
+          [ -f "$file" ] && [ ! -L "$file" ] || continue
+          if file "$file" | grep -q 'ELF'; then
+            patchelf --set-rpath '$ORIGIN' "$file"
+          fi
         done
 
     - name: List build artifacts (including ROCm files)
@@ -825,32 +698,43 @@ jobs:
         cd llama.cpp/build/bin
         echo "Final build artifacts (including ROCm library files):"
         ls -la
-        
-    - name: Upload build artifacts
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+
+    # The zip is created here, once, and every later job -- the checks and the release -- uses these exact bytes.
+    # Creating it here also keeps the executables' permission bits, which the artifact upload used to drop.
+    # See .github/qualify-rocm/package.py.
+    - name: Package release archive
+      run: >-
+        python .github/qualify-rocm/package.py
+        --source-dir llama.cpp/build/bin
+        --os ubuntu
+        --gfx-target ${{ matrix.gfx_target }}
+        --gpu-targets "${{ matrix.gpu_targets }}"
+        --rocm-version "$PINNED_ROCM_VERSION"
+        --upstream-sha "$PINNED_LLAMACPP_SHA"
+        --output-dir dist
+
+    - name: Upload release archive
       id: upload-artifacts
       uses: actions/upload-artifact@v4
       with:
         name: llama-ubuntu-rocm-${{ matrix.gfx_target }}-x64
-        path: llama.cpp/build/bin/
-        include-hidden-files: true
+        path: dist/llama-ubuntu-rocm-${{ matrix.gfx_target }}-x64.zip
+        # Already compressed; zipping it again only costs time.
+        compression-level: 0
         retention-days: 30
-        
-    - name: Set job outputs
-      id: set-outputs
-      run: |
-        echo "Setting job outputs..."
-        echo "Current target: ${{ matrix.gfx_target }}"
-        echo "DETECTED_ROCM_VERSION: ${DETECTED_ROCM_VERSION}"
-        echo "ROCM_VERSION: ${{ env.ROCM_VERSION }}"
-        echo "LLAMACPP_COMMIT_HASH: ${LLAMACPP_COMMIT_HASH}"
-        
-        rocm_version="${DETECTED_ROCM_VERSION:-${{ env.ROCM_VERSION }}}"
-        echo "rocm_version=$rocm_version" >> $GITHUB_OUTPUT
-        echo "llamacpp_commit_hash=${LLAMACPP_COMMIT_HASH}" >> $GITHUB_OUTPUT
-        
-        echo "Final rocm_version: $rocm_version"
-        echo "Final llamacpp_commit_hash: ${LLAMACPP_COMMIT_HASH}"
-        
+
+    - name: Upload qualification metadata
+      uses: actions/upload-artifact@v4
+      with:
+        name: qualify-meta-ubuntu-${{ matrix.gfx_target }}
+        path: dist/qualify-meta-ubuntu-${{ matrix.gfx_target }}.json
+        retention-days: 30
+
     - name: Create release summary
       run: |
         cat > "build-summary-ubuntu-${{ matrix.gfx_target }}.md" << 'EOF'
@@ -906,89 +790,210 @@ jobs:
         
         echo "Cleanup completed successfully"
 
-  test-stx-halo:
-    runs-on: ${{ matrix.runner }}
+  # ---------------------------------------------------------------------------
+  # Release qualification. See .github/qualify-rocm/README.md.
+  #
+  # Tier 0 is static and runs on hosted runners for every archive, on every
+  # trigger including pull requests. Tier 1 runs real inference on the Strix
+  # Halo (gfx1151) machines. A gating failure in either fails its job, which is
+  # the only signal a pull request gets, and stops create-release from running.
+  # ---------------------------------------------------------------------------
+
+  qualify-tier0:
+    name: qualify-tier0 (${{ matrix.os }}, ${{ matrix.gfx_target }})
+    # !cancelled() rather than always(): every built archive is checked even if
+    # another leg failed, so one bad family does not hide findings in the rest.
+    if: ${{ !cancelled() && needs.prepare-matrix.result == 'success' }}
     needs: [prepare-matrix, build-windows, build-ubuntu]
-    if: |
-      (needs.build-windows.result == 'success' || needs.build-ubuntu.result == 'success') &&
-      contains(github.event.inputs.gfx_target || 'gfx1151,gfx1150,gfx120X,gfx110X', 'gfx1151')
     strategy:
-      matrix:
-        include:
-          - os: Windows
-            gfx_target: gfx1151
-            artifact_prefix: windows
-            runner: ["stx-halo", "Windows"]
-          - os: Linux
-            gfx_target: gfx1151
-            artifact_prefix: ubuntu
-            runner: ["stx-halo", "Linux"]
       fail-fast: false
+      # One leg per archive, on the archive's own operating system, because two of the checks start llama-server from it.
+      matrix: ${{ fromJson(needs.prepare-matrix.outputs.tier0_matrix) }}
+    runs-on: ${{ matrix.runner }}
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-      
-    - name: Test llama.cpp build
-      uses: ./.github/actions/test-llamacpp-build
-      with:
-        os_type: ${{ matrix.os }}
-        gfx_target: ${{ matrix.gfx_target }}
-        artifact_name: llama-${{ matrix.artifact_prefix }}-rocm-${{ matrix.gfx_target }}-x64
 
-  test-stx:
-    runs-on: ${{ matrix.runner }}
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+
+    - name: Download release archive
+      uses: actions/download-artifact@v4
+      with:
+        name: llama-${{ matrix.os }}-rocm-${{ matrix.gfx_target }}-x64
+        path: ./artifact
+
+    - name: Download qualification metadata
+      uses: actions/download-artifact@v4
+      with:
+        name: qualify-meta-${{ matrix.os }}-${{ matrix.gfx_target }}
+        path: ./meta
+
+    - name: Run Tier 0 static verification
+      run: >-
+        python .github/qualify-rocm/tier0_static.py
+        --meta meta/qualify-meta-${{ matrix.os }}-${{ matrix.gfx_target }}.json
+        --archive-dir ./artifact
+        --expected-upstream-sha ${{ needs.prepare-matrix.outputs.llamacpp_sha }}
+        --expected-rocm-version ${{ needs.prepare-matrix.outputs.rocm_version }}
+        --run-binaries
+        --fail-on-error
+        --output fragments/tier0-${{ matrix.os }}-${{ matrix.gfx_target }}.json
+
+    - name: Upload Tier 0 report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: qualify-fragments-tier0-${{ matrix.os }}-${{ matrix.gfx_target }}
+        path: fragments/*.json
+        if-no-files-found: warn
+
+  qualify-tier1:
+    name: qualify-tier1 (${{ matrix.os }}, ${{ matrix.gfx_target }})
+    # Hardware validation on Strix Halo (gfx1151), the one family with test
+    # machines. Every other archive's record says it was not run on hardware.
+    # Runs on every trigger -- schedule, manual dispatch and pull request --
+    # except a pull request from a fork.
+    if: >-
+      ${{ !cancelled() && needs.prepare-matrix.result == 'success' &&
+          needs.prepare-matrix.outputs.run_tier1 == 'true' &&
+          (github.event_name != 'pull_request' ||
+           github.event.pull_request.head.repo.full_name == github.repository) }}
     needs: [prepare-matrix, build-windows, build-ubuntu]
-    if: |
-      (needs.build-windows.result == 'success' || needs.build-ubuntu.result == 'success') &&
-      contains(github.event.inputs.gfx_target || 'gfx1151,gfx1150,gfx120X,gfx110X', 'gfx1150')
     strategy:
-      matrix:
-        include:
-          - os: Windows
-            gfx_target: gfx1150
-            artifact_prefix: windows
-            runner: ["stx", "Windows"]
       fail-fast: false
+      matrix: ${{ fromJson(needs.prepare-matrix.outputs.tier1_matrix) }}
+    # AMD DevLab's pool: `devlab-dispatch` opts in to the pool and
+    # `strix-halo` narrows it to gfx1151 machines; both are required.
+    runs-on: [strix-halo, devlab-dispatch, "${{ matrix.runner_os }}", self-hosted]
+    timeout-minutes: 60
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-      
-    - name: Test llama.cpp build
-      uses: ./.github/actions/test-llamacpp-build
+
+    - name: Download release archive
+      uses: actions/download-artifact@v4
       with:
-        os_type: ${{ matrix.os }}
-        gfx_target: ${{ matrix.gfx_target }}
-        artifact_name: llama-${{ matrix.artifact_prefix }}-rocm-${{ matrix.gfx_target }}-x64
+        name: llama-${{ matrix.os }}-rocm-${{ matrix.gfx_target }}-x64
+        path: ./artifact
+
+    - name: Download qualification metadata
+      uses: actions/download-artifact@v4
+      with:
+        name: qualify-meta-${{ matrix.os }}-${{ matrix.gfx_target }}
+        path: ./meta
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+
+    # Pin the interpreter the later steps use.
+    # A self-hosted machine may carry a second Python earlier on its search path,
+    # and the scripts would then quietly run under that one instead.
+    - name: Pin the interpreter
+      shell: python
+      run: |
+        import os
+        location = os.environ["pythonLocation"]
+        interpreter = (os.path.join(location, "python.exe") if os.name == "nt"
+                       else os.path.join(location, "bin", "python"))
+        if not os.path.exists(interpreter):
+            raise SystemExit(f"::error::no interpreter at {interpreter}")
+        print(f"Qualification scripts will run under {interpreter}")
+        with open(os.environ["GITHUB_ENV"], "a", encoding="utf-8") as handle:
+            handle.write(f"QUALIFY_PYTHON={interpreter}\n")
+
+    # Unpacking the archive and fetching the test model happen inside the
+    # script, so this one command line parses the same under every shell.
+    - name: Run Tier 1 GPU inference
+      run: >-
+        ${{ env.QUALIFY_PYTHON }} .github/qualify-rocm/tier1_gpu.py
+        --meta meta/qualify-meta-${{ matrix.os }}-${{ matrix.gfx_target }}.json
+        --archive-dir ./artifact
+        --gfx-target ${{ matrix.gfx_target }}
+        --logs-dir fragments
+        --fail-on-error
+        --output fragments/tier1-${{ matrix.os }}-${{ matrix.gfx_target }}.json
+
+    - name: Upload Tier 1 report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: qualify-fragments-tier1-${{ matrix.os }}-${{ matrix.gfx_target }}
+        path: |
+          fragments/*.json
+          fragments/*.log
+        if-no-files-found: warn
+
+    # A cancelled run can leave llama-server alive and holding GPU memory.
+    # The script stops it on every path it reaches; this is the backstop for the ones it never gets to.
+    # continue-on-error because a red mark here would only add noise on top of whatever already went wrong.
+    - name: Tear down
+      if: always()
+      continue-on-error: true
+      shell: python
+      run: |
+        import subprocess, sys
+        cmd = (["taskkill", "/F", "/IM", "llama-server.exe"]
+               if sys.platform == "win32" else
+               ["pkill", "-f", "llama-server"])
+        try:
+            subprocess.run(cmd, check=False, capture_output=True, timeout=60)
+        except (OSError, subprocess.SubprocessError) as exc:
+            print(f"cleanup skipped: {exc}")
 
   create-release:
-    needs: [prepare-matrix, build-windows, build-ubuntu, test-stx-halo, test-stx]
+    needs: [prepare-matrix, build-windows, build-ubuntu, qualify-tier0, qualify-tier1]
     runs-on: ubuntu-22.04
     permissions:
       contents: write
       pull-requests: write
+    # All or nothing: every archive must pass its gating checks before anything is published.
+    # Lemonade pins one nightly tag for every GPU family, so a release with a family missing would be a failed download for those users.
+    # Tier 1 may only be skipped when this run did not build gfx1151.
     if: |
       always() &&
       (needs.build-windows.result == 'success' || needs.build-windows.result == 'skipped') &&
       (needs.build-ubuntu.result == 'success' || needs.build-ubuntu.result == 'skipped') &&
       (needs.build-windows.result == 'success' || needs.build-ubuntu.result == 'success') &&
-      (needs.test-stx-halo.result == 'success' || needs.test-stx-halo.result == 'skipped') &&
-      (needs.test-stx.result == 'success' || needs.test-stx.result == 'skipped') &&
+      needs.qualify-tier0.result == 'success' &&
+      (needs.qualify-tier1.result == 'success' ||
+       (needs.qualify-tier1.result == 'skipped' && needs.prepare-matrix.outputs.run_tier1 != 'true')) &&
       github.event_name != 'pull_request' &&
-      (github.event_name == 'workflow_dispatch' && 
+      (github.event_name == 'workflow_dispatch' &&
        (github.event.inputs.create_release == 'true' || github.event.inputs.create_release == null) ||
        github.event_name == 'schedule')
-    
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-      
-    - name: Download all build artifacts
+
+    - name: Download release archives
       uses: actions/download-artifact@v4
       with:
-        path: ./all-artifacts
-        
+        pattern: llama-*-rocm-*-x64
+        path: ./artifacts
+        merge-multiple: true
+
+    - name: Download qualification metadata
+      uses: actions/download-artifact@v4
+      with:
+        pattern: qualify-meta-*
+        path: ./meta
+        merge-multiple: true
+
+    - name: Download qualification reports
+      uses: actions/download-artifact@v4
+      with:
+        pattern: qualify-fragments-*
+        path: ./fragments
+        merge-multiple: true
+
     - name: Generate release tag
       id: generate-tag
       env:
@@ -1030,92 +1035,82 @@ jobs:
           echo "tag_exists=false" >> $GITHUB_OUTPUT
         fi
         
-    - name: Create archives for all target artifacts
+    # T0.11: each archive's SHA-256 must match the one its build job recorded,
+    # so what ships is byte-for-byte what Tier 0 and Tier 1 checked.
+    # Also moves the archives into ./release under their published names.
+    - name: Confirm the archives are the ones that were tested
+      if: steps.check-tag.outputs.tag_exists == 'false'
+      run: >-
+        python3 .github/qualify-rocm/check_final.py
+        --meta-dir ./meta
+        --artifacts-dir ./artifacts
+        --release-dir ./release
+        --fragments-dir ./fragments
+        --tag "${{ steps.generate-tag.outputs.tag }}"
+
+    - name: Qualify the release
+      if: steps.check-tag.outputs.tag_exists == 'false'
+      env:
+        TAG: ${{ steps.generate-tag.outputs.tag }}
+        BUILT_TARGETS: ${{ needs.prepare-matrix.outputs.gfx_targets }}
+        BUILT_OSES: ${{ needs.prepare-matrix.outputs.operating_systems }}
+        RUN_TIER1: ${{ needs.prepare-matrix.outputs.run_tier1 }}
+      run: >-
+        python3 .github/qualify-rocm/aggregate.py
+        --fragments-dir ./fragments
+        --tag "$TAG"
+        --records-dir ./qualification
+        --operating-systems "$BUILT_OSES"
+        --gfx-targets "$BUILT_TARGETS"
+        --require-tier1 "$RUN_TIER1"
+        --fail-on-not-publishable
+
+    - name: Upload qualification records
+      if: always() && steps.check-tag.outputs.tag_exists == 'false'
+      uses: actions/upload-artifact@v4
+      with:
+        name: qualification-records
+        path: qualification/*.json
+        if-no-files-found: warn
+
+    # checksums.txt lets anyone confirm a download is the published file; the
+    # qualification-*.json records say what each archive contains, which gfx
+    # target was run on hardware, and every check's result.
+    - name: Add checksums and qualification records
       if: steps.check-tag.outputs.tag_exists == 'false'
       run: |
-        # Parse targets and operating systems from environment
-        targets="${{ env.GFX_TARGETS }}"
-        operating_systems="${{ env.OPERATING_SYSTEMS }}"
-        TAG="${{ steps.generate-tag.outputs.tag }}"
-        
-        echo "Processing targets: $targets"
-        echo "Processing operating systems: $operating_systems"
-        echo "Using release tag: $TAG"
-        
-        # Create individual archives for each target and OS combination
-        IFS=',' read -ra TARGET_ARRAY <<< "$targets"
-        IFS=',' read -ra OS_ARRAY <<< "$operating_systems"
-        
-        for os in "${OS_ARRAY[@]}"; do
-          os=$(echo "$os" | xargs) # trim whitespace
-          for target in "${TARGET_ARRAY[@]}"; do
-            target=$(echo "$target" | xargs) # trim whitespace
-            
-            echo "Processing OS: $os, target: $target"
-            
-            # Use artifact name to find the directory
-            artifact_name="llama-${os}-rocm-${target}-x64"
-            artifact_dir="./all-artifacts/${artifact_name}"
-            
-            # Create final archive with release tag
-            final_archive_name="llama-${TAG}-${os}-rocm-${target}-x64"
-            
-            if [ -d "$artifact_dir" ]; then
-              echo "Creating archive: ${final_archive_name}.zip"
-              cd "$artifact_dir"
-              zip -r "../../${final_archive_name}.zip" .
-              cd ../../
-            else
-              echo "Warning: Artifact directory not found: $artifact_dir"
-              ls -la ./all-artifacts/
-            fi
-          done
-        done
-        
-        echo "Created archives:"
-        ls -la *.zip
-        
+        cd release
+        sha256sum *.zip > checksums.txt
+        cat checksums.txt
+        cp -v ../qualification/*.json .
+
     - name: Create Release
       if: steps.check-tag.outputs.tag_exists == 'false'
       env:
         GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
       run: |
         TAG="${{ steps.generate-tag.outputs.tag }}"
-        # Get ROCm version from either Windows or Ubuntu build (whichever succeeded)
-        ROCM_VERSION="${{ needs.build-windows.outputs.rocm_version || needs.build-ubuntu.outputs.rocm_version }}"
-        # Get llama.cpp commit hash from either Windows or Ubuntu build (whichever succeeded)
-        LLAMACPP_COMMIT_HASH="${{ needs.build-windows.outputs.llamacpp_commit_hash || needs.build-ubuntu.outputs.llamacpp_commit_hash }}"
-        targets="${{ env.GFX_TARGETS }}"
-        operating_systems="${{ env.OPERATING_SYSTEMS }}"
-        
+        # Pinned once for the whole run in prepare-matrix, so these describe every archive.
+        ROCM_VERSION="${{ needs.prepare-matrix.outputs.rocm_version }}"
+        # Lemonade reads the "Llama.cpp Commit Hash" line, so it keeps its format;
+        # the full SHA is given on its own line.
+        LLAMACPP_COMMIT_HASH="${{ needs.prepare-matrix.outputs.llamacpp_short }}"
+        LLAMACPP_COMMIT_FULL="${{ needs.prepare-matrix.outputs.llamacpp_sha }}"
+        targets="${{ needs.prepare-matrix.outputs.gfx_targets }}"
+        operating_systems="${{ needs.prepare-matrix.outputs.operating_systems }}"
+
         echo "Creating release with tag: $TAG"
         echo "GPU Targets: $targets"
         echo "Operating Systems: $operating_systems"
         echo "ROCm Version: $ROCM_VERSION"
-        echo "Llama.cpp Commit: $LLAMACPP_COMMIT_HASH"
-        
+        echo "Llama.cpp Commit: $LLAMACPP_COMMIT_FULL"
+
         # Verify archives exist
-        ls -la *.zip
-        
-        # Prepare upload files list
-        upload_files=""
-        IFS=',' read -ra TARGET_ARRAY <<< "$targets"
-        IFS=',' read -ra OS_ARRAY <<< "$operating_systems"
-        
-        for os in "${OS_ARRAY[@]}"; do
-          os=$(echo "$os" | xargs) # trim whitespace
-          for target in "${TARGET_ARRAY[@]}"; do
-            target=$(echo "$target" | xargs) # trim whitespace
-            
-            final_archive_name="llama-${TAG}-${os}-rocm-${target}-x64"
-            if [ -f "${final_archive_name}.zip" ]; then
-              upload_files="${upload_files} ${final_archive_name}.zip"
-            fi
-          done
-        done
-        
+        ls -la release
+
+        upload_files=$(ls release/*.zip release/checksums.txt release/qualification-*.json)
         echo "Files to upload: $upload_files"
-        
+
         # Create release with GitHub CLI
         gh release create "$TAG" \
           --title "$TAG" \
@@ -1124,7 +1119,10 @@ jobs:
         **GPU Target(s)**: $targets
         **ROCm Version**: $ROCM_VERSION
         **Llama.cpp Commit Hash**: $LLAMACPP_COMMIT_HASH
+        **Llama.cpp Commit (full)**: $LLAMACPP_COMMIT_FULL
         **Build Date**: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
 
-        This release includes compiled llama.cpp binaries with ROCm support for multiple GPU targets and operating systems, with all essential ROCm runtime libraries included." \
+        This release includes compiled llama.cpp binaries with ROCm support for multiple GPU targets and operating systems, with all essential ROCm runtime libraries included.
+
+        Every archive passed the release checks. Each archive has a \`qualification-<archive>.json\` record listing what it contains, which gfx target (if any) it was run on real hardware with, and every check's result; \`checksums.txt\` holds the SHA-256 of every archive." \
           $upload_files

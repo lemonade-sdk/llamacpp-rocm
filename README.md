@@ -1,16 +1,16 @@
 # llamacpp-rocm
 
-<a href="https://github.com/aigdat/llamacpp-rocm/releases/latest" title="Download the latest release">
-  <img src="https://img.shields.io/github/v/release/aigdat/llamacpp-rocm?logo=github&logoColor=white" alt="GitHub release (latest by date)" />
+<a href="https://github.com/lemonade-sdk/llamacpp-rocm/releases/latest" title="Download the latest release">
+  <img src="https://img.shields.io/github/v/release/lemonade-sdk/llamacpp-rocm?logo=github&logoColor=white" alt="GitHub release (latest by date)" />
 </a>
-<a href="https://github.com/aigdat/llamacpp-rocm/releases/latest" title="View latest release date">
-  <img src="https://img.shields.io/github/release-date/aigdat/llamacpp-rocm?logo=github&logoColor=white" alt="Latest release date" />
+<a href="https://github.com/lemonade-sdk/llamacpp-rocm/releases/latest" title="View latest release date">
+  <img src="https://img.shields.io/github/release-date/lemonade-sdk/llamacpp-rocm?logo=github&logoColor=white" alt="Latest release date" />
 </a>
 <a href="LICENSE" title="View license">
-  <img src="https://img.shields.io/github/license/aigdat/llamacpp-rocm?logo=opensourceinitiative&logoColor=white&cacheBust=1)" alt="License" />
+  <img src="https://img.shields.io/github/license/lemonade-sdk/llamacpp-rocm?logo=opensourceinitiative&logoColor=white&cacheBust=1)" alt="License" />
 </a>
-<a href="https://github.com/ROCm/ROCm" title="Powered by ROCm 7.0">
-  <img src="https://img.shields.io/badge/ROCm-7.0-blue?logo=amd&logoColor=white" alt="ROCm 7.0" />
+<a href="https://github.com/ROCm/TheRock" title="Powered by TheRock ROCm nightly builds">
+  <img src="https://img.shields.io/badge/ROCm-TheRock%20nightly-blue?logo=amd&logoColor=white" alt="ROCm: TheRock nightly" />
 </a>
 <a href="https://github.com/ggerganov/llama.cpp" title="Powered by llama.cpp">
   <img src="https://img.shields.io/badge/🦙Powered%20by-llama.cpp-blue?logo=llama&logoColor=white" alt="Powered by llama.cpp" />
@@ -23,7 +23,7 @@
 </a>
 
 
-We provide nightly builds of **llama.cpp** with **AMD ROCm™ 7** acceleration based on TheRock - delivering the freshest, cutting-edge builds available. Our automated pipeline specifically targets seamless integration with [**🍋 Lemonade**](https://github.com/lemonade-sdk/lemonade) and similar AI applications requiring high-performance GPU inference.
+We provide nightly builds of **llama.cpp** with **AMD ROCm™** acceleration from TheRock's nightly builds - delivering the freshest, cutting-edge builds available. Our automated pipeline specifically targets seamless integration with [**🍋 Lemonade**](https://github.com/lemonade-sdk/lemonade) and similar AI applications requiring high-performance GPU inference.
 
 > [!IMPORTANT]  
 > **Contribution & Support Notice**: While this project currently focuses on integrating llama.cpp+ROCm in a specific production context, our broader goal is to contribute meaningfully to the llama.cpp+ROCm ecosystem. We're not set up to provide comprehensive technical support, but we welcome collaborations, idea exchanges, or contributions that help advance this space.
@@ -35,31 +35,31 @@ This build specifically targets the following GPU architectures:
 - **gfx1150** (STX Point APU) - Ryzen AI 300
 - **gfx120X** (RDNA4 GPUs) - includes AMD Radeon RX 9070 XT/GRE/9070, RX 9060 XT/9060
 - **gfx110X** (RDNA3 GPUs) - includes AMD Radeon dGPUs: PRO W7900/W7800/W7700/W7600, RX 7900 XTX/XT/GRE, RX 7800 XT, RX 7700 XT/7700, RX 7600 XT/7600 and iGPUs: Radeon 780M/760M/740M
-- **gfx103X** (RDNA2 GPUs) - includes AMD Radeon dGPUs: RX 6800 XT/6800, RX 6700 XT/6700, RX 6600 XT/6600, RX 6500 XT/6500
+- **gfx103X** (RDNA2 GPUs) - includes AMD Radeon dGPUs: RX 6800 XT/6800, RX 6700 XT/6700, RX 6600 XT/6600, RX 6500 XT/6500. Discrete GPUs only (gfx1030, gfx1031, gfx1032, gfx1034); RDNA2 APUs such as gfx1033, gfx1035 and gfx1036 are not included
 - **gfx90a** (CDNA2 GPU) - AMD Instinct MI210
 - **gfx908** (CDNA1 GPU) - AMD Instinct MI100
 
-**All builds include ROCm™ 7 built-in** - no separate ROCm™ installation required!
+**All builds include ROCm™ built-in** - no separate ROCm™ installation required! The exact TheRock nightly version is listed in each release's notes.
 
 ## 🚀 Automated Builds
 
 Our automated GitHub Actions workflow creates nightly builds for:
 - **Windows** and **Ubuntu** operating systems
 - **Multiple GPU targets**: `gfx1151`, `gfx1150`, `gfx110X`, `gfx120X`, `gfx103X`, `gfx90a`, `gfx908`
-- **ROCm™ 7 built-in** - complete runtime libraries included
+- **ROCm™ built-in** - complete runtime libraries included
 
 
 | GPU Target | Ubuntu | Windows |
 |-------------|--------|---------|
-| **gfx110X** | [![Download Ubuntu gfx110X](https://img.shields.io/badge/Download-Ubuntu%20gfx110X-blue)](https://github.com/aigdat/llamacpp-rocm/releases/latest) | [![Download Windows gfx110X](https://img.shields.io/badge/Download-Windows%20gfx110X-green)](https://github.com/aigdat/llamacpp-rocm/releases/latest) |
-| **gfx1150** | [![Download Ubuntu gfx1150](https://img.shields.io/badge/Download-Ubuntu%20gfx1150-blue)](https://github.com/aigdat/llamacpp-rocm/releases/latest) | [![Download Windows gfx1150](https://img.shields.io/badge/Download-Windows%20gfx1150-green)](https://github.com/aigdat/llamacpp-rocm/releases/latest) |
-| **gfx1151** | [![Download Ubuntu gfx1151](https://img.shields.io/badge/Download-Ubuntu%20gfx1151-blue)](https://github.com/aigdat/llamacpp-rocm/releases/latest) | [![Download Windows gfx1151](https://img.shields.io/badge/Download-Windows%20gfx1151-green)](https://github.com/aigdat/llamacpp-rocm/releases/latest) |
-| **gfx120X** | [![Download Ubuntu gfx120X](https://img.shields.io/badge/Download-Ubuntu%20gfx120X-blue)](https://github.com/aigdat/llamacpp-rocm/releases/latest) | [![Download Windows gfx120X](https://img.shields.io/badge/Download-Windows%20gfx120X-green)](https://github.com/aigdat/llamacpp-rocm/releases/latest) |
-| **gfx103X** | [![Download Ubuntu gfx103X](https://img.shields.io/badge/Download-Ubuntu%20gfx103X-blue)](https://github.com/aigdat/llamacpp-rocm/releases/latest) | [![Download Windows gfx103X](https://img.shields.io/badge/Download-Windows%20gfx103X-green)](https://github.com/aigdat/llamacpp-rocm/releases/latest) |
-| **gfx90a** | [![Download Ubuntu gfx90a](https://img.shields.io/badge/Download-Ubuntu%20gfx90a-blue)](https://github.com/aigdat/llamacpp-rocm/releases/latest) | [![Download Windows gfx90a](https://img.shields.io/badge/Download-Windows%20gfx90a-green)](https://github.com/aigdat/llamacpp-rocm/releases/latest) |
-| **gfx908** | [![Download Ubuntu gfx908](https://img.shields.io/badge/Download-Ubuntu%20gfx908-blue)](https://github.com/aigdat/llamacpp-rocm/releases/latest) | [![Download Windows gfx908](https://img.shields.io/badge/Download-Windows%20gfx908-green)](https://github.com/aigdat/llamacpp-rocm/releases/latest) |
+| **gfx110X** | [![Download Ubuntu gfx110X](https://img.shields.io/badge/Download-Ubuntu%20gfx110X-blue)](https://github.com/lemonade-sdk/llamacpp-rocm/releases/latest) | [![Download Windows gfx110X](https://img.shields.io/badge/Download-Windows%20gfx110X-green)](https://github.com/lemonade-sdk/llamacpp-rocm/releases/latest) |
+| **gfx1150** | [![Download Ubuntu gfx1150](https://img.shields.io/badge/Download-Ubuntu%20gfx1150-blue)](https://github.com/lemonade-sdk/llamacpp-rocm/releases/latest) | [![Download Windows gfx1150](https://img.shields.io/badge/Download-Windows%20gfx1150-green)](https://github.com/lemonade-sdk/llamacpp-rocm/releases/latest) |
+| **gfx1151** | [![Download Ubuntu gfx1151](https://img.shields.io/badge/Download-Ubuntu%20gfx1151-blue)](https://github.com/lemonade-sdk/llamacpp-rocm/releases/latest) | [![Download Windows gfx1151](https://img.shields.io/badge/Download-Windows%20gfx1151-green)](https://github.com/lemonade-sdk/llamacpp-rocm/releases/latest) |
+| **gfx120X** | [![Download Ubuntu gfx120X](https://img.shields.io/badge/Download-Ubuntu%20gfx120X-blue)](https://github.com/lemonade-sdk/llamacpp-rocm/releases/latest) | [![Download Windows gfx120X](https://img.shields.io/badge/Download-Windows%20gfx120X-green)](https://github.com/lemonade-sdk/llamacpp-rocm/releases/latest) |
+| **gfx103X** | [![Download Ubuntu gfx103X](https://img.shields.io/badge/Download-Ubuntu%20gfx103X-blue)](https://github.com/lemonade-sdk/llamacpp-rocm/releases/latest) | [![Download Windows gfx103X](https://img.shields.io/badge/Download-Windows%20gfx103X-green)](https://github.com/lemonade-sdk/llamacpp-rocm/releases/latest) |
+| **gfx90a** | [![Download Ubuntu gfx90a](https://img.shields.io/badge/Download-Ubuntu%20gfx90a-blue)](https://github.com/lemonade-sdk/llamacpp-rocm/releases/latest) | [![Download Windows gfx90a](https://img.shields.io/badge/Download-Windows%20gfx90a-green)](https://github.com/lemonade-sdk/llamacpp-rocm/releases/latest) |
+| **gfx908** | [![Download Ubuntu gfx908](https://img.shields.io/badge/Download-Ubuntu%20gfx908-blue)](https://github.com/lemonade-sdk/llamacpp-rocm/releases/latest) | [![Download Windows gfx908](https://img.shields.io/badge/Download-Windows%20gfx908-green)](https://github.com/lemonade-sdk/llamacpp-rocm/releases/latest) |
 
-> **⚡ Ready to Run**: All releases include complete ROCm™ 7 runtime libraries - just download and go!
+> **⚡ Ready to Run**: All releases include complete ROCm™ runtime libraries - just download and go!
 
 > **Linux (gfx1150/APU):** OOM despite free VRAM? Add `ttm.pages_limit=12582912` (48 GB) to the kernel cmdline (e.g. GRUB), run `update-grub`, then reboot. See [TheRock FAQ](https://github.com/ROCm/TheRock/blob/main/docs/faq.md#gfx1151-strix-halo-specific-questions) for more.
 
@@ -69,7 +69,7 @@ Our automated GitHub Actions workflow creates nightly builds for:
 
 To verify your download is working correctly:
 
-1. **Download** the appropriate build for your GPU target from our [latest releases](https://github.com/aigdat/llamacpp-rocm/releases/latest)
+1. **Download** the appropriate build for your GPU target from our [latest releases](https://github.com/lemonade-sdk/llamacpp-rocm/releases/latest)
 2. **Extract** the archive to your preferred directory
 3. **Test** with any GGUF model from Hugging Face:
 
@@ -80,6 +80,22 @@ llama-server -m YOUR_GGUF_MODEL_PATH -ngl 99
 > **💡 Tip**: Use `-ngl 99` to offload all layers to GPU for maximum acceleration. The exact number of layers may vary by model, but 99 ensures all available layers are offloaded.
 
 > **🍋 Lemonade Integration**: You can also test these builds directly with [**Lemonade**](https://github.com/lemonade-sdk/lemonade) for a seamless AI application experience *(coming soon!)*
+
+---
+
+## ✅ Release Qualification
+
+A release is published only when every archive in it passes:
+
+- **Static checks on every archive** - the GPU code really covers every gfx target of its family, nothing it needs comes from outside the archive, the Linux binaries start on Ubuntu 22.04 and look for libraries only next to themselves, `llama-server` still accepts the flags Lemonade uses, and every archive was built from the same llama.cpp commit and ROCm nightly.
+- **Inference on real hardware** - the gfx1151 archives (Windows and Linux) are run on Strix Halo machines, and the run must prove the GPU did the work and that ROCm was loaded from the archive itself.
+
+Each release also carries:
+
+- `qualification-<archive>.json` for every archive: which gfx targets it contains, which were tested on hardware, the exact ROCm and llama.cpp versions, and the result of every check.
+- `checksums.txt`: the SHA-256 of every archive, so you can confirm a download with `sha256sum -c checksums.txt --ignore-missing`.
+
+Details of every check are in [.github/qualify-rocm/README.md](.github/qualify-rocm/README.md).
 
 ---
 
@@ -112,7 +128,7 @@ This project relies on the following external software and tools:
 - **GitHub Actions Workflows** - Located in `.github/workflows/` (automated build pipeline)
 - **Build Artifacts** - Generated during CI/CD and published as releases
 
-The build process is primarily handled through GitHub Actions, with the repository serving as the source for automated compilation and packaging of llama.cpp with ROCm™ 7 support.
+The build process is primarily handled through GitHub Actions, with the repository serving as the source for automated compilation and packaging of llama.cpp with ROCm™ support.
 
 ---
 
