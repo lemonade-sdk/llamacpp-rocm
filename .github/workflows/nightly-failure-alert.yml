@@ -36,7 +36,7 @@ jobs:
         assignees=$(echo $ALERT_USERS | tr ' ' ',')
 
         body=$(cat <<EOF
-        $mentions the nightly llama.cpp + ROCm build **${CONCLUSION}** (started ${RUN_DATE}). No release was published.
+        $mentions the nightly llama.cpp + ROCm build **${CONCLUSION}** (started ${RUN_DATE}). If gfx1151 failed, no release was published; otherwise a release was published without the archives that failed. The run's "Release qualification" summary says which.
 
         **Run:** $RUN_URL
 
