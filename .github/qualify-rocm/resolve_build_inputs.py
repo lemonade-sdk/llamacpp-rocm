@@ -23,7 +23,11 @@ expanded in exactly one place (families.py).
 
 gfx1151 is always built, on every requested operating system, even when the
 requested family list leaves it out: it is the family tested on real hardware,
-and a release is only published when it builds and passes every check.
+so no release is ever published without it.
+
+`full_release` says whether the run builds every published gfx family (every
+family in families.py) on both operating systems. A release is only created
+from a run that does.
 
 Usage (CI):
     python3 resolve_build_inputs.py --gfx-targets "gfx1151,gfx1150" \
@@ -237,6 +241,18 @@ def main():
     outputs["tier0_matrix"] = json.dumps({"include": tier0})
     outputs["tier1_matrix"] = json.dumps({"include": tier1})
     outputs["run_tier1"] = "true" if tier1 else "false"
+
+    # A release must contain every published family on both operating systems.
+    missing_families = [f for f in families.FAMILIES if f not in targets]
+    missing_oses = [o for o in KNOWN_OSES if o not in oses]
+    full_release = not missing_families and not missing_oses
+    outputs["full_release"] = "true" if full_release else "false"
+    if not full_release and not args.skip_pins:
+        print("::notice::This run will not create a release: it does not build "
+              + ", ".join(filter(None, [
+                  f"families {', '.join(missing_families)}" if missing_families else "",
+                  f"for {', '.join(missing_oses)}" if missing_oses else ""]))
+              + ". A release must include every family on Windows and Linux.")
 
     if not args.skip_pins:
         pairs = unique((o, families.tarball_target(f)) for o in oses for f in targets)

@@ -1,38 +1,26 @@
 #!/usr/bin/env python3
 """
-Merge tier reports into one qualification record per archive, decide what the
-release publishes, and write the job summary.
+Merge tier reports into one qualification record per archive, decide whether the
+release may be published, and write the job summary.
 
 Reports are grouped by (OS, family), because that pair identifies exactly one
 release asset -- the unit a user downloads and the unit a bug report names.
 
-What gets published:
-
-  * gfx1151 is the gate. It is the family tested on real hardware, so if its
-    archive for any built operating system is missing or fails a gating check,
-    nothing is published at all.
-  * Every other archive is judged on its own. One that failed to build or
-    failed a check is left out, and everything that qualified is published.
-    The release notes and this job's summary name what was left out, and the
-    workflow then ends red so the nightly-failure alert reports it.
-
-Leaving an archive out cannot reach Lemonade users: Lemonade only moves its
-nightly pin to a release that has every archive it needs, so it simply stays on
-the last complete release until the missing archive is back.
+The release is all or nothing. So one archive failing withholds the whole release.
 
 An archive qualifies when:
   - Tier 0 ran and none of its gating checks failed, including T0.11 (the
     published archive is the tested archive);
   - Tier 1, where it is required, ran and none of its gating checks failed.
 
-Tier 1 runs only on the gfx1151 archives. Every other record says so
-(`hardware_validated: []`) rather than implying it was tested too.
+Tier 1 runs only on the gfx1151 archives, the one family with test hardware.
+Every other record says so (`hardware_validated: []`) rather than implying it
+was tested too.
 
 Usage:
-    python3 aggregate.py --fragments-dir fragments --meta-dir meta --tag b1357 \
-        --records-dir qualification --release-dir release \
-        --operating-systems windows,ubuntu --gfx-targets gfx1151,gfx110X \
-        --require-tier1 true --fail-on-not-publishable
+    python3 aggregate.py --fragments-dir fragments --tag b1357 \
+        --records-dir qualification --operating-systems windows,ubuntu \
+        --gfx-targets gfx1151,gfx110X --require-tier1 true --fail-on-not-publishable
 """
 
 import argparse
@@ -59,23 +47,6 @@ def load_fragments(fragments_dir):
         if data.get("kind") == "tier_fragment":
             fragments.append(data)
     return fragments
-
-
-def built_archives(meta_dir):
-    """(os, family) of every archive a build job produced and described."""
-    built = set()
-    for path in glob.glob(os.path.join(meta_dir, "qualify-meta-*.json")):
-        try:
-            with open(path, encoding="utf-8-sig") as handle:
-                info = json.load(handle)
-        except (OSError, ValueError):
-            continue
-        built.add((info.get("os"), info.get("gfx_family")))
-    return built
-
-
-def published_name(tag, os_name, family):
-    return f"llama-{tag}-{os_name}-rocm-{family}-x64.zip"
 
 
 def find_test(record, test_id):
@@ -136,20 +107,13 @@ def summarise(record):
                             "manifest": details.pop("manifest")}
 
 
-def write_step_summary(records, left_out, publishable, gate_failures):
+def write_step_summary(records, missing, publishable):
     path = os.environ.get("GITHUB_STEP_SUMMARY")
     if not path:
         return
-    published = sum(1 for r in records if r["published"])
-    if publishable:
-        verdict = f"**Release: published {published} archive(s)**"
-        if left_out:
-            verdict += f" — {len(left_out)} left out"
-    else:
-        verdict = ("**Release: NOT published** — the hardware-tested family did not "
-                   f"pass: {'; '.join(gate_failures)}")
-    lines = ["## Release qualification", "", verdict, "",
-             "| Archive | Tier 0 | Tier 1 | gfx in binary | HW validated | Published |",
+    lines = ["## Release qualification", "",
+             f"**Release publishable: {'YES' if publishable else 'NO'}**", "",
+             "| Archive | Tier 0 | Tier 1 | gfx in binary | HW validated | Qualified |",
              "|---|---|---|---|---|---|"]
     for record in records:
         tiers = record.get("tiers", {})
@@ -160,11 +124,9 @@ def write_step_summary(records, left_out, publishable, gate_failures):
         lines.append(
             f"| `{record['build'].get('artifact')}` | {t0} | {t1} | "
             f"{len(gfx['present_in_binary'])}/{len(gfx['requested'])} | {hw} | "
-            f"{'yes' if record['published'] else 'NO'} |")
-    reported = {(r["build"].get("os"), r["build"].get("gfx_family")) for r in records}
-    for os_name, family, reason in left_out:
-        if (os_name, family) not in reported:
-            lines.append(f"| {os_name} {family} | {reason} | | | | NO |")
+            f"{'yes' if record['qualified'] else 'NO'} |")
+    for os_name, family in missing:
+        lines.append(f"| {os_name} {family} | no report | | | | NO |")
 
     problems = []
     for record in records:
@@ -186,48 +148,38 @@ def write_step_summary(records, left_out, publishable, gate_failures):
 def main():
     parser = argparse.ArgumentParser(description="Aggregate tier fragments into release records")
     parser.add_argument("--fragments-dir", required=True)
-    parser.add_argument("--meta-dir", required=True,
-                        help="the qualify-meta-*.json files, one per archive that was built")
     parser.add_argument("--tag", required=True, help="the release tag, e.g. b1357")
     parser.add_argument("--records-dir", required=True,
                         help="write one qualification-<archive>.json per archive here")
-    parser.add_argument("--release-dir", default=None,
-                        help="the staged release; archives that do not qualify are removed")
     parser.add_argument("--operating-systems", required=True,
                         help="the operating systems this run built, comma-separated")
     parser.add_argument("--gfx-targets", required=True,
                         help="the families this run built, comma-separated")
     parser.add_argument("--require-tier1", default="false",
                         help="'true' if Tier 1 was scheduled for the gfx1151 archives")
-    parser.add_argument("--fail-on-not-publishable", action="store_true",
-                        help="exit non-zero when the hardware-tested family did not pass")
+    parser.add_argument("--fail-on-not-publishable", action="store_true")
     args = parser.parse_args()
 
-    gate_family = families.HARDWARE_VALIDATED_FAMILY
     oses = families.split_targets(args.operating_systems)
     targets = families.split_targets(args.gfx_targets)
     expected = [(o, f) for o in oses for f in targets]
-    tier1_required = {(o, gate_family) for o in oses} \
+    tier1_required = {(o, families.HARDWARE_VALIDATED_FAMILY) for o in oses} \
         if args.require_tier1.lower() == "true" else set()
-    built = built_archives(args.meta_dir)
 
     grouped = {}
     for fragment in load_fragments(args.fragments_dir):
         build = fragment.get("build", {})
         grouped.setdefault((build.get("os"), build.get("gfx_family")), []).append(fragment)
 
-    records, left_out, gate_failures = [], [], []
+    os.makedirs(args.records_dir, exist_ok=True)
+    records, missing = [], []
     for os_name, family in expected:
         group = grouped.get((os_name, family))
         if not group:
-            reason = ("not qualified: no check report" if (os_name, family) in built
-                      else "build failed")
-            left_out.append((os_name, family, reason))
-            if family == gate_family:
-                gate_failures.append(f"{family} on {os_name}: {reason}")
-            print(f"::warning::{family} on {os_name}: {reason}.")
+            missing.append((os_name, family))
+            print(f"::error::No qualification report at all for {os_name} {family}.")
             continue
-        name = published_name(args.tag, os_name, family)
+        name = f"llama-{args.tag}-{os_name}-rocm-{family}-x64.zip"
         record = report.merge_fragments(group, extra_meta={"artifact": name,
                                                            "release_tag": args.tag})
         qualified, reasons = decide(record, (os_name, family) in tier1_required)
@@ -235,25 +187,14 @@ def main():
         record["blocked_by"] = reasons
         summarise(record)
         records.append(record)
-        if not qualified:
-            reason = f"failed checks: {', '.join(reasons)}"
-            left_out.append((os_name, family, reason))
-            if family == gate_family:
-                gate_failures.append(f"{family} on {os_name}: {reason}")
         print(f"{name}: overall={record['overall']} qualified={qualified} "
               f"blocked_by={reasons} "
               f"gfx={len(record['gfx']['present_in_binary'])}/{len(record['gfx']['requested'])} "
               f"hw_validated={record['gfx']['hardware_validated'] or 'none'}")
 
-    # gfx1151 is the gate: it must have been built and must have qualified on every operating system this run built.
-    gate_expected = [(o, f) for o, f in expected if f == gate_family]
-    if not gate_expected:
-        gate_failures.append(f"{gate_family} was not part of this run")
-    publishable = not gate_failures
-
-    os.makedirs(args.records_dir, exist_ok=True)
+    publishable = not missing and all(r["qualified"] for r in records)
     for record in records:
-        record["published"] = publishable and record["qualified"]
+        record["published"] = publishable
         stem = record["build"]["artifact"][: -len(".zip")]
         out = os.path.join(args.records_dir, f"qualification-{stem}.json")
         with open(out, "w", encoding="utf-8") as handle:
@@ -261,29 +202,12 @@ def main():
             handle.write("\n")
         print(f"Wrote {out}")
 
-    # Take what did not qualify out of the staged release.
-    if publishable and args.release_dir:
-        for os_name, family, reason in left_out:
-            path = os.path.join(args.release_dir, published_name(args.tag, os_name, family))
-            if os.path.exists(path):
-                os.remove(path)
-                print(f"Left out of the release: {os.path.basename(path)} ({reason})")
-
-    published_families = [f for f in targets
-                          if any(r["published"] and r["build"].get("gfx_family") == f
-                                 for r in records)]
-    left_out_text = "; ".join(f"{f} on {o} ({reason})" for o, f, reason in left_out)
-
     summary = {
         "tag": args.tag,
         "publishable": publishable,
-        "gate_family": gate_family,
-        "gate_failures": gate_failures,
-        "published_families": published_families,
-        "left_out": [{"os": o, "gfx_family": f, "reason": reason} for o, f, reason in left_out],
+        "missing_reports": [f"{o}-{f}" for o, f in missing],
         "archives": [{"artifact": r["build"].get("artifact"),
                       "qualified": r["qualified"],
-                      "published": r["published"],
                       "overall": r["overall"],
                       "blocked_by": r["blocked_by"],
                       "hardware_validated": r["gfx"]["hardware_validated"]}
@@ -294,23 +218,19 @@ def main():
         json.dump(summary, handle, indent=2)
         handle.write("\n")
 
-    write_step_summary(records, left_out, publishable, gate_failures)
+    write_step_summary(records, missing, publishable)
 
     github_output = os.environ.get("GITHUB_OUTPUT")
     if github_output:
         with open(github_output, "a", encoding="utf-8") as handle:
             handle.write(f"publishable={'true' if publishable else 'false'}\n")
-            handle.write(f"published_targets={','.join(published_families)}\n")
-            handle.write(f"left_out_count={len(left_out)}\n")
-            handle.write(f"left_out={left_out_text}\n")
 
     if not publishable:
-        print(f"::error::Nothing is published: {'; '.join(gate_failures)}. "
-              f"{gate_family} is tested on real hardware and gates the release.")
+        print("::error::At least one archive did not qualify, so nothing is published. "
+              "The step summary and the qualification-*.json records list each failing "
+              "check.")
         if args.fail_on_not_publishable:
             sys.exit(1)
-    elif left_out:
-        print(f"::warning::Publishing without: {left_out_text}")
 
 
 if __name__ == "__main__":

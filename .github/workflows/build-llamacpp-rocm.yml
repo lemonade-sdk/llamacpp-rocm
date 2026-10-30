@@ -19,7 +19,7 @@ on:
         required: false
         default: 'latest'
       create_release:
-        description: 'Create a GitHub release after successful build'
+        description: 'Create a GitHub release after successful build (only applies when every GPU target is built for both windows and ubuntu)'
         required: false
         default: true
         type: boolean
@@ -51,6 +51,7 @@ jobs:
       tier0_matrix: ${{ steps.set-matrix.outputs.tier0_matrix }}
       tier1_matrix: ${{ steps.set-matrix.outputs.tier1_matrix }}
       run_tier1: ${{ steps.set-matrix.outputs.run_tier1 }}
+      full_release: ${{ steps.set-matrix.outputs.full_release }}
       rocm_version: ${{ steps.set-matrix.outputs.rocm_version }}
       llamacpp_sha: ${{ steps.set-matrix.outputs.llamacpp_sha }}
       llamacpp_short: ${{ steps.set-matrix.outputs.llamacpp_short }}
@@ -991,15 +992,20 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
-    # Runs even when some build or check failed.
-    # The decision is made per archive in "Qualify the release": gfx1151 is the hardware-tested family, so it must pass on every OS we build, otherwise nothing gets published.
-    # Any other archive that failed is left out, and the rest is published.
-    # Lemonade only moves its nightly pin to a release that has every archive it needs, so a release with one missing never reaches users.
+    # All or nothing: every archive must pass its gating checks before anything is published.
+    # A manual run only publishes when it built every gfx family in families.py on Windows and Linux.
+    # gfx1151 is always part of a manual run, so Tier 1 is never skipped.
     if: |
-      !cancelled() &&
-      needs.prepare-matrix.result == 'success' &&
+      always() &&
+      (needs.build-windows.result == 'success' || needs.build-windows.result == 'skipped') &&
+      (needs.build-ubuntu.result == 'success' || needs.build-ubuntu.result == 'skipped') &&
+      (needs.build-windows.result == 'success' || needs.build-ubuntu.result == 'success') &&
+      needs.qualify-tier0.result == 'success' &&
+      (needs.qualify-tier1.result == 'success' ||
+       (needs.qualify-tier1.result == 'skipped' && needs.prepare-matrix.outputs.run_tier1 != 'true')) &&
       github.event_name != 'pull_request' &&
       (github.event_name == 'workflow_dispatch' &&
+       needs.prepare-matrix.outputs.full_release == 'true' &&
        (github.event.inputs.create_release == 'true' || github.event.inputs.create_release == null) ||
        github.event_name == 'schedule')
 
@@ -1082,10 +1088,7 @@ jobs:
         --fragments-dir ./fragments
         --tag "${{ steps.generate-tag.outputs.tag }}"
 
-    # Fails the job (so nothing is published) unless gfx1151 qualified on every built OS.
-    # Otherwise removes every archive that did not qualify from ./release and reports what was left out.
     - name: Qualify the release
-      id: qualify
       if: steps.check-tag.outputs.tag_exists == 'false'
       env:
         TAG: ${{ steps.generate-tag.outputs.tag }}
@@ -1095,10 +1098,8 @@ jobs:
       run: >-
         python3 .github/qualify-rocm/aggregate.py
         --fragments-dir ./fragments
-        --meta-dir ./meta
         --tag "$TAG"
         --records-dir ./qualification
-        --release-dir ./release
         --operating-systems "$BUILT_OSES"
         --gfx-targets "$BUILT_TARGETS"
         --require-tier1 "$RUN_TIER1"
@@ -1127,7 +1128,6 @@ jobs:
       if: steps.check-tag.outputs.tag_exists == 'false'
       env:
         GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-        LEFT_OUT: ${{ steps.qualify.outputs.left_out }}
       run: |
         TAG="${{ steps.generate-tag.outputs.tag }}"
         # Pinned once for the whole run in prepare-matrix, so these describe every archive.
@@ -1136,17 +1136,8 @@ jobs:
         # the full SHA is given on its own line.
         LLAMACPP_COMMIT_HASH="${{ needs.prepare-matrix.outputs.llamacpp_short }}"
         LLAMACPP_COMMIT_FULL="${{ needs.prepare-matrix.outputs.llamacpp_sha }}"
-        # Only the families with at least one archive in this release.
-        targets="${{ steps.qualify.outputs.published_targets }}"
+        targets="${{ needs.prepare-matrix.outputs.gfx_targets }}"
         operating_systems="${{ needs.prepare-matrix.outputs.operating_systems }}"
-
-        # Name anything that was built for this run but is not in the release.
-        not_included=""
-        if [ -n "$LEFT_OUT" ]; then
-          not_included="
-        **Not included in this release**: $LEFT_OUT"
-          echo "Not included: $LEFT_OUT"
-        fi
 
         echo "Creating release with tag: $TAG"
         echo "GPU Targets: $targets"
@@ -1169,19 +1160,9 @@ jobs:
         **ROCm Version**: $ROCM_VERSION
         **Llama.cpp Commit Hash**: $LLAMACPP_COMMIT_HASH
         **Llama.cpp Commit (full)**: $LLAMACPP_COMMIT_FULL
-        **Build Date**: $(date -u '+%Y-%m-%d %H:%M:%S UTC')${not_included}
+        **Build Date**: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
 
         This release includes compiled llama.cpp binaries with ROCm support for multiple GPU targets and operating systems, with all essential ROCm runtime libraries included.
 
-        Every archive in this release passed the release checks, and the gfx1151 archives were also run on Strix Halo hardware. Each archive has a \`qualification-<archive>.json\` record listing what it contains, which gfx target (if any) it was run on real hardware with, and every check's result; \`checksums.txt\` holds the SHA-256 of every archive." \
+        Every archive passed the release checks. Each archive has a \`qualification-<archive>.json\` record listing what it contains, which gfx target (if any) it was run on real hardware with, and every check's result; \`checksums.txt\` holds the SHA-256 of every archive." \
           $upload_files
-
-    # Published, but not everything that was built made it in.
-    # Ending the run red makes the nightly-failure alert open an issue naming what is missing.
-    - name: Fail if any archive was left out
-      if: steps.check-tag.outputs.tag_exists == 'false' && steps.qualify.outputs.left_out_count != '0'
-      env:
-        LEFT_OUT: ${{ steps.qualify.outputs.left_out }}
-      run: |
-        echo "::error::The release was published without: $LEFT_OUT. The 'Qualify the release' step summary and the qualification-*.json records show why."
-        exit 1
