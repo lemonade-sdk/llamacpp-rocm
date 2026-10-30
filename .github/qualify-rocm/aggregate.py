@@ -6,10 +6,7 @@ release may be published, and write the job summary.
 Reports are grouped by (OS, family), because that pair identifies exactly one
 release asset -- the unit a user downloads and the unit a bug report names.
 
-The release is all or nothing. Lemonade pins a single nightly tag for every GPU
-family, so a release with one family left out would not look like "no nightly
-today" to the people with that GPU; it would look like a broken download. So
-one archive failing withholds the whole release.
+The release is all or nothing. So one archive failing withholds the whole release.
 
 An archive qualifies when:
   - Tier 0 ran and none of its gating checks failed, including T0.11 (the

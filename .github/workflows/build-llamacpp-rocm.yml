@@ -19,7 +19,7 @@ on:
         required: false
         default: 'latest'
       create_release:
-        description: 'Create a GitHub release after successful build'
+        description: 'Create a GitHub release after successful build (only applies when every GPU target is built for both windows and ubuntu)'
         required: false
         default: true
         type: boolean
@@ -51,6 +51,7 @@ jobs:
       tier0_matrix: ${{ steps.set-matrix.outputs.tier0_matrix }}
       tier1_matrix: ${{ steps.set-matrix.outputs.tier1_matrix }}
       run_tier1: ${{ steps.set-matrix.outputs.run_tier1 }}
+      full_release: ${{ steps.set-matrix.outputs.full_release }}
       rocm_version: ${{ steps.set-matrix.outputs.rocm_version }}
       llamacpp_sha: ${{ steps.set-matrix.outputs.llamacpp_sha }}
       llamacpp_short: ${{ steps.set-matrix.outputs.llamacpp_short }}
@@ -119,7 +120,8 @@ jobs:
         $vsInstallerPath = "$env:TEMP\vs_buildtools.exe"
         
         Write-Host "Downloading Visual Studio Build Tools..."
-        Invoke-WebRequest -Uri $vsInstallerUrl -OutFile $vsInstallerPath -MaximumRetryCount 5 -RetryIntervalSec 10
+        . .github/scripts/Invoke-Download.ps1
+        Invoke-Download -Uri $vsInstallerUrl -OutFile $vsInstallerPath
         
         Write-Host "Installing Visual Studio Build Tools..."
         Start-Process -FilePath $vsInstallerPath -ArgumentList "--quiet", "--wait", "--norestart", "--add", "Microsoft.VisualStudio.Component.VC.Tools.x86.x64", "--add", "Microsoft.VisualStudio.Component.VC.CMake.Project", "--add", "Microsoft.VisualStudio.Component.VC.ATL", "--add", "Microsoft.VisualStudio.Component.Windows11SDK.22621" -Wait
@@ -130,23 +132,28 @@ jobs:
     - name: Install build dependencies
       run: |
         Write-Host "Installing build dependencies using manual methods..."
-        
+        . .github/scripts/Invoke-Download.ps1
+
         # Install Ninja
         Write-Host "Installing Ninja..."
         $ninjaUrl = "https://github.com/ninja-build/ninja/releases/download/v1.11.1/ninja-win.zip"
         $ninjaPath = "$env:TEMP\ninja-win.zip"
         $ninjaDir = "C:\ninja"
         New-Item -ItemType Directory -Force -Path $ninjaDir
-        Invoke-WebRequest -Uri $ninjaUrl -OutFile $ninjaPath -MaximumRetryCount 5 -RetryIntervalSec 10
+        Invoke-Download -Uri $ninjaUrl -OutFile $ninjaPath
         Expand-Archive -Path $ninjaPath -DestinationPath $ninjaDir -Force
-        
-        # Install Strawberry Perl
-        Write-Host "Installing Strawberry Perl..."
-        $perlUrl = "http://strawberryperl.com/download/5.32.1.1/strawberry-perl-5.32.1.1-64bit.msi"
-        $perlPath = "$env:TEMP\strawberry-perl-5.32.1.1-64bit.msi"
-        Invoke-WebRequest -Uri $perlUrl -OutFile $perlPath -MaximumRetryCount 5 -RetryIntervalSec 10
-        Start-Process msiexec.exe -ArgumentList "/i $perlPath /quiet /norestart" -Wait
-        
+
+        # Install Strawberry Perl, unless the runner already has it.
+        if (Test-Path "C:\Strawberry\perl\bin\perl.exe") {
+          Write-Host "Strawberry Perl is already installed; skipping the download."
+        } else {
+          Write-Host "Installing Strawberry Perl..."
+          $perlUrl = "http://strawberryperl.com/download/5.32.1.1/strawberry-perl-5.32.1.1-64bit.msi"
+          $perlPath = "$env:TEMP\strawberry-perl-5.32.1.1-64bit.msi"
+          Invoke-Download -Uri $perlUrl -OutFile $perlPath
+          Start-Process msiexec.exe -ArgumentList "/i $perlPath /quiet /norestart" -Wait
+        }
+
         # Verify installations
         $env:PATH = "C:\ninja;C:\Strawberry\perl\bin;$env:PATH"
         Write-Host "Verifying installations..."
@@ -165,7 +172,8 @@ jobs:
         echo "DETECTED_ROCM_VERSION=$rocmVersion" >> $env:GITHUB_ENV
         
         Write-Host "Downloading ROCm from: $rocmUrl"
-        Invoke-WebRequest -Uri $rocmUrl -OutFile "rocm.tar.gz" -MaximumRetryCount 5 -RetryIntervalSec 10
+        . .github/scripts/Invoke-Download.ps1
+        Invoke-Download -Uri $rocmUrl -OutFile "rocm.tar.gz"
         
     - name: Extract ROCm to C:\opt\rocm
       run: |
@@ -180,8 +188,14 @@ jobs:
         # Check out the commit pinned for the whole run in prepare-matrix, with full history so llama.cpp's build number is right.
         $commit = $env:PINNED_LLAMACPP_SHA
         Write-Host "Cloning llama.cpp at $commit with blobless clone"
-        git clone --filter=blob:none --no-checkout https://github.com/ggml-org/llama.cpp.git
-        if ($LASTEXITCODE -ne 0) { throw "git clone failed with exit code $LASTEXITCODE" }
+        for ($attempt = 1; $attempt -le 5; $attempt++) {
+          git clone --filter=blob:none --no-checkout https://github.com/ggml-org/llama.cpp.git
+          if ($LASTEXITCODE -eq 0) { break }
+          if ($attempt -eq 5) { throw "git clone failed with exit code $LASTEXITCODE after 5 attempts" }
+          Write-Host "git clone failed (attempt $attempt/5); retrying in $(15 * $attempt)s..."
+          Remove-Item -Recurse -Force llama.cpp -ErrorAction SilentlyContinue
+          Start-Sleep -Seconds (15 * $attempt)
+        }
         cd llama.cpp
         git checkout --detach $commit
         if ($LASTEXITCODE -ne 0) { throw "could not check out $commit" }
@@ -451,7 +465,11 @@ jobs:
     steps:
     - name: Free disk space
       # Remove unused runner files to free up disk space
-      run: curl -fsSL https://raw.githubusercontent.com/kou/arrow/e49d8ae15583ceff03237571569099a6ad62be32/ci/scripts/util_free_space.sh | bash
+      # Downloaded to a file first so a retried download can never feed a half
+      # script to bash. --retry-all-errors also retries connection timeouts.
+      run: |
+        curl -fsSL --retry 5 --retry-all-errors --retry-delay 15 -o "$RUNNER_TEMP/util_free_space.sh" https://raw.githubusercontent.com/kou/arrow/e49d8ae15583ceff03237571569099a6ad62be32/ci/scripts/util_free_space.sh
+        bash "$RUNNER_TEMP/util_free_space.sh"
     
     - name: Checkout repository
       uses: actions/checkout@v4
@@ -481,8 +499,8 @@ jobs:
     - name: Install build dependencies
       run: |
         echo "Installing build dependencies..."
-        sudo apt update
-        sudo apt install -y cmake ninja-build unzip curl
+        sudo apt-get -o Acquire::Retries=5 update
+        sudo apt-get -o Acquire::Retries=5 install -y cmake ninja-build unzip curl
         
         # Verify installations
         echo "Verifying installations..."
@@ -500,12 +518,24 @@ jobs:
         echo "DETECTED_ROCM_VERSION=$rocm_version" >> $GITHUB_ENV
         
         echo "Streaming ROCm from: $rocm_url directly to extraction"
-        
-        # Create directory if it doesn't exist
-        sudo mkdir -p /opt/rocm
-        
-        # Stream download directly into tar extraction (no intermediate file)
-        curl -sL "$rocm_url" | sudo tar --use-compress-program=gzip -xf - -C /opt/rocm --strip-components=1
+
+        # Stream download directly into tar extraction (no intermediate file).
+        # A stream cannot resume, so a failed attempt -- including a connection
+        # timeout -- empties /opt/rocm and starts over.
+        set -o pipefail
+        for attempt in 1 2 3 4 5; do
+          sudo rm -rf /opt/rocm
+          sudo mkdir -p /opt/rocm
+          if curl -fsSL "$rocm_url" | sudo tar --use-compress-program=gzip -xf - -C /opt/rocm --strip-components=1; then
+            break
+          fi
+          if [ "$attempt" -eq 5 ]; then
+            echo "::error::Could not download and extract $rocm_url after 5 attempts"
+            exit 1
+          fi
+          echo "Download or extraction failed (attempt $attempt/5); retrying in $((15 * attempt))s..."
+          sleep $((15 * attempt))
+        done
         
     - name: Set ROCm environment variables
       run: |
@@ -537,7 +567,16 @@ jobs:
         # Check out the commit pinned for the whole run in prepare-matrix, with full history so llama.cpp's build number is right.
         commit="$PINNED_LLAMACPP_SHA"
         echo "Cloning llama.cpp at $commit with blobless clone"
-        git clone --filter=blob:none --no-checkout https://github.com/ggml-org/llama.cpp.git
+        for attempt in 1 2 3 4 5; do
+          git clone --filter=blob:none --no-checkout https://github.com/ggml-org/llama.cpp.git && break
+          if [ "$attempt" -eq 5 ]; then
+            echo "::error::git clone failed after 5 attempts"
+            exit 1
+          fi
+          echo "git clone failed (attempt $attempt/5); retrying in $((15 * attempt))s..."
+          rm -rf llama.cpp
+          sleep $((15 * attempt))
+        done
         cd llama.cpp
         git checkout --detach "$commit"
         
@@ -680,7 +719,7 @@ jobs:
 
     - name: Set RPATH for portable distribution
       run: |
-        sudo apt-get install -y patchelf
+        sudo apt-get -o Acquire::Retries=5 install -y patchelf
         cd llama.cpp/build/bin
         # Set RPATH to $ORIGIN so all libraries (including the comgr stub loader) find deps locally.
         # Every ELF file is covered, not just *.so* and llama-*: that narrower pattern missed
@@ -954,8 +993,8 @@ jobs:
       contents: write
       pull-requests: write
     # All or nothing: every archive must pass its gating checks before anything is published.
-    # Lemonade pins one nightly tag for every GPU family, so a release with a family missing would be a failed download for those users.
-    # Tier 1 may only be skipped when this run did not build gfx1151.
+    # A manual run only publishes when it built every gfx family in families.py on Windows and Linux.
+    # gfx1151 is always part of a manual run, so Tier 1 is never skipped.
     if: |
       always() &&
       (needs.build-windows.result == 'success' || needs.build-windows.result == 'skipped') &&
@@ -966,6 +1005,7 @@ jobs:
        (needs.qualify-tier1.result == 'skipped' && needs.prepare-matrix.outputs.run_tier1 != 'true')) &&
       github.event_name != 'pull_request' &&
       (github.event_name == 'workflow_dispatch' &&
+       needs.prepare-matrix.outputs.full_release == 'true' &&
        (github.event.inputs.create_release == 'true' || github.event.inputs.create_release == null) ||
        github.event_name == 'schedule')
 

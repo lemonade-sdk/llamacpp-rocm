@@ -29,7 +29,11 @@ So the checks that look for ROCm *outside* the archive there (T0.12, and install
 
 Both run on every trigger, pull requests included. The one exception is that Tier 1 is skipped for a pull request from a fork, which must not reach the self-hosted machines.
 
-The release is all or nothing: if any archive fails a gating check, nothing is published. Lemonade pins a single nightly tag for every GPU family, so a release with one family missing would be a broken download for everyone with that GPU, not a visible "no nightly today". The nightly-failure alert opens an issue instead.
+The release is all or nothing. If any archive fails to build or fails a gating check (Tier 0/1 qualification test), nothing is published, and the nightly-failure alert opens an issue instead.
+
+A manual run only publishes a release when it builds every gfx family in `families.py` on both Windows and Linux. A manual run of fewer families still builds and runs every check, but creates no release.
+
+gfx1151 is always built, even by a manual run that leaves it out, so every release has been run on real hardware.
 
 ### Tier 0 — `tier0_static.py`, `check_final.py`
 

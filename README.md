@@ -90,6 +90,8 @@ A release is published only when every archive in it passes:
 - **Static checks on every archive** - the GPU code really covers every gfx target of its family, nothing it needs comes from outside the archive, the Linux binaries start on Ubuntu 22.04 and look for libraries only next to themselves, `llama-server` still accepts the flags Lemonade uses, and every archive was built from the same llama.cpp commit and ROCm nightly.
 - **Inference on real hardware** - the gfx1151 archives (Windows and Linux) are run on Strix Halo machines, and the run must prove the GPU did the work and that ROCm was loaded from the archive itself.
 
+If any archive fails, there is no release that night, so every release always contains every GPU target on both Windows and Ubuntu.
+
 Each release also carries:
 
 - `qualification-<archive>.json` for every archive: which gfx targets it contains, which were tested on hardware, the exact ROCm and llama.cpp versions, and the result of every check.

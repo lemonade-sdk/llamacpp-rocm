@@ -21,6 +21,14 @@ This runs once, in prepare-matrix, and pins:
 It also emits the build, Tier 0 and Tier 1 matrices, so the family list is
 expanded in exactly one place (families.py).
 
+gfx1151 is always built, on every requested operating system, even when the
+requested family list leaves it out: it is the family tested on real hardware,
+so no release is ever published without it.
+
+`full_release` says whether the run builds every published gfx family (every
+family in families.py) on both operating systems. A release is only created
+from a run that does.
+
 Usage (CI):
     python3 resolve_build_inputs.py --gfx-targets "gfx1151,gfx1150" \
         --operating-systems "windows,ubuntu" --rocm-version latest \
@@ -145,10 +153,18 @@ def resolve_llamacpp(requested):
         return requested
     ref = "master" if requested == "latest" else requested
     wanted = [f"refs/heads/{ref}", f"refs/tags/{ref}", f"refs/tags/{ref}^{{}}"]
-    out = subprocess.run(["git", "ls-remote", LLAMACPP_REPO, *wanted],
-                         capture_output=True, text=True, check=False)
-    if out.returncode != 0:
-        raise SystemExit(f"::error::git ls-remote failed: {out.stderr.strip()}")
+    attempts = 5
+    out = None
+    for attempt in range(1, attempts + 1):
+        out = subprocess.run(["git", "ls-remote", LLAMACPP_REPO, *wanted],
+                             capture_output=True, text=True, check=False)
+        if out.returncode == 0:
+            break
+        print(f"git ls-remote failed (attempt {attempt}/{attempts}): {out.stderr.strip()}")
+        if attempt < attempts:
+            time.sleep(10 * attempt)
+    if out is None or out.returncode != 0:
+        raise SystemExit(f"::error::git ls-remote failed: {out.stderr.strip() if out else ''}")
     found = {}
     for line in out.stdout.splitlines():
         sha, _, name = line.partition("\t")
@@ -192,6 +208,14 @@ def main():
     if not targets:
         raise SystemExit("::error::No gfx targets requested")
 
+    # A build always includes the hardware-tested family, because the release is gated on it.
+    # Re-testing a published release (--skip-pins) tests only what was asked for.
+    hw_family = families.HARDWARE_VALIDATED_FAMILY
+    if not args.skip_pins and hw_family not in targets:
+        targets.insert(0, hw_family)
+        print(f"::notice::Added {hw_family}: it is always built and tested on hardware, "
+              "and the release is only published when it passes.")
+
     print(f"Families: {', '.join(targets)}")
     print(f"Operating systems: {', '.join(oses)}")
 
@@ -211,12 +235,24 @@ def main():
     tier0 = [{"os": o, "gfx_target": f, "runner": TIER0_RUNNER[o]}
              for o in oses for f in targets]
     tier1 = []
-    if families.HARDWARE_VALIDATED_FAMILY in targets:
-        tier1 = [{"os": o, "gfx_target": families.HARDWARE_VALIDATED_FAMILY,
+    if hw_family in targets:
+        tier1 = [{"os": o, "gfx_target": hw_family,
                   "runner_os": TIER1_RUNNER_OS[o]} for o in oses]
     outputs["tier0_matrix"] = json.dumps({"include": tier0})
     outputs["tier1_matrix"] = json.dumps({"include": tier1})
     outputs["run_tier1"] = "true" if tier1 else "false"
+
+    # A release must contain every published family on both operating systems.
+    missing_families = [f for f in families.FAMILIES if f not in targets]
+    missing_oses = [o for o in KNOWN_OSES if o not in oses]
+    full_release = not missing_families and not missing_oses
+    outputs["full_release"] = "true" if full_release else "false"
+    if not full_release and not args.skip_pins:
+        print("::notice::This run will not create a release: it does not build "
+              + ", ".join(filter(None, [
+                  f"families {', '.join(missing_families)}" if missing_families else "",
+                  f"for {', '.join(missing_oses)}" if missing_oses else ""]))
+              + ". A release must include every family on Windows and Linux.")
 
     if not args.skip_pins:
         pairs = unique((o, families.tarball_target(f)) for o in oses for f in targets)
