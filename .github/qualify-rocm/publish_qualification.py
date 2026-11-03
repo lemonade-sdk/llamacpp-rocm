@@ -74,7 +74,8 @@ PLACEHOLDER_NO_REPORT = "no report"
 _SAFE_ID = re.compile(r"^[A-Za-z0-9._-]+$")
 
 # "build-windows (gfx110X, gfx1100;gfx1101;gfx1102;gfx1103, gfx110X-all)": GitHub names a matrix job after its matrix values, the family first.
-_BUILD_JOB = re.compile(r"^build-(?P<os>[a-z]+) \((?P<values>.*)\)$")
+# Long names are cut short with "...", so only the first value is read.
+_BUILD_JOB = re.compile(r"^build-(?P<os>[a-z]+) \((?P<first>[^,)]+)")
 
 
 def _int(value):
@@ -138,7 +139,7 @@ def load_build_results(jobs_file):
         match = _BUILD_JOB.match(job.get("name") or "")
         if not match:
             continue
-        family = match.group("values").split(",")[0].strip()
+        family = match.group("first").strip()
         conclusion = job.get("conclusion")
         results[(match.group("os"), family)] = (
             BUILD_RESULTS.get(conclusion, BUILD_FAIL) if conclusion else BUILD_UNKNOWN)
@@ -302,19 +303,26 @@ def write_json(path, data):
         handle.write("\n")
 
 
-def update_latest(path, record):
-    """Write the record unless the file already holds a newer one.
+def _run_order(run_id):
+    """GitHub run ids only grow, so they order runs by when they started.
+    generated_at cannot: a re-run writes its records later than a newer run did.
+    """
+    number = _int(run_id)
+    return number if number is not None else -1
 
-    Re-publishing an old run (a late re-run) must not roll the status tile
-    back to an older result.
+
+def update_latest(path, record):
+    """Write the record unless the file already holds one from a newer run.
+
+    Re-running an old run must not roll the status tile back to an older result. A re-run of the same run replaces it.
     """
     if os.path.exists(path):
         try:
             with open(path, encoding="utf-8") as handle:
-                current = json.load(handle).get("generated_at") or ""
-        except (OSError, ValueError):
-            current = ""
-        if current > (record.get("generated_at") or ""):
+                current = json.load(handle).get("build", {}).get("run_id")
+        except (OSError, ValueError, AttributeError):
+            current = None
+        if _run_order(current) > _run_order(record.get("build", {}).get("run_id")):
             return False
     write_json(path, record)
     return True
@@ -333,12 +341,12 @@ def upsert_index(index_path, repo, entries):
     builds.extend(entries)
     # Newest run first; the archives within one run in a fixed, readable order.
     builds.sort(key=lambda b: b.get("build_id") or "")
-    builds.sort(key=lambda b: b.get("generated_at") or "", reverse=True)
+    builds.sort(key=lambda b: _run_order(b.get("run_id")), reverse=True)
 
     return {
         "schema_version": SCHEMA_VERSION,
         "repo": repo or index.get("repo"),
-        "updated_at": builds[0].get("generated_at") if builds else None,
+        "updated_at": max((b.get("generated_at") or "" for b in builds), default="") or None,
         "builds": builds,
     }
 
@@ -379,7 +387,7 @@ def main():
     if args.jobs_file and not build_results:
         print(f"::warning::no build jobs found in {args.jobs_file}; build_result will be {BUILD_UNKNOWN!r}")
 
-    # Placeholders share the run's timestamp so they sort with its other rows.
+    # Placeholders share the run's timestamp, so every row of a run shows the same time.
     run_time = max((r.get("generated_at") or "" for r in records), default="") or report.now_iso()
 
     covered = set()

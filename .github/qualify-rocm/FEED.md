@@ -86,8 +86,8 @@ Not in the feed:
 {
   "schema_version": 1,
   "repo": "lemonade-sdk/llamacpp-rocm",
-  "updated_at": "2026-11-03T13:21:07Z",       // generated_at of the newest row
-  "builds": [                                   // newest run first
+  "updated_at": "2026-11-03T13:21:07Z",       // the most recent generated_at of any row
+  "builds": [                                   // newest run (highest run_id) first
     // ... the other rows of run 41500000001 ...
 
     // An archive that was built and checked, and failed a Tier 0 check.
@@ -176,7 +176,7 @@ Not in the feed:
       "gfx_target": "gfx1151",                  // the one gfx target Tier 1 ran on; null when Tier 1 did not run
       "hardware_validated": true,               // Tier 1 ran on a real GPU (see tier1 for how it went)
       "gfx": { "requested": 1, "present": 1, "missing": [] },
-      "generated_at": "2026-11-02T14:19:43Z",   // ISO-8601 UTC, the time axis
+      "generated_at": "2026-11-02T14:19:43Z",   // ISO-8601 UTC, when this row's record was written
       "run_id": "41449736969",
       "run_attempt": 1,                         // the attempt that published this row
       "run_url": "https://github.com/lemonade-sdk/llamacpp-rocm/actions/runs/41449736969",
@@ -262,6 +262,9 @@ A passing archive of any other family looks like the gfx1151 row, except that:
   job list could not be read.
 - **`run_attempt`** is the attempt of the run that published the row. It is the
   same on every row of a run.
+- **`generated_at`** is when the row's record was written. A re-run writes it
+  again, later than any run that started after it, so order runs by `run_id`
+  (rows are already newest-run-first) rather than by `generated_at`.
 - **`blocked_by`** gives the reasons the archive did not qualify. It is empty
   when it qualified. The values:
   - `tier0=fail`: a gating Tier 0 check failed (a T0.11 failure counts here);
@@ -334,8 +337,9 @@ For a placeholder row it is a placeholder (`kind: "qualification_placeholder"`) 
 The newest full record for one archive (for example
 `latest/windows-rocm-gfx1151.json`), for status tiles that want the current state
 without scanning the index. A placeholder is written here too, so a tile shows
-a failing build instead of the last good one. It is replaced only by a newer
-record, so re-running an old run cannot move it backwards.
+a failing build instead of the last good one. It is replaced only by a record
+from the same run or a newer one (a higher `run_id`), so re-running an old run
+cannot move it backwards.
 
 ## Differences from lemonade-sdk/llama.cpp
 
