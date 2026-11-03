@@ -2,7 +2,7 @@
 """
 Resolve, once per run, everything the build legs must agree on.
 
-A run has one build leg per family per operating system (fourteen by default),
+A run has one build leg per family per operating system (sixteen by default),
 and they start minutes apart. Left to themselves, each leg cloned llama.cpp's
 master branch and picked the newest ROCm nightly on its own, so one release
 could mix upstream commits and ROCm versions while its notes named only one of

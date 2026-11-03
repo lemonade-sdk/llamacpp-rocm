@@ -16,6 +16,7 @@ two can never drift apart.
 FAMILIES = {
     "gfx1151": ("gfx1151", "gfx1151"),
     "gfx1150": ("gfx1150", "gfx1150"),
+    "gfx117X": ("gfx1170;gfx1171", "gfx117X-all"),
     "gfx120X": ("gfx1200;gfx1201", "gfx120X-all"),
     "gfx110X": ("gfx1100;gfx1101;gfx1102;gfx1103", "gfx110X-all"),
     # Discrete RDNA2 only. The RDNA2 APUs (gfx1033, gfx1035, gfx1036) are not
