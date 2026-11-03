@@ -1166,3 +1166,161 @@ jobs:
 
         Every archive passed the release checks. Each archive has a \`qualification-<archive>.json\` record listing what it contains, which gfx target (if any) it was run on real hardware with, and every check's result; \`checksums.txt\` holds the SHA-256 of every archive." \
           $upload_files
+
+  # ---------------------------------------------------------------------------
+  # Publish this run's qualification records to the qualification-data branch, where the dashboard polls them.
+  # Pass or fail, every archive the run was meant to build gets a row, including an archive whose build failed.
+  # The format is described in .github/qualify-rocm/FEED.md.
+  # ---------------------------------------------------------------------------
+  publish-qualification:
+    # Only runs that would create a release: the scheduled nightly, and manual runs with create_release ticked that build every family -- the same runs create-release accepts.
+    # Pull requests never publish.
+    # Runs whatever create-release did. When a build or a check fails, create-release is skipped and writes no records, so this job writes them itself from the Tier 0 and Tier 1 reports.
+    # !cancelled() rather than always(): a run someone cancelled publishes nothing.
+    if: >-
+      ${{ !cancelled() && needs.prepare-matrix.result == 'success' &&
+          (github.event_name == 'schedule' ||
+           (github.event_name == 'workflow_dispatch' &&
+            needs.prepare-matrix.outputs.full_release == 'true' &&
+            (github.event.inputs.create_release == 'true' || github.event.inputs.create_release == null))) }}
+    needs: [prepare-matrix, build-windows, build-ubuntu, qualify-tier0, qualify-tier1, create-release]
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write # to push to the qualification-data branch
+      actions: read   # to read each build job's result
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    # Written by create-release when it got as far as qualifying the release.
+    - name: Download release qualification records
+      continue-on-error: true
+      uses: actions/download-artifact@v4
+      with:
+        name: qualification-records
+        path: ./records
+
+    - name: Download qualification reports
+      continue-on-error: true
+      uses: actions/download-artifact@v4
+      with:
+        pattern: qualify-fragments-*
+        path: ./fragments
+        merge-multiple: true
+
+    # Without the release job's records, build them from the Tier 0 and Tier 1 reports.
+    # No --tag: there is no release, so T0.11 is not required and nothing is marked published.
+    - name: Collect qualification records
+      id: records
+      env:
+        BUILT_TARGETS: ${{ needs.prepare-matrix.outputs.gfx_targets }}
+        BUILT_OSES: ${{ needs.prepare-matrix.outputs.operating_systems }}
+        RUN_TIER1: ${{ needs.prepare-matrix.outputs.run_tier1 }}
+        RELEASE_RESULT: ${{ needs.create-release.result }}
+      run: |
+        set -euo pipefail
+        shopt -s nullglob
+        records=(records/qualification-llama-*.json)
+        if [ ${#records[@]} -gt 0 ]; then
+          echo "Using the ${#records[@]} record(s) the release job wrote."
+          source=release
+        else
+          echo "The release job wrote no records (create-release: $RELEASE_RESULT); building them from the Tier 0 and Tier 1 reports."
+          rm -rf records
+          python3 .github/qualify-rocm/aggregate.py \
+            --fragments-dir ./fragments \
+            --records-dir ./records \
+            --operating-systems "$BUILT_OSES" \
+            --gfx-targets "$BUILT_TARGETS" \
+            --require-tier1 "$RUN_TIER1"
+          source=fallback
+        fi
+        # The release exists only if create-release finished and these are its records.
+        published=false
+        if [ "$source" = release ] && [ "$RELEASE_RESULT" = success ]; then
+          published=true
+        fi
+        echo "published=$published" >> "$GITHUB_OUTPUT"
+        echo "Published: $published"
+
+    # build_result for every row, and the reason for an archive that has no record.
+    - name: Read build job results
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        set -uo pipefail
+        for attempt in 1 2 3; do
+          if gh api --paginate \
+              "repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/jobs?filter=latest&per_page=100" \
+              --jq '.jobs[] | {name, conclusion}' > jobs.jsonl; then
+            grep '"name":"build-' jobs.jsonl || true
+            exit 0
+          fi
+          echo "Could not read the run's jobs (attempt $attempt); retrying"
+          sleep $((attempt * 5))
+        done
+        echo "::warning::Could not read the run's jobs; build_result will be 'unknown'."
+        : > jobs.jsonl
+
+    - name: Publish to qualification-data branch
+      env:
+        GH_TOKEN: ${{ github.token }}
+        BUILT_TARGETS: ${{ needs.prepare-matrix.outputs.gfx_targets }}
+        BUILT_OSES: ${{ needs.prepare-matrix.outputs.operating_systems }}
+        ROCM_VERSION: ${{ needs.prepare-matrix.outputs.rocm_version }}
+        LLAMACPP_SHA: ${{ needs.prepare-matrix.outputs.llamacpp_sha }}
+        PUBLISHED: ${{ steps.records.outputs.published }}
+      run: |
+        set -euo pipefail
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        REPO_URL="https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git"
+        BRANCH="qualification-data"
+        TAG=$(python3 -c 'import glob, json; print(next((t for t in (json.load(open(p)).get("build", {}).get("release_tag") for p in sorted(glob.glob("records/qualification-llama-*.json"))) if t), ""))')
+
+        pushed=0
+        for attempt in 1 2 3 4 5; do
+          rm -rf data
+          found=0
+          git ls-remote --exit-code --heads "$REPO_URL" "$BRANCH" >/dev/null || found=$?
+          if [ "$found" -eq 0 ]; then
+            if ! git clone --quiet --depth 1 --branch "$BRANCH" "$REPO_URL" data; then
+              echo "Clone failed (attempt $attempt); retrying"; sleep $((attempt * 3)); continue
+            fi
+          elif [ "$found" -eq 2 ]; then
+            echo "$BRANCH does not exist yet; creating it"
+            git init --quiet data
+            git -C data checkout --quiet --orphan "$BRANCH"
+            git -C data remote add origin "$REPO_URL"
+          else
+            echo "Could not reach the repository (attempt $attempt); retrying"; sleep $((attempt * 3)); continue
+          fi
+
+          python3 .github/qualify-rocm/publish_qualification.py \
+            --records-dir records \
+            --data-dir data/qualification \
+            --operating-systems "$BUILT_OSES" \
+            --gfx-targets "$BUILT_TARGETS" \
+            --jobs-file jobs.jsonl \
+            --published "$PUBLISHED" \
+            --rocm-version "$ROCM_VERSION" \
+            --upstream-sha "$LLAMACPP_SHA"
+          # Keep the format description next to the data it describes.
+          cp .github/qualify-rocm/FEED.md data/qualification/SCHEMA.md
+
+          git -C data add -A
+          if git -C data diff --cached --quiet; then
+            echo "Nothing changed; the feed already holds this run."
+            pushed=1; break
+          fi
+          git -C data commit --quiet -m "qualification: run ${{ github.run_id }} (${TAG:-no release})"
+          if git -C data push --quiet origin "$BRANCH"; then
+            pushed=1; break
+          fi
+          echo "Push rejected (attempt $attempt), most likely because another run published first; retrying"
+          sleep $((attempt * 3))
+        done
+
+        [ "$pushed" = 1 ] || { echo "::error::Could not publish to $BRANCH after 5 attempts."; exit 1; }
+        echo "Feed: https://raw.githubusercontent.com/${{ github.repository }}/${BRANCH}/qualification/index.json"
