@@ -17,6 +17,12 @@ Tier 1 runs only on the gfx1151 archives, the one family with test hardware.
 Every other record says so (`hardware_validated: []`) rather than implying it
 was tested too.
 
+Without --tag the records describe a run that created no release: the release
+job never started, usually because a build or a check failed. Archives keep the
+names the build jobs gave them (llama-<os>-rocm-<family>-x64.zip), T0.11 is not
+required because only the release job can run it, and no record says it was
+published. publish_qualification.py uses this to put failed runs in the feed.
+
 Usage:
     python3 aggregate.py --fragments-dir fragments --tag b1357 \
         --records-dir qualification --operating-systems windows,ubuntu \
@@ -57,7 +63,7 @@ def find_test(record, test_id):
     return None
 
 
-def decide(record, tier1_required):
+def decide(record, tier1_required, final_check_required=True):
     """Return (qualified, reasons) for one archive's merged record."""
     reasons = []
     tiers = record.get("tiers", {})
@@ -65,7 +71,7 @@ def decide(record, tier1_required):
         reasons.append("tier0 missing")
     elif tiers["tier0"]["status"] == report.STATUS_FAIL:
         reasons.append("tier0=fail")
-    if find_test(record, "T0.11") is None:
+    if final_check_required and find_test(record, "T0.11") is None:
         reasons.append("T0.11 missing")
     if "tier1" in tiers:
         if tiers["tier1"]["status"] == report.STATUS_FAIL:
@@ -148,7 +154,8 @@ def write_step_summary(records, missing, publishable):
 def main():
     parser = argparse.ArgumentParser(description="Aggregate tier fragments into release records")
     parser.add_argument("--fragments-dir", required=True)
-    parser.add_argument("--tag", required=True, help="the release tag, e.g. b1357")
+    parser.add_argument("--tag",
+                        help="the release tag, e.g. b1357; leave out for a run that created no release")
     parser.add_argument("--records-dir", required=True,
                         help="write one qualification-<archive>.json per archive here")
     parser.add_argument("--operating-systems", required=True,
@@ -179,10 +186,12 @@ def main():
             missing.append((os_name, family))
             print(f"::error::No qualification report at all for {os_name} {family}.")
             continue
-        name = f"llama-{args.tag}-{os_name}-rocm-{family}-x64.zip"
+        name = (f"llama-{args.tag}-{os_name}-rocm-{family}-x64.zip" if args.tag
+                else f"llama-{os_name}-rocm-{family}-x64.zip")
         record = report.merge_fragments(group, extra_meta={"artifact": name,
                                                            "release_tag": args.tag})
-        qualified, reasons = decide(record, (os_name, family) in tier1_required)
+        qualified, reasons = decide(record, (os_name, family) in tier1_required,
+                                    final_check_required=bool(args.tag))
         record["qualified"] = qualified
         record["blocked_by"] = reasons
         summarise(record)
@@ -194,7 +203,8 @@ def main():
 
     publishable = not missing and all(r["qualified"] for r in records)
     for record in records:
-        record["published"] = publishable
+        # Without a tag there is no release, whatever the checks found.
+        record["published"] = publishable and bool(args.tag)
         stem = record["build"]["artifact"][: -len(".zip")]
         out = os.path.join(args.records_dir, f"qualification-{stem}.json")
         with open(out, "w", encoding="utf-8") as handle:
