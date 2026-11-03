@@ -57,9 +57,11 @@ one row per family per operating system — fourteen today.
 build_id = "<run_id>-<os>-rocm-<gfx_family>"     e.g. 41449736969-windows-rocm-gfx1151
 ```
 
-Unique per archive per run. Publishing is an upsert keyed on `build_id`:
-re-running a run replaces that run's rows and files instead of adding new ones.
-`run_attempt` records which attempt the row came from.
+Unique per archive per run. Publishing is an upsert keyed on `build_id`.
+A re-run of a run keeps its `run_id`, so it replaces that run's rows and its
+`reports/` files instead of adding new ones; the latest attempt's values win.
+`run_attempt` records which attempt published the rows.
+A new run has a new `run_id` and adds new rows.
 
 ## Which runs appear
 
@@ -84,31 +86,111 @@ Not in the feed:
 {
   "schema_version": 1,
   "repo": "lemonade-sdk/llamacpp-rocm",
-  "updated_at": "2026-11-02T14:19:43Z",       // generated_at of the newest row
+  "updated_at": "2026-11-03T13:21:07Z",       // generated_at of the newest row
   "builds": [                                   // newest run first
+    // ... the other rows of run 41500000001 ...
+
+    // An archive that was built and checked, and failed a Tier 0 check.
+    {
+      "build_id": "41500000001-windows-rocm-gfx110X",
+      "tag": null,                              // no release was created by this run
+      "upstream_sha": "e1f7a2c9b04d5d3c6a8f0b2e4d6c8a0b1c3d5e7f",
+      "artifact": "llama-windows-rocm-gfx110X-x64.zip",   // the build job's name for it: no tag
+      "os": "windows",
+      "gfx_family": "gfx110X",
+      "rocm_version": "10.3.0a20261103",
+      "gfx_target": null,                       // Tier 1 did not run on this archive
+      "hardware_validated": false,
+      "gfx": { "requested": 4, "present": 4, "missing": [] },
+      "generated_at": "2026-11-03T13:21:07Z",
+      "run_id": "41500000001",
+      "run_attempt": 1,
+      "run_url": "https://github.com/lemonade-sdk/llamacpp-rocm/actions/runs/41500000001",
+      "event": "schedule",
+      "build_result": "pass",
+      "tests": { "passed": 6, "failed": 1, "warned": 0, "skipped": 2, "missing": 0, "not_applicable": 7, "total": 16 },
+      "qualified": false,                       // a gating Tier 0 check failed
+      "published": false,
+      "overall": "fail",
+      "tier0": "fail",
+      "tier1": "not_applicable",                // Tier 1 only runs on gfx1151
+      "blocked_by": ["tier0=fail"],
+      "blocking_tests": ["T0.3"],
+      "results": {
+        "T0.1": "pass", "T0.2": "pass", "T0.3": "fail", "T0.5": "pass",
+        "T0.6": "skip", "T0.7": "skip", "T0.8": "pass", "T0.9": "pass",
+        "T0.11": "not_applicable", "T0.13": "pass",   // T0.11 only runs when a release is made
+        "T1.1": "not_applicable", "T1.2": "not_applicable", "T1.3": "not_applicable",
+        "T1.4": "not_applicable", "T1.5": "not_applicable", "T1.6": "not_applicable"
+      },
+      "report_url": "reports/41500000001-windows-rocm-gfx110X.json"
+    },
+
+    // A placeholder: this archive's build failed, so there was nothing to check.
+    {
+      "build_id": "41500000001-ubuntu-rocm-gfx908",
+      "tag": null,
+      "upstream_sha": "e1f7a2c9b04d5d3c6a8f0b2e4d6c8a0b1c3d5e7f",
+      "artifact": "llama-ubuntu-rocm-gfx908-x64.zip",
+      "os": "ubuntu",
+      "gfx_family": "gfx908",
+      "rocm_version": "10.3.0a20261103",
+      "gfx_target": null,
+      "hardware_validated": false,
+      "gfx": { "requested": 1, "present": 0, "missing": ["gfx908"] },   // no archive, so nothing is present
+      "generated_at": "2026-11-03T13:21:07Z",
+      "run_id": "41500000001",
+      "run_attempt": 1,
+      "run_url": "https://github.com/lemonade-sdk/llamacpp-rocm/actions/runs/41500000001",
+      "event": "schedule",
+      "build_result": "fail",                   // the build job failed
+      "tests": { "passed": 0, "failed": 0, "warned": 0, "skipped": 0, "missing": 9, "not_applicable": 7, "total": 16 },
+      "qualified": false,
+      "published": false,
+      "overall": "fail",
+      "tier0": "missing",                       // should have run, but there was no archive
+      "tier1": "not_applicable",
+      "blocked_by": ["build failed"],
+      "blocking_tests": [],
+      "results": {
+        "T0.1": "missing", "T0.2": "missing", "T0.3": "missing", "T0.5": "missing",
+        "T0.6": "missing", "T0.7": "missing", "T0.8": "missing", "T0.9": "missing",
+        "T0.11": "not_applicable", "T0.13": "missing",
+        "T1.1": "not_applicable", "T1.2": "not_applicable", "T1.3": "not_applicable",
+        "T1.4": "not_applicable", "T1.5": "not_applicable", "T1.6": "not_applicable"
+      },
+      "report_url": "reports/41500000001-ubuntu-rocm-gfx908.json"
+    },
+
+    // ... the rows of earlier runs ...
+
+    // A fully passing gfx1151 archive from a run that created release b1362.
     {
       "build_id": "41449736969-windows-rocm-gfx1151",
-      "tag": "b1362",                           // this repository's release tag, or null if the run released nothing
+      "tag": "b1362",                           // this repository's release tag; set only when that release exists
       "upstream_sha": "cd8427d018c07eefab6c110f7f115c31ec4c6157",
       "artifact": "llama-b1362-windows-rocm-gfx1151-x64.zip",
       "os": "windows",                          // windows | ubuntu
       "gfx_family": "gfx1151",                  // the GPU family this archive serves
       "rocm_version": "10.3.0a20261102",        // the ROCm nightly bundled inside
-      "gfx_target": "gfx1151",                  // the target tested on real hardware, or null
-      "hardware_validated": true,               // did Tier 1 run on a GPU
+      "gfx_target": "gfx1151",                  // the one gfx target Tier 1 ran on; null when Tier 1 did not run
+      "hardware_validated": true,               // Tier 1 ran on a real GPU (see tier1 for how it went)
       "gfx": { "requested": 1, "present": 1, "missing": [] },
       "generated_at": "2026-11-02T14:19:43Z",   // ISO-8601 UTC, the time axis
       "run_id": "41449736969",
-      "run_attempt": 1,
+      "run_attempt": 1,                         // the attempt that published this row
       "run_url": "https://github.com/lemonade-sdk/llamacpp-rocm/actions/runs/41449736969",
       "event": "schedule",                      // schedule | workflow_dispatch
-      "build_result": "success",                // how this archive's build job ended
-      "tests": { "passed": 14, "failed": 0, "warned": 0, "skipped": 2, "missing": 0, "total": 16 },
-      "qualified": true,                        // this archive passed its checks
-      "published": true,                        // this archive shipped in this run's release
-      "overall": "pass",                        // pass | warn | fail
-      "blocked_by": [],                         // e.g. ["tier0=fail"]
-      "blocking_tests": [],                     // e.g. ["T0.3"]
+      "build_result": "pass",                   // pass | fail | cancelled | skipped | unknown
+      "tests": { "passed": 14, "failed": 0, "warned": 0, "skipped": 2, "missing": 0, "not_applicable": 0, "total": 16 },
+      "qualified": true,                        // passed every gating check required of it: Tier 0 (and T0.11 when
+                                                // a release was made), plus Tier 1 for gfx1151. Not whether it shipped.
+      "published": true,                        // shipped in this run's release
+      "overall": "pass",                        // pass | warn | fail; fail exactly when qualified is false
+      "tier0": "pass",                          // pass | warn | fail | missing
+      "tier1": "pass",                          // pass | warn | fail | missing | not_applicable
+      "blocked_by": [],                         // why it did not qualify, e.g. ["tier0=fail"]
+      "blocking_tests": [],                     // the gating tests that failed, e.g. ["T0.3"]
       "results": {
         "T0.1": "pass", "T0.2": "pass", "T0.3": "pass", "T0.5": "pass",
         "T0.6": "skip", "T0.7": "skip", "T0.8": "pass", "T0.9": "pass",
@@ -122,54 +204,83 @@ Not in the feed:
 }
 ```
 
+A passing archive of any other family looks like the gfx1151 row, except that:
+- `gfx_target` is `null`,
+- `hardware_validated` is `false`,
+- `tier1` and T1.1–T1.6 are `not_applicable`, and
+- `tests.not_applicable` is 6.
+
 ### Field notes
 
 - **`results`** has one entry per test: T0.1, T0.2, T0.3, T0.5, T0.6, T0.7,
   T0.8, T0.9, T0.11, T0.13 and T1.1–T1.6, as listed in [README.md](README.md).
-  Values are `pass | fail | warn | skip | missing`. A test that did not run at
-  all is `missing`. A test id added to the suite later appears here as soon as
-  it runs, so the failure-frequency and heatmap views can be built from
-  `index.json` alone.
+  A test id added to the suite later appears here as soon as it runs, so the
+  failure-frequency and heatmap views can be built from `index.json` alone.
+  The values:
+  - `pass`: the check ran and passed.
+  - `fail`: the check ran and found a problem. It blocks the archive only if
+    the test is gating; T1.4 and T1.5 never block.
+  - `warn`: the check ran and found something worth recording that does not
+    block, e.g. no `.kpack` kernel packs (T0.13) or programs without the
+    executable bit (T0.11).
+  - `skip`: the check ran but could not apply, e.g. T0.6 and T0.7 on Windows
+    (Linux-only checks), or T1.2–T1.6 when the server never started (T1.1
+    then fails).
+  - `missing`: the check should have run for this archive and did not. This
+    always means something went wrong.
+  - `not_applicable`: the check is never run for this archive: T1.1–T1.6 on
+    every family except gfx1151 (the one family with test hardware), and T0.11
+    on a run that created no release.
 - **`tests`** counts the values in `results`, so
-  `passed + failed + warned + skipped + missing == total` always holds.
-- **`missing` is not `failed`.** Tier 1 runs only on the gfx1151 archives, the
-  one family with test hardware. Every other archive has all six T1 tests
-  `missing` and `hardware_validated: false`, and still qualifies. Showing that
-  as a failure would paint a shipped archive red. Use `qualified`, not the
-  counts, to decide pass or fail. The Windows archives also report T0.6 and
-  T0.7 as `skip`: both are Linux-only checks.
-- **`qualified`** is the verdict for this one archive: Tier 0 ran and did not
-  fail; T0.11 passed (only when the run created a release, see below); and, for
-  gfx1151, Tier 1 ran and did not fail. A `warn` does not block, and tests marked
-  non-gating in README.md never affect it.
+  `passed + failed + warned + skipped + missing + not_applicable == total`
+  always holds. Use `qualified`, not the counts, to decide pass or fail.
+- **`qualified`** is the verdict for this one archive: it passed every gating
+  check required of it. That is Tier 0, plus T0.11 when the run created a
+  release, plus Tier 1 for gfx1151. A `warn` does not block, and non-gating
+  tests never affect it. It does not say whether the archive shipped
+  (`published`) or ran on a GPU (`tier1`, `hardware_validated`).
+- **`overall`** is `fail` exactly when `qualified` is `false`. Otherwise it is
+  the worst result of the gating tests that ran: `warn` if any of them warned,
+  else `pass`.
+- **`tier0` / `tier1`** are each tier's result: `pass`, `warn` or `fail` when
+  the tier ran; `missing` when it should have run and did not; and, for
+  `tier1`, `not_applicable` on every family except gfx1151.
 - **`published`** says whether this archive shipped. The release is all or
-  nothing: it is created only when every archive of the run qualifies. So an archive
-  can have `qualified: true` and `published: false` because another archive
-  failed. Within a run, `published` is the same on every row. It is `true` only
-  when the run's `create-release` job finished successfully. The record in
-  `reports/` carries its own `published` flag, written just before the release
-  is created; when the two disagree, trust this one.
+  nothing: it is created only when every archive of the run qualifies. So an
+  archive can have `qualified: true` and `published: false` because another
+  archive failed. Within a run, `published` is the same on every row. It is
+  `true` only when the run's `create-release` job finished successfully. The
+  record in `reports/` carries its own `published` flag, written just before
+  the release is created; when the two disagree, trust this one.
 - **`tag`** is this repository's release tag (`b1362`), which is not the
-  llama.cpp build number. It only exists when the run created a release; on
-  every other run it is `null`, and `artifact` is the name the build job gave
-  the archive (`llama-windows-rocm-gfx1151-x64.zip`), without a tag.
-- **T0.11** (the published archive is byte-for-byte the tested one) runs only
-  inside the release job. On a run that created no release it is `missing`, and
-  it does not count against `qualified`.
-- **`build_result`** is how the archive's build job ended, as GitHub reports it:
-  `success`, `failure`, `cancelled`, `skipped`, `timed_out`, …, or `unknown`
-  when the job list could not be read.
-- **`blocked_by`** gives the reasons the archive did not qualify: `tier0=fail`,
-  `tier0 missing`, `T0.11 missing`, `tier1=fail`, `tier1 missing`, and on
-  placeholder rows `build failed`, `build cancelled`, `build skipped` or
-  `no report`. **`blocking_tests`** lists the gating tests that failed. Both
-  are empty when the archive qualified.
+  llama.cpp build number. It is set only when `published` is `true`. Otherwise
+  it is `null`, even if the release job had picked a tag (that tag was never
+  created, and the next run reuses it), and `artifact` is the name the build
+  job gave the archive (`llama-windows-rocm-gfx1151-x64.zip`), without a tag.
+- **`build_result`** is how the archive's build job ended: `pass`, `fail`
+  (including a timeout), `cancelled`, `skipped`, or `unknown` when the run's
+  job list could not be read.
+- **`run_attempt`** is the attempt of the run that published the row. It is the
+  same on every row of a run.
+- **`blocked_by`** gives the reasons the archive did not qualify. It is empty
+  when it qualified. The values:
+  - `tier0=fail`: a gating Tier 0 check failed (a T0.11 failure counts here);
+  - `tier0 missing`: no Tier 0 report;
+  - `T0.11 missing`: the release job did not run T0.11 on it;
+  - `tier1=fail`: a gating Tier 1 check failed;
+  - `tier1 missing`: gfx1151 had no Tier 1 report;
+  - on placeholder rows only: `build failed`, `build cancelled`, `build skipped`
+    or `no report`.
+- **`blocking_tests`** lists the gating tests that failed; empty when none did.
 - **`gfx`** summarises the check that every gfx target of the family was
   compiled into the GPU backend (T0.3): how many were requested, how many are
   present, and the names of any that are missing.
-- **`gfx_target` / `hardware_validated`** say which single target was actually
-  tested on a GPU. Every other target in `gfx.requested` was only checked for
-  presence, never run. Don't present those as tested.
+- **`gfx_target`** is the one gfx target Tier 1 actually ran on, and `null` when
+  Tier 1 did not run. Today that is gfx1151 on the gfx1151 rows and `null`
+  everywhere else. **`hardware_validated`** is `true` when Tier 1 ran on a real
+  GPU, whether or not it then passed; `tier1` gives the outcome. Every target
+  in `gfx.requested` other than `gfx_target` was only checked for presence,
+  never run. Don't present those as tested.
 - **`rocm_version`** is the full TheRock nightly version bundled inside the
   archive. One nightly is pinned per run, so every row of a run has the same
   value.
@@ -182,28 +293,41 @@ An archive with no record at all gets a placeholder row. This happens when its
 build failed, so there was nothing to check, or when no check reported on it.
 In a placeholder row:
 
-- every test is `missing`, `qualified` and `published` are `false`, and
-  `overall` is `fail`;
-- `blocked_by` says why: `build failed` (also for a build that timed out),
-  `build cancelled`, `build skipped`, or `no report` when the build succeeded or
-  its result is unknown;
+- every test that applies is `missing` (the others stay `not_applicable`),
+  `tier0` is `missing`, `qualified` and `published` are `false`, and `overall`
+  is `fail`;
+- `blocked_by` follows `build_result`: `build failed`, `build cancelled`,
+  `build skipped`, or `no report` when the build passed or its result is
+  `unknown`;
 - `gfx.present` is `0` and every requested target is in `gfx.missing`, because
   there is no binary;
-- `tag`, `gfx_target` are `null` and `hardware_validated` is `false`.
+- `tag` and `gfx_target` are `null`, and `hardware_validated` is `false`.
+
+The second row of the [`index.json`](#indexjson) example is a placeholder.
 
 ## `reports/<build_id>.json`
 
-The `qualification-<archive>.json` record exactly as `aggregate.py` wrote it
-(`kind: "qualification_record"`): the `build` metadata, `overall`, `qualified`,
-`blocked_by`, `published`, raw `counts`, the `gfx` audit, the `versions` it was
-built from, the `bundle` file list, and `tiers` with every test. When the run
-created a release, the same content is attached to it. Its own `build.build_id`
-(`<artifact>@<run_id>`) differs from the feed's `build_id`; use the feed's.
+The `qualification-<archive>.json` record exactly as `aggregate.py` wrote it (`kind: "qualification_record"`):
+- the `build` metadata,
+- `overall`, `qualified`,
+- `blocked_by`, `published`,
+- raw `counts`,
+- the `gfx` audit,
+- the `versions` it was built from,
+- the `bundle` file list, and
+- `tiers` with every test.
+When the run created a release, the same content is attached to it. Its own `build.build_id` (`<artifact>@<run_id>`) differs from the feed's `build_id`; use the feed's.
 
-For a placeholder row it is a placeholder (`kind: "qualification_placeholder"`)
-with the same top-level fields: `build` metadata, `overall: "fail"`,
-`qualified: false`, `published: false`, `blocked_by`, `build_result`, the `gfx`
-block, zero `counts` and empty `tiers`.
+For a placeholder row it is a placeholder (`kind: "qualification_placeholder"`) with the same top-level fields:
+- `build` metadata,
+- `overall: "fail"`,
+- `qualified: false`,
+- `published: false`,
+- `blocked_by`,
+- `build_result` (in the feed's vocabulary),
+- the `gfx` block,
+- zero `counts` and
+- empty `tiers`.
 
 ## `latest/<os>-rocm-<gfx_family>.json`
 
@@ -228,6 +352,9 @@ family, with ROCm bundled inside. Everything else in the row means the same.
 | `version_qualified` | both archives of a ROCm version qualified | not present; see `published` |
 | `published` | — | the archive shipped in this run's release |
 | `build_result` | — | how the archive's build job ended |
+| `tier0`, `tier1` | — | each tier's result |
+| `tests.not_applicable`, `not_applicable` result | — | a check never run for this archive |
+| `overall` | worst test that ran | also `fail` whenever `qualified` is `false` |
 | `results` keys | T0.1–T0.12, T1.1–T1.5 | T0.1–T0.3, T0.5–T0.9, T0.11, T0.13, T1.1–T1.6 |
 | failed build | no row | a placeholder row |
 | `latest/` file | `<os>-rocm-<rocm_version>.json` | `<os>-rocm-<gfx_family>.json` |

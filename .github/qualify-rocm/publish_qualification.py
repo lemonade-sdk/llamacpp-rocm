@@ -14,8 +14,10 @@ Publishing the same run again (a re-run) replaces its rows and files rather than
 Every archive the run was meant to build gets a row.
 An archive with no record (its build failed / no check ever reported on it) gets a placeholder row and a placeholder report saying so. Therefore, a failing build shows up in the feed instead of silently leaving a gap.
 
-A test the record does not contain is reported as "missing" and counted separately -- NOT folded into "failed".
-Tier 1 only ever runs on the gfx1151 archives, so every other archive has its T1 tests "missing" and can still qualify. Counting that as a failure would show a published archive as red.
+A test the record does not contain is reported as either:
+  - "not_applicable": it is never run for this archive -- Tier 1 on every family except gfx1151 (the one family with test hardware), and T0.11 on a run that created no release; or
+  - "missing": it should have run and did not.
+Neither is folded into "failed"; `qualified` is the verdict.
 
 The contract this writes is FEED.md, copied to the branch as SCHEMA.md.
 
@@ -48,15 +50,21 @@ TIER_TESTS = {
               "T0.8", "T0.9", "T0.11", "T0.13"],
     "tier1": ["T1.1", "T1.2", "T1.3", "T1.4", "T1.5", "T1.6"],
 }
-KNOWN_TESTS = [test_id for ids in TIER_TESTS.values() for test_id in ids]
 
 STATUS_MISSING = "missing"
-BUILD_UNKNOWN = "unknown"
+STATUS_NOT_APPLICABLE = "not_applicable"
+FINAL_CHECK = "T0.11"
 
-# Why a placeholder row has no record, by the conclusion of its build job.
+# build_result is GitHub's conclusion for the archive's build job, in the feed's own vocabulary.
+# Any other conclusion (failure, timed_out, startup_failure, ...) is "fail".
+BUILD_PASS = "pass"
+BUILD_FAIL = "fail"
+BUILD_UNKNOWN = "unknown"
+BUILD_RESULTS = {"success": BUILD_PASS, "cancelled": "cancelled", "skipped": "skipped"}
+
+# Why a placeholder row has no record, by its build_result.
 PLACEHOLDER_REASONS = {
-    "failure": "build failed",
-    "timed_out": "build failed",
+    BUILD_FAIL: "build failed",
     "cancelled": "build cancelled",
     "skipped": "build skipped",
 }
@@ -131,7 +139,9 @@ def load_build_results(jobs_file):
         if not match:
             continue
         family = match.group("values").split(",")[0].strip()
-        results[(match.group("os"), family)] = job.get("conclusion") or BUILD_UNKNOWN
+        conclusion = job.get("conclusion")
+        results[(match.group("os"), family)] = (
+            BUILD_RESULTS.get(conclusion, BUILD_FAIL) if conclusion else BUILD_UNKNOWN)
     return results
 
 
@@ -146,6 +156,31 @@ def make_build_id(run_id, os_name, family):
     return build_id
 
 
+def tier_applies(record, tier):
+    """Tier 1 only applies to the family with test hardware, unless it ran anyway."""
+    if tier in record.get("tiers", {}) or tier != "tier1":
+        return True
+    return record.get("build", {}).get("gfx_family") == families.HARDWARE_VALIDATED_FAMILY
+
+
+def tier_status(record, tier):
+    """pass | warn | fail for a tier that reported, otherwise missing or not_applicable."""
+    reported = record.get("tiers", {}).get(tier)
+    if reported:
+        return reported.get("status")
+    return STATUS_MISSING if tier_applies(record, tier) else STATUS_NOT_APPLICABLE
+
+
+def absent_status(record, tier, test_id):
+    """What a test the record does not contain is reported as."""
+    if not tier_applies(record, tier):
+        return STATUS_NOT_APPLICABLE
+    # T0.11 only runs in the release job, which assigns the release tag.
+    if test_id == FINAL_CHECK and not record.get("build", {}).get("release_tag"):
+        return STATUS_NOT_APPLICABLE
+    return STATUS_MISSING
+
+
 def collect_results(record):
     """Per-test status across the known suite, plus any test it does not list."""
     by_id = {}
@@ -153,8 +188,9 @@ def collect_results(record):
         for test in tier.get("tests", []):
             by_id.setdefault(test.get("id"), test)
 
-    results = {test_id: by_id[test_id]["status"] if test_id in by_id else STATUS_MISSING
-               for test_id in KNOWN_TESTS}
+    results = {test_id: by_id[test_id]["status"] if test_id in by_id
+               else absent_status(record, tier, test_id)
+               for tier, ids in TIER_TESTS.items() for test_id in ids}
     for test_id in sorted((t for t in by_id if t not in results), key=_test_order):
         results[test_id] = by_id[test_id]["status"]
 
@@ -206,13 +242,22 @@ def build_entry(record, build_id, build_result, published, run_url, event, run_a
     build = record.get("build", {})
     results, blocking = collect_results(record)
     statuses = list(results.values())
+    # The record's own flag is set before the release is created, so it is
+    # only trusted when the release job also finished successfully.
+    published = bool(published and record.get("published") is True)
+
+    # A tag is only shown when its release exists: a tag the release job
+    # assigned but never created is handed out again by the next run.
+    artifact = build.get("artifact")
+    if not published:
+        artifact = f"llama-{build.get('os')}-rocm-{build.get('gfx_family')}-x64.zip"
 
     gfx = record.get("gfx", {})
     return {
         "build_id": build_id,
-        "tag": build.get("release_tag"),
+        "tag": build.get("release_tag") if published else None,
         "upstream_sha": build.get("upstream_sha"),
-        "artifact": build.get("artifact"),
+        "artifact": artifact,
         "os": build.get("os"),
         "gfx_family": build.get("gfx_family"),
         "rocm_version": build.get("rocm_version"),
@@ -225,7 +270,8 @@ def build_entry(record, build_id, build_result, published, run_url, event, run_a
         },
         "generated_at": record.get("generated_at"),
         "run_id": build.get("run_id"),
-        "run_attempt": _int(build.get("run_attempt")) or run_attempt,
+        # The attempt that published this row, the same for every row of the run.
+        "run_attempt": run_attempt if run_attempt is not None else _int(build.get("run_attempt")),
         "run_url": run_url,
         "event": event,
         "build_result": build_result,
@@ -235,13 +281,14 @@ def build_entry(record, build_id, build_result, published, run_url, event, run_a
             "warned": statuses.count("warn"),
             "skipped": statuses.count("skip"),
             "missing": statuses.count(STATUS_MISSING),
+            "not_applicable": statuses.count(STATUS_NOT_APPLICABLE),
             "total": len(statuses),
         },
         "qualified": bool(record.get("qualified")),
-        # The record's own flag is set before the release is created, so it is
-        # only trusted when the release job also finished successfully.
-        "published": bool(published and record.get("published") is True),
+        "published": published,
         "overall": record.get("overall"),
+        "tier0": tier_status(record, "tier0"),
+        "tier1": tier_status(record, "tier1"),
         "blocked_by": record.get("blocked_by", []),
         "blocking_tests": blocking,
         "results": results,

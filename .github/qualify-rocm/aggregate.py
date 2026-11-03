@@ -13,11 +13,14 @@ An archive qualifies when:
     published archive is the tested archive);
   - Tier 1, where it is required, ran and none of its gating checks failed.
 
+An archive that does not qualify always has overall "fail", even when the reason
+is a tier that never reported rather than a failed check.
+
 Tier 1 runs only on the gfx1151 archives, the one family with test hardware.
 Every other record says so (`hardware_validated: []`) rather than implying it
 was tested too.
 
-Without --tag the records describe a run that created no release: the release
+Without --tag, the records describe a run that created no release: the release
 job never started, usually because a build or a check failed. Archives keep the
 names the build jobs gave them (llama-<os>-rocm-<family>-x64.zip), T0.11 is not
 required because only the release job can run it, and no record says it was
@@ -194,6 +197,9 @@ def main():
                                     final_check_required=bool(args.tag))
         record["qualified"] = qualified
         record["blocked_by"] = reasons
+        # A tier that never reported fails no test, so the test rollup alone could still say "pass".
+        if not qualified:
+            record["overall"] = report.STATUS_FAIL
         summarise(record)
         records.append(record)
         print(f"{name}: overall={record['overall']} qualified={qualified} "
