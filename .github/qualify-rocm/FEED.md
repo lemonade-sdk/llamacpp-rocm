@@ -80,7 +80,7 @@ Not in the feed:
   nightly could be found. Nothing was pinned or built. The nightly-failure
   alert reports these.
 
-## `index.json`
+## Example `index.json`
 
 ```jsonc
 {
@@ -319,6 +319,7 @@ The `qualification-<archive>.json` record exactly as `aggregate.py` wrote it (`k
 - the `versions` it was built from,
 - the `bundle` file list, and
 - `tiers` with every test.
+
 When the run created a release, the same content is attached to it. Its own `build.build_id` (`<artifact>@<run_id>`) differs from the feed's `build_id`; use the feed's.
 
 For a placeholder row it is a placeholder (`kind: "qualification_placeholder"`) with the same top-level fields:
@@ -343,25 +344,34 @@ cannot move it backwards.
 
 ## Differences from lemonade-sdk/llama.cpp
 
-That feed has one archive per ROCm version; this one has one archive per GPU
-family, with ROCm bundled inside. Everything else in the row means the same.
+That feed has one archive per ROCm version, with ROCm installed separately by the user. This one has one archive per GPU family, with ROCm bundled inside.
 
-| Field | lemonade-sdk/llama.cpp | this repository |
+Everything else in the row means the same:
+- `published`,
+- `build_result`,
+- `tier0`, `tier1`, `not_applicable`,
+- placeholder rows,
+- `overall` being `fail` exactly when `qualified` is `false`,
+- `run_attempt` being the publishing attempt, and
+- runs ordered by `run_id`.
+
+| Field | this repository | lemonade-sdk/llama.cpp |
 |---|---|---|
-| `build_id` | `<run_id>-<os>-rocm-<rocm_version>` | `<run_id>-<os>-rocm-<gfx_family>` |
-| `tag` | upstream llama.cpp build number | this repository's release tag, or `null` |
-| `os` | `win` \| `ubuntu` | `windows` \| `ubuntu` |
-| `rocm_version` | `7.14` \| `10.0` \| `10.1`, one per archive | full nightly, e.g. `10.3.0a20261102`, same for the whole run |
-| `gfx_family` | — | the family the archive serves |
-| `version_qualified` | both archives of a ROCm version qualified | not present; see `published` |
-| `published` | — | the archive shipped in this run's release |
-| `build_result` | — | how the archive's build job ended |
-| `tier0`, `tier1` | — | each tier's result |
-| `tests.not_applicable`, `not_applicable` result | — | a check never run for this archive |
-| `overall` | worst test that ran | also `fail` whenever `qualified` is `false` |
-| `results` keys | T0.1–T0.12, T1.1–T1.5 | T0.1–T0.3, T0.5–T0.9, T0.11, T0.13, T1.1–T1.6 |
-| failed build | no row | a placeholder row |
-| `latest/` file | `<os>-rocm-<rocm_version>.json` | `<os>-rocm-<gfx_family>.json` |
+| `schema_version` | `1` | `2` (same row shape) |
+| `build_id` | `<run_id>-<os>-rocm-<gfx_family>` | `<run_id>-<os>-rocm-<rocm_version>` |
+| rows per run | 14 | 6 |
+| `tag` | this repository's release tag; `null` unless `published` | llama.cpp build number; set on every row |
+| `artifact` | the untagged CI name unless `published` | always the release name |
+| `os` | `windows` \| `ubuntu` | `win` \| `ubuntu` |
+| `rocm_version` | full nightly, e.g. `10.3.0a20261102`, same for the whole run | `7.14` \| `10.0` \| `10.1`, one per archive |
+| `gfx_family` | the GPU family the archive serves | — |
+| `version_qualified` | not present (a release here is all or nothing) | both archives of a ROCm version exist and qualified |
+| `tier1` | Tier 1 runs only on gfx1151 (`not_applicable` elsewhere); `missing` blocks | Tier 1 runs on every archive; `missing` does not block |
+| `not_applicable` | T1.x outside gfx1151; T0.11 on a run with no release | T0.10, T0.11 on an archive dropped before the release checks |
+| `blocked_by` | also `tier1 missing`, `T0.11 missing` | no `tier1 missing`, no `T0.11 missing` |
+| `results` keys | T0.1–T0.3, T0.5–T0.9, T0.11, T0.13, T1.1–T1.6 | T0.1–T0.12, T1.1–T1.5 |
+| placeholder `gfx` | requested targets, all in `missing` | all zero |
+| `latest/` file | `<os>-rocm-<gfx_family>.json` | `<os>-rocm-<rocm_version>.json` |
 
 ## Versioning and growth
 
