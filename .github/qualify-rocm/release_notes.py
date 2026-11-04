@@ -88,14 +88,14 @@ def render(args, oses, targets, sizes, validated):
 
     notes = []
     if validated:
-        notes.append("✅ Hardware-validated: this family's archives were run on a real GPU "
-                     "for this release.")
+        notes.append("✅ next to a gfx family means its archives were hardware-validated "
+                     "(run on a real GPU) for this release.")
     notes += ["Every archive passed the release checks.",
               "Each archive bundles its ROCm runtime, so nothing else needs to be installed.",
               "If your GPU's gfx target isn't listed here, these builds don't support it."]
 
     build_date = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
-    lines += ["", " ".join(notes), "", "---", "",
+    lines += [""] + [f"- {note}" for note in notes] + ["", "---", "",
               f"**Build Number**: {args.tag}",
               f"**ROCm Version**: {args.rocm_version}",
               f"**Llama.cpp Commit Hash**: {args.llamacpp_short}",
