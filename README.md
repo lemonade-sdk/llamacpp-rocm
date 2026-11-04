@@ -19,7 +19,7 @@
   <img src="https://img.shields.io/badge/OS-Windows%20%7C%20Ubuntu-0078D6?logo=windows&logoColor=white" alt="Platform: Windows | Ubuntu" />
 </a>
 <a href="#-supported-devices" title="GPU targets">
-  <img src="https://img.shields.io/badge/GPU-gfx110X%20%7C%20gfx1150%20%7C%20gfx1151%20%7C%20gfx1152%20%7C%20gfx117X%20%7C%20gfx120X%20%7C%20gfx103X%20%7C%20gfx90a%20%7C%20gfx908-00B04F?logo=amd&logoColor=white" alt="GPU Targets" />
+  <img src="https://img.shields.io/badge/GPU-gfx110X%20%7C%20gfx1150%20%7C%20gfx1151%20%7C%20gfx1152%20%7C%20gfx1153%20%7C%20gfx117X%20%7C%20gfx120X%20%7C%20gfx103X%20%7C%20gfx90a%20%7C%20gfx908-00B04F?logo=amd&logoColor=white" alt="GPU Targets" />
 </a>
 
 
@@ -34,6 +34,7 @@ This build specifically targets the following GPU architectures:
 - **gfx1151** (STX Halo APU) - Ryzen AI MAX+ Pro 395
 - **gfx1150** (STX Point APU) - Ryzen AI 300
 - **gfx1152** (Krackan Point APU) - Ryzen AI 7 350 / Ryzen AI 5 340 (Radeon 860M/840M iGPU)
+- **gfx1153** (Krackan Point APU) - Ryzen AI 5 330 (Radeon 820M iGPU)
 - **gfx117X** - gfx1170 and gfx1171
 - **gfx120X** (RDNA4 GPUs) - includes AMD Radeon RX 9070 XT/GRE/9070, RX 9060 XT/9060
 - **gfx110X** (RDNA3 GPUs) - includes AMD Radeon dGPUs: PRO W7900/W7800/W7700/W7600, RX 7900 XTX/XT/GRE, RX 7800 XT, RX 7700 XT/7700, RX 7600 XT/7600 and iGPUs: Radeon 780M/760M/740M
@@ -47,7 +48,7 @@ This build specifically targets the following GPU architectures:
 
 Our automated GitHub Actions workflow creates nightly builds for:
 - **Windows** and **Ubuntu** operating systems
-- **Multiple GPU targets**: `gfx1151`, `gfx1152`, `gfx1150`, `gfx117X`, `gfx110X`, `gfx120X`, `gfx103X`, `gfx90a`, `gfx908`
+- **Multiple GPU targets**: `gfx1151`, `gfx1152`, `gfx1153`, `gfx1150`, `gfx117X`, `gfx110X`, `gfx120X`, `gfx103X`, `gfx90a`, `gfx908`
 - **ROCm™ built-in** - complete runtime libraries included
 
 
@@ -57,6 +58,7 @@ Our automated GitHub Actions workflow creates nightly builds for:
 | **gfx1150** | [![Download Ubuntu gfx1150](https://img.shields.io/badge/Download-Ubuntu%20gfx1150-blue)](https://github.com/lemonade-sdk/llamacpp-rocm/releases/latest) | [![Download Windows gfx1150](https://img.shields.io/badge/Download-Windows%20gfx1150-green)](https://github.com/lemonade-sdk/llamacpp-rocm/releases/latest) |
 | **gfx1151** | [![Download Ubuntu gfx1151](https://img.shields.io/badge/Download-Ubuntu%20gfx1151-blue)](https://github.com/lemonade-sdk/llamacpp-rocm/releases/latest) | [![Download Windows gfx1151](https://img.shields.io/badge/Download-Windows%20gfx1151-green)](https://github.com/lemonade-sdk/llamacpp-rocm/releases/latest) |
 | **gfx1152** | [![Download Ubuntu gfx1152](https://img.shields.io/badge/Download-Ubuntu%20gfx1152-blue)](https://github.com/lemonade-sdk/llamacpp-rocm/releases/latest) | [![Download Windows gfx1152](https://img.shields.io/badge/Download-Windows%20gfx1152-green)](https://github.com/lemonade-sdk/llamacpp-rocm/releases/latest) |
+| **gfx1153** | [![Download Ubuntu gfx1153](https://img.shields.io/badge/Download-Ubuntu%20gfx1153-blue)](https://github.com/lemonade-sdk/llamacpp-rocm/releases/latest) | [![Download Windows gfx1153](https://img.shields.io/badge/Download-Windows%20gfx1153-green)](https://github.com/lemonade-sdk/llamacpp-rocm/releases/latest) |
 | **gfx117X** | [![Download Ubuntu gfx117X](https://img.shields.io/badge/Download-Ubuntu%20gfx117X-blue)](https://github.com/lemonade-sdk/llamacpp-rocm/releases/latest) | [![Download Windows gfx117X](https://img.shields.io/badge/Download-Windows%20gfx117X-green)](https://github.com/lemonade-sdk/llamacpp-rocm/releases/latest) |
 | **gfx120X** | [![Download Ubuntu gfx120X](https://img.shields.io/badge/Download-Ubuntu%20gfx120X-blue)](https://github.com/lemonade-sdk/llamacpp-rocm/releases/latest) | [![Download Windows gfx120X](https://img.shields.io/badge/Download-Windows%20gfx120X-green)](https://github.com/lemonade-sdk/llamacpp-rocm/releases/latest) |
 | **gfx103X** | [![Download Ubuntu gfx103X](https://img.shields.io/badge/Download-Ubuntu%20gfx103X-blue)](https://github.com/lemonade-sdk/llamacpp-rocm/releases/latest) | [![Download Windows gfx103X](https://img.shields.io/badge/Download-Windows%20gfx103X-green)](https://github.com/lemonade-sdk/llamacpp-rocm/releases/latest) |
