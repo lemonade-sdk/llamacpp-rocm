@@ -108,6 +108,13 @@ Only gfx1151 has test hardware. Every other archive's record says `hardware_vali
 - `qualification-summary.json`: the release decision.
 - `checksums.txt`: SHA-256 of every archive.
 
+The release notes (`release_notes.py`) open with a download table: one row per
+family with its gfx targets, the products it serves (`SUPPORTED_GPUS` in
+`families.py`), a ✅ when its archives were run on hardware according to
+`qualification-summary.json`, and a link to each OS's archive. The build details
+follow, with the "Llama.cpp Commit Hash" and "Llama.cpp Commit (full)" lines in
+the format Lemonade and `fetch_release_asset.py` read.
+
 ## Published feed
 
 Every run that would create a release (the nightly, and manual runs with

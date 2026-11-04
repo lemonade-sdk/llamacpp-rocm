@@ -1124,26 +1124,30 @@ jobs:
         cat checksums.txt
         cp -v ../qualification/*.json .
 
+    # A download table (one row per family, a link per OS) followed by the build details.
+    # ROCm and llama.cpp were pinned once for the whole run in prepare-matrix, so they describe every archive.
+    # Lemonade reads the "Llama.cpp Commit Hash" line; release_notes.py keeps its format.
+    - name: Write the release notes
+      if: steps.check-tag.outputs.tag_exists == 'false'
+      run: >-
+        python3 .github/qualify-rocm/release_notes.py
+        --repo "${{ github.repository }}"
+        --tag "${{ steps.generate-tag.outputs.tag }}"
+        --release-dir ./release
+        --gfx-targets "${{ needs.prepare-matrix.outputs.gfx_targets }}"
+        --operating-systems "${{ needs.prepare-matrix.outputs.operating_systems }}"
+        --rocm-version "${{ needs.prepare-matrix.outputs.rocm_version }}"
+        --llamacpp-short "${{ needs.prepare-matrix.outputs.llamacpp_short }}"
+        --llamacpp-sha "${{ needs.prepare-matrix.outputs.llamacpp_sha }}"
+        --output release-notes.md
+
     - name: Create Release
       if: steps.check-tag.outputs.tag_exists == 'false'
       env:
         GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
       run: |
         TAG="${{ steps.generate-tag.outputs.tag }}"
-        # Pinned once for the whole run in prepare-matrix, so these describe every archive.
-        ROCM_VERSION="${{ needs.prepare-matrix.outputs.rocm_version }}"
-        # Lemonade reads the "Llama.cpp Commit Hash" line, so it keeps its format;
-        # the full SHA is given on its own line.
-        LLAMACPP_COMMIT_HASH="${{ needs.prepare-matrix.outputs.llamacpp_short }}"
-        LLAMACPP_COMMIT_FULL="${{ needs.prepare-matrix.outputs.llamacpp_sha }}"
-        targets="${{ needs.prepare-matrix.outputs.gfx_targets }}"
-        operating_systems="${{ needs.prepare-matrix.outputs.operating_systems }}"
-
         echo "Creating release with tag: $TAG"
-        echo "GPU Targets: $targets"
-        echo "Operating Systems: $operating_systems"
-        echo "ROCm Version: $ROCM_VERSION"
-        echo "Llama.cpp Commit: $LLAMACPP_COMMIT_FULL"
 
         # Verify archives exist
         ls -la release
@@ -1154,17 +1158,7 @@ jobs:
         # Create release with GitHub CLI
         gh release create "$TAG" \
           --title "$TAG" \
-          --notes "**Build Number**: $TAG
-        **Operating System(s)**: $operating_systems
-        **GPU Target(s)**: $targets
-        **ROCm Version**: $ROCM_VERSION
-        **Llama.cpp Commit Hash**: $LLAMACPP_COMMIT_HASH
-        **Llama.cpp Commit (full)**: $LLAMACPP_COMMIT_FULL
-        **Build Date**: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-
-        This release includes compiled llama.cpp binaries with ROCm support for multiple GPU targets and operating systems, with all essential ROCm runtime libraries included.
-
-        Every archive passed the release checks. Each archive has a \`qualification-<archive>.json\` record listing what it contains, which gfx target (if any) it was run on real hardware with, and every check's result; \`checksums.txt\` holds the SHA-256 of every archive." \
+          --notes-file release-notes.md \
           $upload_files
 
   # ---------------------------------------------------------------------------

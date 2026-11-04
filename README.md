@@ -31,14 +31,16 @@ We provide nightly builds of **llama.cpp** with **AMD ROCm™** acceleration fro
 ## 🎯 Supported Devices
 
 This build specifically targets the following GPU architectures:
-- **gfx1151** (STX Halo APU) - Ryzen AI MAX+ Pro 395
-- **gfx1150** (STX Point APU) - Ryzen AI 300
-- **gfx117X** - gfx1170 and gfx1171
-- **gfx120X** (RDNA4 GPUs) - includes AMD Radeon RX 9070 XT/GRE/9070, RX 9060 XT/9060
-- **gfx110X** (RDNA3 GPUs) - includes AMD Radeon dGPUs: PRO W7900/W7800/W7700/W7600, RX 7900 XTX/XT/GRE, RX 7800 XT, RX 7700 XT/7700, RX 7600 XT/7600 and iGPUs: Radeon 780M/760M/740M
-- **gfx103X** (RDNA2 GPUs) - includes AMD Radeon dGPUs: RX 6800 XT/6800, RX 6700 XT/6700, RX 6600 XT/6600, RX 6500 XT/6500. Discrete GPUs only (gfx1030, gfx1031, gfx1032, gfx1034); RDNA2 APUs such as gfx1033, gfx1035 and gfx1036 are not included
-- **gfx90a** (CDNA2 GPU) - AMD Instinct MI210
-- **gfx908** (CDNA1 GPU) - AMD Instinct MI100
+- **gfx1151** (RDNA3.5 APU) - Radeon 8065S/8060S/8050S/8040S (e.g. Ryzen AI Max+ 395, Ryzen AI Max 390)
+- **gfx1150** (RDNA3.5 APU) - Radeon 890M/880M (e.g. Ryzen AI 9 HX 370, Ryzen AI 9 365)
+- **gfx117X** (gfx1170, gfx1171) - no products listed by AMD yet
+- **gfx120X** (RDNA4 GPUs: gfx1200, gfx1201) - includes AMD Radeon RX 9070 XT/9070 GRE/9070, RX 9060 XT/9060, RX 9050 and Radeon AI PRO R9700/R9700S/R9600/R9600D
+- **gfx110X** (RDNA3 GPUs: gfx1100, gfx1101, gfx1102, gfx1103) - includes AMD Radeon dGPUs: RX 7900 XTX/XT/GRE, RX 7800 XT, RX 7700 XT/7700, RX 7600 XT/7600, PRO W7900/W7800/W7700, PRO V710 and iGPUs: Radeon 780M/760M/740M
+- **gfx103X** (RDNA2 GPUs: gfx1030, gfx1031, gfx1032, gfx1034) - includes AMD Radeon dGPUs: RX 6900 XT, RX 6800 XT/6800, RX 6700 XT, PRO W6800, PRO V620. Discrete GPUs only; RDNA2 APUs such as gfx1033, gfx1035 and gfx1036 are not included
+- **gfx90a** (CDNA2 GPU) - AMD Instinct MI250X/MI250/MI210
+- **gfx908** (CDNA GPU) - AMD Instinct MI100
+
+Product names are the ones AMD's [GPU hardware specifications](https://rocm.docs.amd.com/en/latest/reference/gpu-arch-specs.html) and LLVM's [AMDGPU processor table](https://github.com/llvm/llvm-project/blob/main/llvm/docs/AMDGPUUsage.md) place on each target. Neither list is complete, so support is decided by gfx target: a GPU whose target is listed above is covered even if its name is not.
 
 **All builds include ROCm™ built-in** - no separate ROCm™ installation required! The exact TheRock nightly version is listed in each release's notes.
 
