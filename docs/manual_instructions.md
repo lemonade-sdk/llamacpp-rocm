@@ -16,6 +16,7 @@ TheRock publishes nightlies at [rocm.nightlies.amd.com/tarball-multi-arch](https
 | --- | --- |
 | gfx1151 | `gfx1151` |
 | gfx1150 | `gfx1150` |
+| gfx117X | `gfx117X-all` |
 | gfx120X | `gfx120X-all` |
 | gfx110X | `gfx110X-all` |
 | gfx103X | `gfx103X-all` |
@@ -163,6 +164,7 @@ Use the mapped architectures in `-DGPU_TARGETS`, not the tarball family name:
 
 | Family | `-DGPU_TARGETS` | Examples |
 | --- | --- | --- |
+| gfx117X | `gfx1170;gfx1171` | RDNA4m |
 | gfx120X | `gfx1200;gfx1201` | RX 9070 XT/GRE/9070, RX 9060 XT/9060 |
 | gfx110X | `gfx1100;gfx1101;gfx1102;gfx1103` | RX 7900/7800/7700/7600, Radeon 780M/760M/740M |
 | gfx103X | `gfx1030;gfx1031;gfx1032;gfx1034` | RX 6800/6700/6600/6500 |
