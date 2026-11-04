@@ -41,15 +41,16 @@ The dashboard's one regular fetch is `.../qualification/index.json`.
 
 ## One row per archive
 
-A release run builds fourteen archives — Windows and Linux for each of the GPU
-families gfx1151, gfx1150, gfx120X, gfx110X, gfx103X, gfx90a and gfx908 (see
-`families.py`) — and each is qualified on its own. Each one gets its own row,
-because an archive is what a user downloads and what a bug report names. Rows
-from the same run share `run_id`; group on it to show a run as a whole.
+A release run builds twenty archives — Windows and Linux for each of the GPU
+families gfx1151, gfx1152, gfx1153, gfx1150, gfx117X, gfx120X, gfx110X, gfx103X,
+gfx90a and gfx908 (see `families.py`) — and each is qualified on its own. Each
+one gets its own row, because an archive is what a user downloads and what a bug
+report names. Rows from the same run share `run_id`; group on it to show a run
+as a whole.
 
 Every archive the run was meant to build gets a row, including one whose build
 failed (see [Placeholder rows](#placeholder-rows)). A run therefore always has
-one row per family per operating system — fourteen today.
+one row per family per operating system — twenty today.
 
 ## `build_id` and re-runs
 
@@ -359,7 +360,7 @@ Everything else in the row means the same:
 |---|---|---|
 | `schema_version` | `1` | `2` (same row shape) |
 | `build_id` | `<run_id>-<os>-rocm-<gfx_family>` | `<run_id>-<os>-rocm-<rocm_version>` |
-| rows per run | 14 | 6 |
+| rows per run | 20 | 6 |
 | `tag` | this repository's release tag; `null` unless `published` | llama.cpp build number; set on every row |
 | `artifact` | the untagged CI name unless `published` | always the release name |
 | `os` | `windows` \| `ubuntu` | `win` \| `ubuntu` |
@@ -379,6 +380,6 @@ Bump `schema_version` on any breaking change to `index.json` or the row shape.
 Adding a field is not breaking. The dashboard should read `schema_version` and
 show a notice, rather than break, on a version it does not know.
 
-`index.json` grows by fourteen rows per nightly, about five thousand a year.
+`index.json` grows by twenty rows per nightly, about seven thousand a year.
 That is comfortable to poll for a long time, especially compressed. If it ever
 is not, older rows will move into per-month files under a new `schema_version`.

@@ -14,7 +14,7 @@ A broken ROCm build does not look broken. When ROCm cannot use the GPU, llama.cp
 
 | | lemonade-sdk/llama.cpp | this repository |
 |---|---|---|
-| Archives | one fat binary per ROCm version, covering every GPU | one archive per GPU family per OS (16 by default) |
+| Archives | one fat binary per ROCm version, covering every GPU | one archive per GPU family per OS (20 by default) |
 | ROCm | installed separately by the user | bundled inside every archive |
 | The question that matters | will the user's ROCm have what this needs? | is everything this needs inside the box? |
 
