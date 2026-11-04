@@ -1,7 +1,7 @@
 name: Nightly Failure Alert
 on:
   workflow_run:
-    workflows: ["Build Llama.cpp + ROCm"]
+    workflows: ["Build Llama.cpp + ROCm", "Select nightly ROCm tracks"]
     types: [completed]
 
 env:
@@ -12,7 +12,8 @@ env:
 jobs:
   alert:
     if: |
-      github.event.workflow_run.event == 'schedule' &&
+      (github.event.workflow_run.event == 'schedule' ||
+       startsWith(github.event.workflow_run.display_title, 'Scheduled nightly ·')) &&
       github.event.workflow_run.conclusion != 'success'
     runs-on: ubuntu-22.04
     permissions:

@@ -138,3 +138,39 @@ python3 .github/qualify-rocm/tier1_gpu.py \
 
 - **Performance.** Tracked downstream in Lemonade (`benchmark-regression.yml`) against these same archives.
 - **Answer quality.** T1.3 covers "the output is well-formed", which catches a backend producing garbage. Judging whether an answer is *good* needs a different kind of test.
+
+## Selecting current nightly tracks
+
+`nightly-tracks.yml` runs daily at 13:00 UTC. It discovers the highest numeric
+stable version from the commit-pinned `lemonade-sdk/llama.cpp` qualification index,
+then selects up to the next two distinct newer minor tracks in AMD's nightly
+SDK catalog. For each track it chooses the newest dated SDK available for every
+configured GPU family on both Linux and Windows. Missing or malformed stable
+input fails selection instead of guessing. Zero available tracks dispatches no
+builds; the selection artifact records the result.
+
+The selector pins one upstream llama.cpp SHA for both tracks and dispatches a
+separate existing build workflow per SDK, so run, archive, artifact and report
+identities remain separate. The newer selected track keeps the normal release
+stream. The older track is qualification-only (`create_release=false`,
+`publish_qualification=true`): it still gets Tier 0 and hardware Tier 1 checks
+and publishes truthful qualified/failed rows, but has a null release tag and
+`published=false`. This avoids two SDK builds competing for the same release
+tag. No earlier SDK records are backfilled or fabricated.
+
+A selector-triggered build is a `workflow_dispatch` event, identified as
+`Scheduled nightly` in its run title. Failure alerts cover the selector and its
+dispatched builds. Manual builds keep their existing defaults. PRs never dispatch
+builds or publish qualification data.
+
+Run selector regressions without downloads/builds:
+
+```sh
+python3 -m unittest discover -s .github/qualify-rocm -p 'test_*.py' -v
+```
+
+Inspect live selection without dispatching or compiling:
+
+```sh
+python3 .github/qualify-rocm/select_nightly_tracks.py --output selection.json
+```

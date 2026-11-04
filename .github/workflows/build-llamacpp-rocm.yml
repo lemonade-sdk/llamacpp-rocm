@@ -1,4 +1,5 @@
 name: Build Llama.cpp + ROCm
+run-name: "${{ inputs.scheduled_track && 'Scheduled nightly' || 'Build' }} · ROCm ${{ inputs.rocm_version || 'latest' }}"
 on:
   workflow_dispatch:
     inputs:
@@ -24,15 +25,23 @@ on:
         default: true
         type: boolean
 
+      publish_qualification:
+        description: 'Publish full-matrix qualification evidence even without creating a release'
+        required: false
+        default: false
+        type: boolean
+
+      scheduled_track:
+        description: 'Identify a build dispatched by the nightly track selector'
+        required: false
+        default: false
+        type: boolean
+
   # Trigger on pushes to pull requests
   pull_request:
     types: [opened, synchronize, reopened]
 
-  # Trigger on a schedule to build nightly releases
-  schedule:
-    # Runs at 1:00 PM UTC, which is 5:00 AM PST (UTC-8)
-    # This is two hours after the ROCm nightly tarball is triggered
-    - cron: '0 13 * * *'
+  # Scheduled builds are dispatched per SDK by nightly-tracks.yml.
 
 env:
   OPERATING_SYSTEMS: ${{ github.event.inputs.operating_systems || 'windows,ubuntu' }}
@@ -1173,7 +1182,7 @@ jobs:
   # The format is described in .github/qualify-rocm/FEED.md.
   # ---------------------------------------------------------------------------
   publish-qualification:
-    # Only runs that would create a release: the scheduled nightly, and manual runs with create_release ticked that build every family -- the same runs create-release accepts.
+    # Full-matrix release builds and explicitly requested qualification-only builds.
     # Pull requests never publish.
     # Runs whatever create-release did. When a build or a check fails, create-release is skipped and writes no records, so this job writes them itself from the Tier 0 and Tier 1 reports.
     # !cancelled() rather than always(): a run someone cancelled publishes nothing.
@@ -1182,7 +1191,8 @@ jobs:
           (github.event_name == 'schedule' ||
            (github.event_name == 'workflow_dispatch' &&
             needs.prepare-matrix.outputs.full_release == 'true' &&
-            (github.event.inputs.create_release == 'true' || github.event.inputs.create_release == null))) }}
+            (github.event.inputs.create_release == 'true' || github.event.inputs.create_release == null ||
+             github.event.inputs.publish_qualification == 'true'))) }}
     needs: [prepare-matrix, build-windows, build-ubuntu, qualify-tier0, qualify-tier1, create-release]
     runs-on: ubuntu-22.04
     permissions:

@@ -1,0 +1,67 @@
+name: Select nightly ROCm tracks
+
+on:
+  schedule:
+    - cron: '0 13 * * *'
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - '.github/qualify-rocm/select_nightly_tracks.py'
+      - '.github/qualify-rocm/test_select_nightly_tracks.py'
+      - '.github/qualify-rocm/resolve_build_inputs.py'
+      - '.github/qualify-rocm/families.py'
+      - '.github/workflows/nightly-tracks.yml'
+      - '.github/workflows/build-llamacpp-rocm.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: nightly-track-selection-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  select:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      actions: write # workflow_dispatch to the existing build workflow
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test track selection
+        run: python3 -m unittest discover -s .github/qualify-rocm -p 'test_*.py' -v
+      - name: Resolve stable and the next two usable nightly tracks
+        if: github.event_name != 'pull_request'
+        run: python3 .github/qualify-rocm/select_nightly_tracks.py --output nightly-selection.json
+      - name: Save pinned selection evidence
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: nightly-selection-${{ github.run_id }}
+          path: nightly-selection.json
+      - name: Dispatch one independently qualified build per selected SDK
+        if: github.event_name != 'pull_request' && github.repository == 'lemonade-sdk/llamacpp-rocm'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          python3 - <<'PY'
+          import json, os, subprocess
+          with open('nightly-selection.json') as handle:
+              plan = json.load(handle)
+          if not plan['builds']:
+              print('No usable nightly SDK above current stable; no build dispatched.')
+          for build in plan['builds']:
+              print(f"Dispatching ROCm {build['rocm_version']}; create_release={build['create_release']}", flush=True)
+              subprocess.run([
+                  'gh', 'workflow', 'run', 'build-llamacpp-rocm.yml', '--ref', os.environ['GITHUB_REF_NAME'],
+                  '-f', 'rocm_version=' + build['rocm_version'],
+                  '-f', 'llamacpp_version=' + plan['llamacpp_sha'],
+                  '-f', 'gfx_target=' + plan['gfx_targets'],
+                  '-f', 'operating_systems=' + plan['operating_systems'],
+                  '-f', 'create_release=' + str(build['create_release']).lower(),
+                  '-f', 'publish_qualification=true',
+                  '-f', 'scheduled_track=true',
+              ], check=True)
+          PY
