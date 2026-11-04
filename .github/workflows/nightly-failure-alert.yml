@@ -32,11 +32,20 @@ jobs:
           --jq '.jobs[] | select(.conclusion != "success" and .conclusion != "skipped") | "- [\(.name)](\(.html_url)) — \(.conclusion)"')
         [ -z "$failed_jobs" ] && failed_jobs="- (no individual job failures reported)"
 
+        # A run can fail after its release was created, e.g. in publish-qualification.
+        release_result=$(gh api --paginate "repos/$GH_REPO/actions/runs/$RUN_ID/jobs?per_page=100" \
+          --jq '.jobs[] | select(.name == "create-release") | .conclusion' | tail -n 1)
+        if [ "$release_result" = "success" ]; then
+          release_note="The release was published; only the jobs below failed."
+        else
+          release_note="No release was published."
+        fi
+
         mentions=$(for u in $ALERT_USERS; do printf '@%s ' "$u"; done)
         assignees=$(echo $ALERT_USERS | tr ' ' ',')
 
         body=$(cat <<EOF
-        $mentions the nightly llama.cpp + ROCm build **${CONCLUSION}** (started ${RUN_DATE}). No release was published.
+        $mentions the nightly llama.cpp + ROCm build **${CONCLUSION}** (started ${RUN_DATE}). ${release_note}
 
         **Run:** $RUN_URL
 

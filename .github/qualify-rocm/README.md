@@ -108,6 +108,17 @@ Only gfx1151 has test hardware. Every other archive's record says `hardware_vali
 - `qualification-summary.json`: the release decision.
 - `checksums.txt`: SHA-256 of every archive.
 
+## Published feed
+
+Every run that would create a release (the nightly, and manual runs with
+`create_release` that build every family) is also published, pass or fail, to
+the `qualification-data` branch by `publish_qualification.py`, so a dashboard
+can follow the history of every run without reading each release. When a build
+or check fails, no release job runs, so the `publish-qualification` job builds
+the records itself with `aggregate.py` (without `--tag`). An archive whose build
+failed gets a placeholder row. The layout and every field are described in
+[FEED.md](FEED.md).
+
 ## Running by hand
 
 Everything works against a downloaded release asset; nothing is installed.
