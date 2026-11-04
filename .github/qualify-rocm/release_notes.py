@@ -29,6 +29,7 @@ Usage (CI, after check_final.py and aggregate.py have filled the release folder)
 """
 
 import argparse
+import io
 import json
 import os
 import sys
@@ -165,7 +166,8 @@ def main():
     with open(args.output, "w", encoding="utf-8") as handle:
         handle.write(text)
     # Echoed for the job log; a console that cannot show ✅ should not fail the step.
-    sys.stdout.reconfigure(errors="replace")
+    if isinstance(sys.stdout, io.TextIOWrapper):
+        sys.stdout.reconfigure(errors="replace")
     print(text)
 
 
