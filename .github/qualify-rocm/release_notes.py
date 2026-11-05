@@ -9,10 +9,6 @@ instead open with one row per family -- its gfx targets (families.py) and a
 direct link to each operating system's archive -- so a user can download in one
 click.
 
-When the newest ROCm nightly was not yet published for some family, so the run
-fell back to an older one (resolve_build_inputs.py), a note above the table
-says which nightly was newest, which was used, and which families held it back.
-
 Two lines are read by other programs and keep their exact format:
 
   * "**Llama.cpp Commit Hash**: <short sha>" -- Lemonade reads it to decide
@@ -25,7 +21,6 @@ Usage (CI, after check_final.py and aggregate.py have filled the release folder)
     python3 release_notes.py --repo lemonade-sdk/llamacpp-rocm --tag b1366 \
         --release-dir release --gfx-targets gfx1151,gfx110X \
         --operating-systems windows,ubuntu --rocm-version 10.3.0a20261104 \
-        --rocm-newest-nightly 10.3.0a20261104 --rocm-held-back-by "" \
         --llamacpp-short cd959 --llamacpp-sha cd959bae99ff4bed22bef2604f45241c09bbb8c8 \
         --output release-notes.md
 """
@@ -61,31 +56,12 @@ def family_cell(family):
     return cell
 
 
-def fallback_note(newest, used, held_back):
-    """The callout for a run that fell back to an older ROCm nightly, or []."""
-    if not held_back:
-        return []
-    oses_of = {}
-    for item in held_back:
-        os_name, _, family = item.partition("/")
-        oses_of.setdefault(family, set()).add(os_name)
-    culprits = ", ".join(
-        f"{family} ({', '.join(label for o, label in OS_COLUMNS if o in oses_of[family])})"
-        for family in sorted(oses_of))
-    return ["> [!NOTE]",
-            f"> **ROCm fallback:** the newest ROCm nightly, {newest}, was not yet published "
-            f"for {culprits}, so every archive in this release uses {used}.",
-            ""]
-
-
 def render(args, oses, targets, sizes):
     download = f"https://github.com/{args.repo}/releases/download/{args.tag}/"
     columns = [label for os_name, label in OS_COLUMNS if os_name in oses]
 
-    lines = fallback_note(args.rocm_newest_nightly, args.rocm_version,
-                          families.split_targets(args.rocm_held_back_by))
-    lines += ["| gfx family | " + " | ".join(columns) + " |",
-              "|---|" + "---|" * len(columns)]
+    lines = ["| gfx family | " + " | ".join(columns) + " |",
+             "|---|" + "---|" * len(columns)]
     for family in targets:
         links = []
         for os_name, _ in OS_COLUMNS:
@@ -139,11 +115,6 @@ def main():
     parser.add_argument("--operating-systems", required=True,
                         help="comma-separated: windows,ubuntu")
     parser.add_argument("--rocm-version", required=True)
-    parser.add_argument("--rocm-newest-nightly", default="",
-                        help="the newest ROCm nightly published for any family")
-    parser.add_argument("--rocm-held-back-by", default="",
-                        help="comma-separated '<os>/<family>' lacking the newest nightly; "
-                             "empty when there was no fallback")
     parser.add_argument("--llamacpp-short", required=True)
     parser.add_argument("--llamacpp-sha", required=True)
     parser.add_argument("--output", required=True)

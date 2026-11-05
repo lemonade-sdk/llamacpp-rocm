@@ -1197,8 +1197,6 @@ jobs:
         --gfx-targets "${{ needs.prepare-matrix.outputs.gfx_targets }}"
         --operating-systems "${{ needs.prepare-matrix.outputs.operating_systems }}"
         --rocm-version "${{ needs.prepare-matrix.outputs.rocm_version }}"
-        --rocm-newest-nightly "${{ needs.prepare-matrix.outputs.rocm_newest_nightly }}"
-        --rocm-held-back-by "${{ needs.prepare-matrix.outputs.rocm_held_back_by }}"
         --llamacpp-short "${{ needs.prepare-matrix.outputs.llamacpp_short }}"
         --llamacpp-sha "${{ needs.prepare-matrix.outputs.llamacpp_sha }}"
         --output release-notes.md

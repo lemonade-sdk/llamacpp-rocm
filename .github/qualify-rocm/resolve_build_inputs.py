@@ -17,8 +17,8 @@ This runs once, in prepare-matrix, and pins:
     requested operating system. When the newest nightly is missing for some
     family, the newest version that all of them have is used instead. The
     newest nightly and the "<os>/<family>" pairs that held it back are emitted
-    as `rocm_newest_nightly` and `rocm_held_back_by`, for the release notes,
-    the qualification feed and the fallback alert.
+    as `rocm_newest_nightly` and `rocm_held_back_by`, for the qualification
+    feed and the fallback alert.
 
 It also emits the build, Tier 0 and Tier 1 matrices, so the family list is
 expanded in exactly one place (families.py).
