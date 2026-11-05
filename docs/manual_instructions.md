@@ -16,6 +16,8 @@ TheRock publishes nightlies at [rocm.nightlies.amd.com/tarball-multi-arch](https
 | --- | --- |
 | gfx1151 | `gfx1151` |
 | gfx1150 | `gfx1150` |
+| gfx1152 | `gfx1152` |
+| gfx1153 | `gfx1153` |
 | gfx117X | `gfx117X-all` |
 | gfx120X | `gfx120X-all` |
 | gfx110X | `gfx110X-all` |
@@ -168,7 +170,9 @@ Use the mapped architectures in `-DGPU_TARGETS`, not the tarball family name:
 | gfx120X | `gfx1200;gfx1201` | RX 9070 XT/GRE/9070, RX 9060 XT/9060 |
 | gfx110X | `gfx1100;gfx1101;gfx1102;gfx1103` | RX 7900/7800/7700/7600, Radeon 780M/760M/740M |
 | gfx103X | `gfx1030;gfx1031;gfx1032;gfx1034` | RX 6800/6700/6600/6500 |
-| gfx1150 | `gfx1150` | Strix Point |
+| gfx1150 | `gfx1150` | Strix Point, Gorgon Point 1 |
 | gfx1151 | `gfx1151` | Strix Halo |
+| gfx1152 | `gfx1152` | Krackan Point 1, Gorgon Point 2 |
+| gfx1153 | `gfx1153` | Krackan Point 2, Gorgon Point 3 |
 | gfx90a | `gfx90a` | Instinct MI210 |
 | gfx908 | `gfx908` | Instinct MI100 |

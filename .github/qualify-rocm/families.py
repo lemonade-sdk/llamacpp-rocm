@@ -15,6 +15,8 @@ two can never drift apart.
 # family -> (gfx targets compiled into the archive, TheRock tarball target)
 FAMILIES = {
     "gfx1151": ("gfx1151", "gfx1151"),
+    "gfx1152": ("gfx1152", "gfx1152"),
+    "gfx1153": ("gfx1153", "gfx1153"),
     "gfx1150": ("gfx1150", "gfx1150"),
     "gfx117X": ("gfx1170;gfx1171", "gfx117X-all"),
     "gfx120X": ("gfx1200;gfx1201", "gfx120X-all"),
