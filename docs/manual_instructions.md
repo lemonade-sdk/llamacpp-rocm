@@ -173,6 +173,6 @@ Use the mapped architectures in `-DGPU_TARGETS`, not the tarball family name:
 | gfx1150 | `gfx1150` | Strix Point, Gorgon Point 1 |
 | gfx1151 | `gfx1151` | Strix Halo |
 | gfx1152 | `gfx1152` | Krackan Point 1, Gorgon Point 2 |
-| gfx1153 | `gfx1153` | Krackan Point 2 |
+| gfx1153 | `gfx1153` | Krackan Point 2, Gorgon Point 3 |
 | gfx90a | `gfx90a` | Instinct MI210 |
 | gfx908 | `gfx908` | Instinct MI100 |
