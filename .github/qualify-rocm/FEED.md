@@ -99,6 +99,8 @@ Not in the feed:
       "os": "windows",
       "gfx_family": "gfx110X",
       "rocm_version": "10.3.0a20261103",
+      "rocm_newest_nightly": "10.3.0a20261104", // newer than rocm_version: this run fell back
+      "rocm_held_back_by": ["ubuntu/gfx1150", "windows/gfx1150"],   // lacked 10.3.0a20261104
       "gfx_target": null,                       // Tier 1 did not run on this archive
       "hardware_validated": false,
       "gfx": { "requested": 4, "present": 4, "missing": [] },
@@ -135,6 +137,8 @@ Not in the feed:
       "os": "ubuntu",
       "gfx_family": "gfx908",
       "rocm_version": "10.3.0a20261103",
+      "rocm_newest_nightly": "10.3.0a20261104", // the same for every row of a run
+      "rocm_held_back_by": ["ubuntu/gfx1150", "windows/gfx1150"],
       "gfx_target": null,
       "hardware_validated": false,
       "gfx": { "requested": 1, "present": 0, "missing": ["gfx908"] },   // no archive, so nothing is present
@@ -173,6 +177,8 @@ Not in the feed:
       "os": "windows",                          // windows | ubuntu
       "gfx_family": "gfx1151",                  // the GPU family this archive serves
       "rocm_version": "10.3.0a20261102",        // the ROCm nightly bundled inside
+      "rocm_newest_nightly": "10.3.0a20261102", // the newest nightly any family had; null when the run pinned a version
+      "rocm_held_back_by": [],                  // "<os>/<family>" lacking that newest nightly; empty: no fallback
       "gfx_target": "gfx1151",                  // the one gfx target Tier 1 ran on; null when Tier 1 did not run
       "hardware_validated": true,               // Tier 1 ran on a real GPU (see tier1 for how it went)
       "gfx": { "requested": 1, "present": 1, "missing": [] },
@@ -287,6 +293,18 @@ A passing archive of any other family looks like the gfx1151 row, except that:
 - **`rocm_version`** is the full TheRock nightly version bundled inside the
   archive. One nightly is pinned per run, so every row of a run has the same
   value.
+- **`rocm_newest_nightly`** and **`rocm_held_back_by`** say whether the run fell
+  back to an older ROCm nightly. With `rocm_version: latest` the run uses the
+  newest nightly published for every family it builds; when the newest one is
+  missing for some family, it uses the newest they all share instead.
+  `rocm_newest_nightly` is the newest nightly any family had, and
+  `rocm_held_back_by` lists the `"<os>/<family>"` pairs that lacked it, e.g.
+  `["windows/gfx1150"]`. Without a fallback, `rocm_newest_nightly` equals
+  `rocm_version` and `rocm_held_back_by` is `[]`. A run that pinned a version
+  looks for no newer one: `rocm_newest_nightly` is `null` and
+  `rocm_held_back_by` is `[]`. Both are the same on every row of a run. Rows
+  published before these fields existed do not have them; treat that as
+  unknown, not as "no fallback".
 - **`report_url`** is relative to the base URL; it holds every check's
   `status`, `gating`, `error` and `details`.
 
@@ -364,6 +382,7 @@ Everything else in the row means the same:
 | `artifact` | the untagged CI name unless `published` | always the release name |
 | `os` | `windows` \| `ubuntu` | `win` \| `ubuntu` |
 | `rocm_version` | full nightly, e.g. `10.3.0a20261102`, same for the whole run | `7.14` \| `10.0` \| `10.1`, one per archive |
+| `rocm_newest_nightly`, `rocm_held_back_by` | whether the run fell back to an older nightly, same for the whole run | not present |
 | `gfx_family` | the GPU family the archive serves | — |
 | `version_qualified` | not present (a release here is all or nothing) | both archives of a ROCm version exist and qualified |
 | `tier1` | Tier 1 runs only on gfx1151 (`not_applicable` elsewhere); `missing` blocks | Tier 1 runs on every archive; `missing` does not block |

@@ -89,8 +89,12 @@ Only gfx1151 has test hardware. Every other archive's record says `hardware_vali
 - **One commit, one ROCm per run** (`resolve_build_inputs.py`). The llama.cpp
   commit and ROCm nightly are resolved once in `prepare-matrix` and every leg
   builds exactly those. If the newest nightly is missing for some family, the
-  newest version every family has is used and the log says which held it back.
-  The release notes have always named a single commit, and Lemonade reads that
+  newest version every family has is used. Such a fallback is reported in four
+  places: a notice on the run, a note at the top of the release notes, the
+  `rocm_newest_nightly` and `rocm_held_back_by` fields of the feed, and, for
+  scheduled and manual runs, the open `rocm-fallback` issue (opened if there is
+  none, assigned to danielholanda and sreeram-11; the `rocm-fallback-alert`
+  job). The release notes have always named a single commit, and Lemonade reads that
   line to decide which model architectures it supports.
 - **The tested zip is the published zip** (`package.py`). The build job creates
   the final archive and records its SHA-256; nothing re-packs it later. This
@@ -110,6 +114,8 @@ Only gfx1151 has test hardware. Every other archive's record says `hardware_vali
 
 The release notes (`release_notes.py`) open with a download table: one row per
 family with its gfx targets (`families.py`) and a link to each OS's archive.
+When the run fell back to an older ROCm nightly, a note above the table says
+which nightly was newest, which was used, and which families held it back.
 The build details follow, with the "Llama.cpp Commit Hash" and "Llama.cpp
 Commit (full)" lines in the format Lemonade and `fetch_release_asset.py` read.
 
