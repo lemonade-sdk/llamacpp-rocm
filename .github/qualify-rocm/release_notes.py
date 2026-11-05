@@ -5,12 +5,9 @@ Write the release notes: a download table first, then the build details.
 A release carries one archive per family per operating system plus a
 qualification record for each, so the Assets list runs to dozens of files whose
 names only make sense to someone who already knows their gfx family. The notes
-instead open with one row per family -- its gfx targets, the products it serves
-(families.py) and a direct link to each operating system's archive -- so a user
-can find their GPU by name and download in one click.
-
-A family is marked hardware-validated only when every one of its archives is,
-according to qualification-summary.json.
+instead open with one row per family -- its gfx targets (families.py) and a
+direct link to each operating system's archive -- so a user can download in one
+click.
 
 Two lines are read by other programs and keep their exact format:
 
@@ -30,7 +27,6 @@ Usage (CI, after check_final.py and aggregate.py have filled the release folder)
 
 import argparse
 import io
-import json
 import os
 import sys
 from datetime import datetime, timezone
@@ -52,48 +48,31 @@ def human_size(size):
     return f"{size / 1000 ** 2:.0f} MB"
 
 
-def validated_families(summary_path, tag, oses, targets):
-    """Families whose every archive in this release ran on real hardware."""
-    with open(summary_path, encoding="utf-8") as handle:
-        archives = {a["artifact"]: a for a in json.load(handle).get("archives", [])}
-    validated = set()
-    for family in targets:
-        names = [published_name(tag, o, family) for o in oses]
-        if all(archives.get(n, {}).get("hardware_validated") for n in names):
-            validated.add(family)
-    return validated
-
-
-def family_cell(family, validated):
-    cell = f"**{family}**" + (" ✅" if family in validated else "")
+def family_cell(family):
+    cell = f"**{family}**"
     gfx = families.split_targets(families.gpu_targets(family))
     if gfx != [family]:
         cell += "<br><sub>" + " · ".join(gfx) + "</sub>"
     return cell
 
 
-def render(args, oses, targets, sizes, validated):
+def render(args, oses, targets, sizes):
     download = f"https://github.com/{args.repo}/releases/download/{args.tag}/"
     columns = [label for os_name, label in OS_COLUMNS if os_name in oses]
 
-    lines = ["| gfx family | Supported GPUs | " + " | ".join(columns) + " |",
-             "|---|---|" + "---|" * len(columns)]
+    lines = ["| gfx family | " + " | ".join(columns) + " |",
+             "|---|" + "---|" * len(columns)]
     for family in targets:
-        products = families.supported_gpus(family) or "—"
         links = []
         for os_name, _ in OS_COLUMNS:
             if os_name in oses:
                 name = published_name(args.tag, os_name, family)
                 links.append(f"[zip · {human_size(sizes[name])}]({download}{name})")
-        lines.append(f"| {family_cell(family, validated)} | {products} | " + " | ".join(links) + " |")
+        lines.append(f"| {family_cell(family)} | " + " | ".join(links) + " |")
 
-    notes = []
-    if validated:
-        notes.append("✅ next to a gfx family means its archives were hardware-validated "
-                     "(run on a real GPU) for this release.")
-    notes += ["Every archive passed the release checks.",
-              "Each archive bundles its ROCm runtime, so nothing else needs to be installed.",
-              "If your GPU's gfx target isn't listed here, these builds don't support it."]
+    notes = ["Every archive passed the release checks.",
+             "Each archive bundles its ROCm runtime, so nothing else needs to be installed.",
+             "If your GPU's gfx target isn't listed here, these builds don't support it."]
 
     build_date = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
     lines += [""] + [f"- {note}" for note in notes] + ["", "---", "",
@@ -157,15 +136,15 @@ def main():
     if absent:
         raise SystemExit(f"::error::Not in {args.release_dir}: {', '.join(absent)}")
 
+    # The Verify section links to it.
     summary = os.path.join(args.release_dir, "qualification-summary.json")
     if not os.path.exists(summary):
         raise SystemExit(f"::error::{summary} is missing; run aggregate.py first")
-    validated = validated_families(summary, args.tag, oses, targets)
 
-    text = render(args, oses, targets, sizes, validated)
+    text = render(args, oses, targets, sizes)
     with open(args.output, "w", encoding="utf-8") as handle:
         handle.write(text)
-    # Echoed for the job log; a console that cannot show ✅ should not fail the step.
+    # Echoed for the job log; a console that cannot show every character should not fail the step.
     if isinstance(sys.stdout, io.TextIOWrapper):
         sys.stdout.reconfigure(errors="replace")
     print(text)
