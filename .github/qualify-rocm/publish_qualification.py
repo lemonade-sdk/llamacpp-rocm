@@ -25,7 +25,8 @@ Usage:
     python3 publish_qualification.py --records-dir ./qualification \
         --data-dir ./data/qualification --operating-systems windows,ubuntu \
         --gfx-targets gfx1151,gfx110X --jobs-file jobs.jsonl --published true \
-        --rocm-version 10.3.0a20261102 --upstream-sha <sha>
+        --rocm-version 10.3.0a20261102 --upstream-sha <sha> \
+        --rocm-newest-nightly 10.3.0a20261102 --rocm-held-back-by ""
 """
 
 import argparse
@@ -238,8 +239,13 @@ def make_placeholder(os_name, family, build_result, run_id, run_attempt,
     }
 
 
-def build_entry(record, build_id, build_result, published, run_url, event, run_attempt):
-    """Derive the compact, dashboard-facing index row from a full record."""
+def build_entry(record, build_id, build_result, published, run_url, event, run_attempt,
+                rocm_newest_nightly=None, rocm_held_back_by=()):
+    """Derive the compact, dashboard-facing index row from a full record.
+
+    rocm_newest_nightly and rocm_held_back_by describe the whole run, so every
+    row of the run carries the same values.
+    """
     build = record.get("build", {})
     results, blocking = collect_results(record)
     statuses = list(results.values())
@@ -262,6 +268,8 @@ def build_entry(record, build_id, build_result, published, run_url, event, run_a
         "os": build.get("os"),
         "gfx_family": build.get("gfx_family"),
         "rocm_version": build.get("rocm_version"),
+        "rocm_newest_nightly": rocm_newest_nightly or None,
+        "rocm_held_back_by": list(rocm_held_back_by),
         "gfx_target": build.get("hardware_gfx_target"),
         "hardware_validated": bool(build.get("hardware_validated")),
         "gfx": {
@@ -367,6 +375,11 @@ def main():
                         help="'true' if this run's release job created the release")
     parser.add_argument("--rocm-version", help="the ROCm nightly this run pinned")
     parser.add_argument("--upstream-sha", help="the llama.cpp commit this run pinned")
+    parser.add_argument("--rocm-newest-nightly", default="",
+                        help="the newest ROCm nightly published for any family; "
+                             "empty when the run pinned a version")
+    parser.add_argument("--rocm-held-back-by", default="",
+                        help="comma-separated '<os>/<family>' lacking the newest nightly")
     parser.add_argument("--event", default=os.environ.get("GITHUB_EVENT_NAME"),
                         help="what triggered the run, e.g. schedule or workflow_dispatch")
     parser.add_argument("--repo", default=os.environ.get("GITHUB_REPOSITORY"),
@@ -420,7 +433,8 @@ def main():
                    if args.repo else None)
         build_result = build_results.get((build.get("os"), build.get("gfx_family")), BUILD_UNKNOWN)
         entry = build_entry(record, build_id, build_result, published and not is_placeholder,
-                            run_url, args.event, run_attempt)
+                            run_url, args.event, run_attempt,
+                            args.rocm_newest_nightly, sorted(families.split_targets(args.rocm_held_back_by)))
         entries.append(entry)
 
         write_json(os.path.join(args.data_dir, "reports", f"{build_id}.json"), record)

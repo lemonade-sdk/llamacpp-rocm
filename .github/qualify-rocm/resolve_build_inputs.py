@@ -15,8 +15,10 @@ This runs once, in prepare-matrix, and pins:
   * the upstream llama.cpp commit, as a full SHA, and
   * one ROCm nightly version that exists for every requested family on every
     requested operating system. When the newest nightly is missing for some
-    family, the newest version that all of them have is used instead, and the
-    log says which families held it back.
+    family, the newest version that all of them have is used instead. The
+    newest nightly and the "<os>/<family>" pairs that held it back are emitted
+    as `rocm_newest_nightly` and `rocm_held_back_by`, for the qualification
+    feed and the fallback alert.
 
 It also emits the build, Tier 0 and Tier 1 matrices, so the family list is
 expanded in exactly one place (families.py).
@@ -103,11 +105,18 @@ def version_key(version):
     return (date.group(1) if date else "", numbers)
 
 
-def resolve_rocm(requested, pairs):
-    """Pick the one ROCm nightly every (os, tarball target) pair will use."""
+def resolve_rocm(requested, families_of):
+    """Pick the one ROCm nightly every (os, tarball target) pair will use.
+
+    `families_of` maps each (os, tarball target) pair to the families built
+    from it. Returns (chosen, newest, held_back): the version to use, the
+    newest nightly any pair has, and the sorted "<os>/<family>" names lacking
+    that newest nightly. A pinned version is used as given, so newest is None
+    and held_back is empty.
+    """
     names = tarball_names()
     available = {}
-    for os_name, tarball in pairs:
+    for os_name, tarball in families_of:
         prefix = f"therock-dist-{TARBALL_OS[os_name]}-{tarball}-"
         # Anchored so that variants sharing the prefix, such as
         # "...-all-tests-<version>.tar.gz", are never picked.
@@ -124,7 +133,7 @@ def resolve_rocm(requested, pairs):
         if missing:
             raise SystemExit(f"::error::ROCm {requested} is not published for: "
                              f"{', '.join(missing)}")
-        return requested
+        return requested, None, []
 
     empty = sorted(f"{o}/{t}" for (o, t), v in available.items() if not v)
     if empty:
@@ -138,13 +147,13 @@ def resolve_rocm(requested, pairs):
     chosen = max(common, key=version_key)
 
     newest = max(set.union(*available.values()), key=version_key)
-    if newest != chosen:
-        holding_back = sorted(f"{o}/{t}" for (o, t), v in available.items()
-                              if newest not in v)
+    held_back = sorted(f"{o}/{family}" for (o, t), v in available.items()
+                       if newest not in v for family in families_of[(o, t)])
+    if held_back:
         print(f"::notice::ROCm {newest} is not yet published for "
-              f"{', '.join(holding_back)}, so every leg uses {chosen}, the newest "
+              f"{', '.join(held_back)}, so every leg uses {chosen}, the newest "
               "nightly all of them have.")
-    return chosen
+    return chosen, newest, held_back
 
 
 def resolve_llamacpp(requested):
@@ -255,10 +264,17 @@ def main():
               + ". A release must include every family on Windows and Linux.")
 
     if not args.skip_pins:
-        pairs = unique((o, families.tarball_target(f)) for o in oses for f in targets)
-        rocm = resolve_rocm(args.rocm_version, pairs)
+        families_of = {}
+        for o in oses:
+            for f in targets:
+                families_of.setdefault((o, families.tarball_target(f)), []).append(f)
+        rocm, newest, held_back = resolve_rocm(args.rocm_version, families_of)
         sha = resolve_llamacpp(args.llamacpp_version)
         outputs["rocm_version"] = rocm
+        # Empty when a version was pinned (no newest was looked for) and when
+        # nothing held the newest nightly back, respectively.
+        outputs["rocm_newest_nightly"] = newest or ""
+        outputs["rocm_held_back_by"] = ",".join(held_back)
         outputs["llamacpp_sha"] = sha
         # The release notes have always carried a five-character hash, and
         # Lemonade parses that line, so its format is kept as it was.
