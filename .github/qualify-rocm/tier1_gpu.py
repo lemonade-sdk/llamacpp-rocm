@@ -270,7 +270,7 @@ def build_env(exe_dir, gfx_target):
         # Windows searches the program's own folder for DLLs before anywhere
         # else, so the bundled ROCm wins without touching PATH. Lemonade sets
         # this for these targets to raise the shared-memory limit.
-        if gfx_target in ("gfx1151", "gfx1152"):
+        if gfx_target in ("gfx1151", "gfx1152", "gfx1153"):
             env["OCL_SET_SVM_SIZE"] = "262144"
     else:
         # Lemonade puts the archive folder on LD_LIBRARY_PATH; nothing else is

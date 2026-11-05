@@ -32,9 +32,9 @@ We provide nightly builds of **llama.cpp** with **AMD ROCm™** acceleration fro
 
 This build specifically targets the following GPU architectures:
 - **gfx1151** (STX Halo APU) - Ryzen AI MAX+ Pro 395
-- **gfx1150** (STX Point APU) - Ryzen AI 300
-- **gfx1152** (Krackan Point APU) - Ryzen AI 7 350 / Ryzen AI 5 340 (Radeon 860M/840M iGPU)
-- **gfx1153** (Krackan Point APU) - Ryzen AI 5 330 (Radeon 820M iGPU)
+- **gfx1150** (STX Point and Gorgon Point 1 APUs) - Ryzen AI 300
+- **gfx1152** (Krackan Point 1 and Gorgon Point 2 APUs) - Ryzen AI 7 350 / Ryzen AI 5 340 (Radeon 860M/840M iGPU)
+- **gfx1153** (Krackan Point 2 APU) - Ryzen AI 5 330 (Radeon 820M iGPU)
 - **gfx117X** - gfx1170 and gfx1171
 - **gfx120X** (RDNA4 GPUs) - includes AMD Radeon RX 9070 XT/GRE/9070, RX 9060 XT/9060
 - **gfx110X** (RDNA3 GPUs) - includes AMD Radeon dGPUs: PRO W7900/W7800/W7700/W7600, RX 7900 XTX/XT/GRE, RX 7800 XT, RX 7700 XT/7700, RX 7600 XT/7600 and iGPUs: Radeon 780M/760M/740M
