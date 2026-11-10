@@ -1,0 +1,2025 @@
+{
+  "schema_version": 1,
+  "kind": "qualification_record",
+  "generated_at": "2026-11-10T14:18:32Z",
+  "build": {
+    "build_id": "llama-ubuntu-rocm-gfx1150-x64.zip@42820964378",
+    "artifact": "llama-ubuntu-rocm-gfx1150-x64.zip",
+    "os": "ubuntu",
+    "gfx_family": "gfx1150",
+    "gpu_targets": [
+      "gfx1150"
+    ],
+    "rocm_version": "10.3.0a20261110",
+    "upstream_sha": "54cde7106a6b4013a053f13bb4a5d91683e7338d",
+    "release_tag": null,
+    "hardware_validated": false,
+    "hardware_gfx_target": null,
+    "run_id": "42820964378",
+    "run_attempt": "1",
+    "runner_env": null
+  },
+  "overall": "pass",
+  "published": false,
+  "counts": {
+    "pass": 9,
+    "fail": 0,
+    "warn": 0,
+    "skip": 0,
+    "total": 9
+  },
+  "tiers": {
+    "tier0": {
+      "status": "pass",
+      "tier_name": "Static archive verification",
+      "counts": {
+        "pass": 9,
+        "fail": 0,
+        "warn": 0,
+        "skip": 0,
+        "total": 9
+      },
+      "tests": [
+        {
+          "id": "T0.1",
+          "name": "archive contents",
+          "tier": "tier0",
+          "status": "pass",
+          "gating": true,
+          "duration_ms": 4,
+          "error": null,
+          "details": {
+            "missing": [],
+            "files": 394,
+            "bytes": 2383707381
+          }
+        },
+        {
+          "id": "T0.2",
+          "name": "HIP backend present",
+          "tier": "tier0",
+          "status": "pass",
+          "gating": true,
+          "duration_ms": 0,
+          "error": null,
+          "details": {
+            "backend": "libggml-hip.so",
+            "exists": true,
+            "targets": 1,
+            "min_bytes": 16777216,
+            "bytes": 74564816
+          }
+        },
+        {
+          "id": "T0.3",
+          "name": "gfx target audit",
+          "tier": "tier0",
+          "status": "pass",
+          "gating": true,
+          "duration_ms": 967,
+          "error": null,
+          "details": {
+            "binary": "libggml-hip.so",
+            "bytes_scanned": 74564816,
+            "bundle_magic_count": 141,
+            "expected_count": 1,
+            "present_count": 1,
+            "expected": [
+              "gfx1150"
+            ],
+            "present": [
+              "gfx1150"
+            ],
+            "missing": [],
+            "extra": [],
+            "entries_per_target": {
+              "gfx1150": 141
+            },
+            "entry_count_uniform": true
+          }
+        },
+        {
+          "id": "T0.5",
+          "name": "self-contained (no library from outside the archive)",
+          "tier": "tier0",
+          "status": "pass",
+          "gating": true,
+          "duration_ms": 113,
+          "error": null,
+          "details": {
+            "binaries_scanned": 135,
+            "unresolved": {},
+            "base_os_libraries_used": [
+              "ld-linux-x86-64.so.2",
+              "libc.so.6",
+              "libdl.so.2",
+              "libgcc_s.so.1",
+              "libm.so.6",
+              "libpthread.so.0",
+              "librt.so.1",
+              "libstdc++.so.6"
+            ],
+            "llama_server_closure": [
+              "libamd_comgr.so.3",
+              "libamdhip64.so.7",
+              "libggml-base.so.0",
+              "libggml-cpu.so.0",
+              "libggml-hip.so.0",
+              "libggml-rpc.so.0",
+              "libggml.so.0",
+              "libhipblas.so.3",
+              "libhipblaslt.so.1",
+              "libhsa-runtime64.so.1",
+              "libllama-common.so.0",
+              "libllama-server-impl.so",
+              "libllama.so.0",
+              "libmtmd.so.0",
+              "liborigami.so.1",
+              "librocblas.so.5",
+              "librocm_kpack.so.0",
+              "librocm_sysdeps_bz2.so",
+              "librocm_sysdeps_drm.so.2",
+              "librocm_sysdeps_drm_amdgpu.so.1",
+              "librocm_sysdeps_elf.so.1",
+              "librocm_sysdeps_liblzma.so.5",
+              "librocm_sysdeps_numa.so.1",
+              "librocm_sysdeps_z.so.1",
+              "librocm_sysdeps_zstd.so.1",
+              "librocprofiler-register.so.0",
+              "librocroller.so.1",
+              "librocsolver.so.0",
+              "libroctx64.so.4",
+              "libtensilelite-host.so.1",
+              "llama-server"
+            ],
+            "rocm_libraries_loaded_by_llama_server": [
+              "libamd_comgr.so.3",
+              "libamdhip64.so.7",
+              "libhipblas.so.3",
+              "libhipblaslt.so.1",
+              "libhsa-runtime64.so.1",
+              "liborigami.so.1",
+              "librocblas.so.5",
+              "librocm_kpack.so.0",
+              "librocm_sysdeps_bz2.so",
+              "librocm_sysdeps_drm.so.2",
+              "librocm_sysdeps_drm_amdgpu.so.1",
+              "librocm_sysdeps_elf.so.1",
+              "librocm_sysdeps_liblzma.so.5",
+              "librocm_sysdeps_numa.so.1",
+              "librocm_sysdeps_z.so.1",
+              "librocm_sysdeps_zstd.so.1",
+              "librocprofiler-register.so.0",
+              "librocroller.so.1",
+              "librocsolver.so.0",
+              "libroctx64.so.4",
+              "libtensilelite-host.so.1"
+            ]
+          }
+        },
+        {
+          "id": "T0.6",
+          "name": "Linux version support",
+          "tier": "tier0",
+          "status": "pass",
+          "gating": true,
+          "duration_ms": 184,
+          "error": null,
+          "details": {
+            "glibc_required": "2.34",
+            "glibc_allowed": "2.35",
+            "oldest_supported_distro": "Ubuntu 22.04",
+            "required_by": "ggml-rpc-server",
+            "per_file": {
+              "ggml-rpc-server": "2.34",
+              "libLLVM.so": "2.27",
+              "libLLVM.so.24.0git": "2.27",
+              "libamd_comgr.so": "2.27",
+              "libamd_comgr.so.3": "2.27",
+              "libamd_comgr.so.3.5.0": "2.27",
+              "libamdhip64.so": "2.17",
+              "libamdhip64.so.7": "2.17",
+              "libamdhip64.so.7.18.26446-0000000": "2.17",
+              "libclang-cpp.so": "2.14",
+              "libclang-cpp.so.24.0git": "2.14",
+              "libggml-base.so": "2.29",
+              "libggml-base.so.0": "2.29",
+              "libggml-base.so.0.29.0": "2.29",
+              "libggml-cpu.so": "2.34",
+              "libggml-cpu.so.0": "2.34",
+              "libggml-cpu.so.0.29.0": "2.34",
+              "libggml-hip.so": "2.34",
+              "libggml-hip.so.0": "2.34",
+              "libggml-hip.so.0.29.0": "2.34",
+              "libggml-rpc.so": "2.34",
+              "libggml-rpc.so.0": "2.34",
+              "libggml-rpc.so.0.29.0": "2.34",
+              "libggml.so": "2.34",
+              "libggml.so.0": "2.34",
+              "libggml.so.0.29.0": "2.34",
+              "libhipblas.so": "2.2.5",
+              "libhipblas.so.3": "2.2.5",
+              "libhipblas.so.3.9": "2.2.5",
+              "libhipblaslt.so": "2.16",
+              "libhipblaslt.so.1": "2.16",
+              "libhipblaslt.so.1.5": "2.16",
+              "libhsa-runtime64.so": "2.27",
+              "libhsa-runtime64.so.1": "2.27",
+              "libhsa-runtime64.so.1.22.0": "2.27",
+              "libllama-batched-bench-impl.so": "2.14",
+              "libllama-bench-impl.so": "2.32",
+              "libllama-cli-impl.so": "2.32",
+              "libllama-common.so": "2.34",
+              "libllama-common.so.0": "2.34",
+              "libllama-common.so.0.9.0": "2.34",
+              "libllama-completion-impl.so": "2.32",
+              "libllama-fit-params-impl.so": "2.14",
+              "libllama-perplexity-impl.so": "2.29",
+              "libllama-quantize-impl.so": "2.14",
+              "libllama-server-impl.so": "2.34",
+              "libllama.so": "2.34",
+              "libllama.so.0": "2.34",
+              "libllama.so.0.9.0": "2.34",
+              "libmtmd.so": "2.32",
+              "libmtmd.so.0": "2.32",
+              "libmtmd.so.0.9.0": "2.32",
+              "libomp.so": "2.17",
+              "liborigami.so": "2.17",
+              "liborigami.so.1": "2.17",
+              "liborigami.so.1.0": "2.17",
+              "librocblas.so": "2.27",
+              "librocblas.so.5": "2.27",
+              "librocblas.so.5.9": "2.27",
+              "librocm_kpack.so": "2.17",
+              "librocm_kpack.so.0": "2.17",
+              "librocm_kpack.so.0.1.0": "2.17",
+              "librocm_sysdeps_bz2.so": "2.3",
+              "librocm_sysdeps_drm.so.2": "2.17",
+              "librocm_sysdeps_drm_amdgpu.so.1": "2.28",
+              "librocm_sysdeps_elf.so.1": "2.14",
+              "librocm_sysdeps_liblzma.so.5": "2.17",
+              "librocm_sysdeps_liblzma.so.5.8.1": "2.17",
+              "librocm_sysdeps_numa.so.1": "2.14",
+              "librocm_sysdeps_z.so.1": "2.14",
+              "librocm_sysdeps_z.so.1.3.2": "2.14",
+              "librocm_sysdeps_zstd.so.1": "2.14",
+              "librocm_sysdeps_zstd.so.1.5.7": "2.14",
+              "librocprofiler-register.so": "2.17",
+              "librocprofiler-register.so.0": "2.17",
+              "librocprofiler-register.so.0.7.0": "2.17",
+              "librocroller.so": "2.27",
+              "librocroller.so.1": "2.27",
+              "librocroller.so.1.0.0": "2.27",
+              "librocsolver.so": "2.17",
+              "librocsolver.so.0": "2.17",
+              "librocsolver.so.0.14": "2.17",
+              "libroctx64.so": "2.3",
+              "libroctx64.so.4": "2.3",
+              "libroctx64.so.4.1.0": "2.3",
+              "libtensilelite-host.so": "2.27",
+              "libtensilelite-host.so.1": "2.27",
+              "libtensilelite-host.so.1.0": "2.27",
+              "llama": "2.34",
+              "llama-batched": "2.34",
+              "llama-batched-bench": "2.34",
+              "llama-bench": "2.34",
+              "llama-cli": "2.34",
+              "llama-completion": "2.34",
+              "llama-convert-llama2c-to-ggml": "2.34",
+              "llama-cvector-generator": "2.34",
+              "llama-debug": "2.34",
+              "llama-diffusion-cli": "2.34",
+              "llama-embedding": "2.34",
+              "llama-eval-callback": "2.34",
+              "llama-export-lora": "2.34",
+              "llama-finetune": "2.34",
+              "llama-fit-params": "2.34",
+              "llama-gemma3-cli": "2.34",
+              "llama-gen-docs": "2.34",
+              "llama-gguf": "2.34",
+              "llama-gguf-hash": "2.34",
+              "llama-gguf-split": "2.34",
+              "llama-idle": "2.34",
+              "llama-imatrix": "2.34",
+              "llama-llava-cli": "2.34",
+              "llama-lookahead": "2.34",
+              "llama-lookup": "2.34",
+              "llama-lookup-create": "2.34",
+              "llama-lookup-merge": "2.34",
+              "llama-lookup-stats": "2.34",
+              "llama-minicpmv-cli": "2.34",
+              "llama-mtmd-cli": "2.34",
+              "llama-mtmd-debug": "2.34",
+              "llama-parallel": "2.34",
+              "llama-passkey": "2.34",
+              "llama-perplexity": "2.34",
+              "llama-q8dot": "2.34",
+              "llama-quantize": "2.34",
+              "llama-qwen2vl-cli": "2.34",
+              "llama-results": "2.34",
+              "llama-retrieval": "2.34",
+              "llama-server": "2.34",
+              "llama-simple": "2.34",
+              "llama-simple-chat": "2.34",
+              "llama-speculative": "2.34",
+              "llama-speculative-simple": "2.34",
+              "llama-tokenize": "2.34",
+              "llama-tts": "2.34",
+              "llama-vdot": "2.34"
+            }
+          }
+        },
+        {
+          "id": "T0.7",
+          "name": "library search path",
+          "tier": "tier0",
+          "status": "pass",
+          "gating": true,
+          "duration_ms": 111,
+          "error": null,
+          "details": {
+            "leaked": {},
+            "no_search_path": []
+          }
+        },
+        {
+          "id": "T0.8",
+          "name": "llama-server flag surface",
+          "tier": "tier0",
+          "status": "pass",
+          "gating": true,
+          "duration_ms": 129,
+          "error": null,
+          "details": {
+            "returncode": 0,
+            "help_bytes": 61840,
+            "flags_checked": 16,
+            "flags_missing": []
+          }
+        },
+        {
+          "id": "T0.9",
+          "name": "provenance",
+          "tier": "tier0",
+          "status": "pass",
+          "gating": true,
+          "duration_ms": 117,
+          "error": null,
+          "details": {
+            "archive_upstream_sha": "54cde7106a6b4013a053f13bb4a5d91683e7338d",
+            "expected_upstream_sha": "54cde7106a6b4013a053f13bb4a5d91683e7338d",
+            "archive_rocm_version": "10.3.0a20261110",
+            "expected_rocm_version": "10.3.0a20261110",
+            "version_returncode": 0,
+            "version_output": "version: 0.9.0-dev (build 12266, commit 54cde7106)\nbuilt with Clang 24.0.0 for Linux",
+            "binary_commit": "54cde7106",
+            "binary_build_number": 12266,
+            "compared": [
+              "archive commit",
+              "archive ROCm version",
+              "binary commit"
+            ]
+          }
+        },
+        {
+          "id": "T0.13",
+          "name": "kernel data per target",
+          "tier": "tier0",
+          "status": "pass",
+          "gating": true,
+          "duration_ms": 0,
+          "error": null,
+          "details": {
+            "per_target": {
+              "gfx1150": {
+                "rocblas_folder": true,
+                "rocblas_kpack": true,
+                "hipblaslt_folder": true,
+                "kpacks": [
+                  "blas_lib_gfx1150.kpack",
+                  "fft_lib_gfx1150.kpack",
+                  "hiptensor_lib_gfx1150.kpack",
+                  "miopen_lib_gfx1150.kpack",
+                  "rand_lib_gfx1150.kpack",
+                  "rocalution_lib_gfx1150.kpack",
+                  "solver_lib_gfx1150.kpack",
+                  "sparse_lib_gfx1150.kpack"
+                ]
+              }
+            },
+            "kpack_files": [
+              "blas_lib_gfx1150.kpack",
+              "fft_lib_gfx1150.kpack",
+              "hiptensor_lib_gfx1150.kpack",
+              "miopen_lib_gfx1150.kpack",
+              "rand_lib_gfx1150.kpack",
+              "rocalution_lib_gfx1150.kpack",
+              "solver_lib_gfx1150.kpack",
+              "sparse_lib_gfx1150.kpack"
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "qualified": true,
+  "blocked_by": [],
+  "gfx": {
+    "requested": [
+      "gfx1150"
+    ],
+    "present_in_binary": [
+      "gfx1150"
+    ],
+    "missing_from_binary": [],
+    "hardware_validated": []
+  },
+  "versions": {
+    "rocm_nightly": "10.3.0a20261110",
+    "llamacpp_commit": "54cde7106a6b4013a053f13bb4a5d91683e7338d",
+    "binary_reports_commit": "54cde7106",
+    "binary_reports_build": 12266
+  },
+  "bundle": {
+    "files": 394,
+    "bytes": 2383707381,
+    "manifest": [
+      [
+        "LICENSE",
+        1078
+      ],
+      [
+        "ggml-rpc-server",
+        201800
+      ],
+      [
+        "libLLVM.so",
+        135165688
+      ],
+      [
+        "libLLVM.so.24.0git",
+        135165688
+      ],
+      [
+        "libamd_comgr.so",
+        169769480
+      ],
+      [
+        "libamd_comgr.so.3",
+        169769480
+      ],
+      [
+        "libamd_comgr.so.3.5.0",
+        169769480
+      ],
+      [
+        "libamdhip64.so",
+        6719232
+      ],
+      [
+        "libamdhip64.so.7",
+        6719232
+      ],
+      [
+        "libamdhip64.so.7.18.26446-0000000",
+        6719232
+      ],
+      [
+        "libclang-cpp.so",
+        89934752
+      ],
+      [
+        "libclang-cpp.so.24.0git",
+        89934752
+      ],
+      [
+        "libggml-base.so",
+        926064
+      ],
+      [
+        "libggml-base.so.0",
+        926064
+      ],
+      [
+        "libggml-base.so.0.29.0",
+        926064
+      ],
+      [
+        "libggml-cpu.so",
+        1100184
+      ],
+      [
+        "libggml-cpu.so.0",
+        1100184
+      ],
+      [
+        "libggml-cpu.so.0.29.0",
+        1100184
+      ],
+      [
+        "libggml-hip.so",
+        74564816
+      ],
+      [
+        "libggml-hip.so.0",
+        74564816
+      ],
+      [
+        "libggml-hip.so.0.29.0",
+        74564816
+      ],
+      [
+        "libggml-rpc.so",
+        318640
+      ],
+      [
+        "libggml-rpc.so.0",
+        318640
+      ],
+      [
+        "libggml-rpc.so.0.29.0",
+        318640
+      ],
+      [
+        "libggml.so",
+        46768
+      ],
+      [
+        "libggml.so.0",
+        46768
+      ],
+      [
+        "libggml.so.0.29.0",
+        46768
+      ],
+      [
+        "libhipblas.so",
+        948584
+      ],
+      [
+        "libhipblas.so.3",
+        948584
+      ],
+      [
+        "libhipblas.so.3.9",
+        948584
+      ],
+      [
+        "libhipblaslt.so",
+        3642240
+      ],
+      [
+        "libhipblaslt.so.1",
+        3642240
+      ],
+      [
+        "libhipblaslt.so.1.5",
+        3642240
+      ],
+      [
+        "libhsa-runtime64.so",
+        5087856
+      ],
+      [
+        "libhsa-runtime64.so.1",
+        5087856
+      ],
+      [
+        "libhsa-runtime64.so.1.22.0",
+        5087856
+      ],
+      [
+        "libllama-batched-bench-impl.so",
+        39072
+      ],
+      [
+        "libllama-bench-impl.so",
+        489280
+      ],
+      [
+        "libllama-cli-impl.so",
+        262112
+      ],
+      [
+        "libllama-common.so",
+        20597312
+      ],
+      [
+        "libllama-common.so.0",
+        20597312
+      ],
+      [
+        "libllama-common.so.0.9.0",
+        20597312
+      ],
+      [
+        "libllama-completion-impl.so",
+        134992
+      ],
+      [
+        "libllama-fit-params-impl.so",
+        34440
+      ],
+      [
+        "libllama-perplexity-impl.so",
+        154792
+      ],
+      [
+        "libllama-quantize-impl.so",
+        78400
+      ],
+      [
+        "libllama-server-impl.so",
+        22438600
+      ],
+      [
+        "libllama.so",
+        5222472
+      ],
+      [
+        "libllama.so.0",
+        5222472
+      ],
+      [
+        "libllama.so.0.9.0",
+        5222472
+      ],
+      [
+        "libmtmd.so",
+        2135104
+      ],
+      [
+        "libmtmd.so.0",
+        2135104
+      ],
+      [
+        "libmtmd.so.0.9.0",
+        2135104
+      ],
+      [
+        "libomp.so",
+        1258280
+      ],
+      [
+        "liborigami.so",
+        599288
+      ],
+      [
+        "liborigami.so.1",
+        599288
+      ],
+      [
+        "liborigami.so.1.0",
+        599288
+      ],
+      [
+        "librocblas.so",
+        27833216
+      ],
+      [
+        "librocblas.so.5",
+        27833216
+      ],
+      [
+        "librocblas.so.5.9",
+        27833216
+      ],
+      [
+        "librocm_kpack.so",
+        344584
+      ],
+      [
+        "librocm_kpack.so.0",
+        344584
+      ],
+      [
+        "librocm_kpack.so.0.1.0",
+        344584
+      ],
+      [
+        "librocm_sysdeps_bz2.so",
+        104016
+      ],
+      [
+        "librocm_sysdeps_drm.so.2",
+        360336
+      ],
+      [
+        "librocm_sysdeps_drm_amdgpu.so.1",
+        251416
+      ],
+      [
+        "librocm_sysdeps_elf.so.1",
+        1198616
+      ],
+      [
+        "librocm_sysdeps_liblzma.so.5",
+        225840
+      ],
+      [
+        "librocm_sysdeps_liblzma.so.5.8.1",
+        225840
+      ],
+      [
+        "librocm_sysdeps_numa.so.1",
+        225424
+      ],
+      [
+        "librocm_sysdeps_z.so.1",
+        134208
+      ],
+      [
+        "librocm_sysdeps_z.so.1.3.2",
+        134208
+      ],
+      [
+        "librocm_sysdeps_zstd.so.1",
+        887656
+      ],
+      [
+        "librocm_sysdeps_zstd.so.1.5.7",
+        887656
+      ],
+      [
+        "librocprofiler-register.so",
+        986648
+      ],
+      [
+        "librocprofiler-register.so.0",
+        986648
+      ],
+      [
+        "librocprofiler-register.so.0.7.0",
+        986648
+      ],
+      [
+        "librocroller.so",
+        233500640
+      ],
+      [
+        "librocroller.so.1",
+        233500640
+      ],
+      [
+        "librocroller.so.1.0.0",
+        233500640
+      ],
+      [
+        "librocsolver.so",
+        34231168
+      ],
+      [
+        "librocsolver.so.0",
+        34231168
+      ],
+      [
+        "librocsolver.so.0.14",
+        34231168
+      ],
+      [
+        "libroctx64.so",
+        7664
+      ],
+      [
+        "libroctx64.so.4",
+        7664
+      ],
+      [
+        "libroctx64.so.4.1.0",
+        7664
+      ],
+      [
+        "libtensilelite-host.so",
+        7275464
+      ],
+      [
+        "libtensilelite-host.so.1",
+        7275464
+      ],
+      [
+        "libtensilelite-host.so.1.0",
+        7275464
+      ],
+      [
+        "llama",
+        57792
+      ],
+      [
+        "llama-batched",
+        40720
+      ],
+      [
+        "llama-batched-bench",
+        6616
+      ],
+      [
+        "llama-bench",
+        6592
+      ],
+      [
+        "llama-cli",
+        6656
+      ],
+      [
+        "llama-completion",
+        6600
+      ],
+      [
+        "llama-convert-llama2c-to-ggml",
+        57272
+      ],
+      [
+        "llama-cvector-generator",
+        78152
+      ],
+      [
+        "llama-debug",
+        256656
+      ],
+      [
+        "llama-diffusion-cli",
+        106376
+      ],
+      [
+        "llama-embedding",
+        54424
+      ],
+      [
+        "llama-eval-callback",
+        32400
+      ],
+      [
+        "llama-export-lora",
+        70376
+      ],
+      [
+        "llama-finetune",
+        32688
+      ],
+      [
+        "llama-fit-params",
+        6600
+      ],
+      [
+        "llama-gemma3-cli",
+        9400
+      ],
+      [
+        "llama-gen-docs",
+        44552
+      ],
+      [
+        "llama-gguf",
+        22992
+      ],
+      [
+        "llama-gguf-hash",
+        85240
+      ],
+      [
+        "llama-gguf-split",
+        37832
+      ],
+      [
+        "llama-idle",
+        33960
+      ],
+      [
+        "llama-imatrix",
+        217208
+      ],
+      [
+        "llama-llava-cli",
+        9400
+      ],
+      [
+        "llama-lookahead",
+        50048
+      ],
+      [
+        "llama-lookup",
+        44344
+      ],
+      [
+        "llama-lookup-create",
+        31064
+      ],
+      [
+        "llama-lookup-merge",
+        14224
+      ],
+      [
+        "llama-lookup-stats",
+        37080
+      ],
+      [
+        "llama-minicpmv-cli",
+        9400
+      ],
+      [
+        "llama-mtmd-cli",
+        80896
+      ],
+      [
+        "llama-mtmd-debug",
+        46776
+      ],
+      [
+        "llama-parallel",
+        65568
+      ],
+      [
+        "llama-passkey",
+        42864
+      ],
+      [
+        "llama-perplexity",
+        6600
+      ],
+      [
+        "llama-q8dot",
+        14800
+      ],
+      [
+        "llama-quantize",
+        6592
+      ],
+      [
+        "llama-qwen2vl-cli",
+        9400
+      ],
+      [
+        "llama-results",
+        41168
+      ],
+      [
+        "llama-retrieval",
+        56008
+      ],
+      [
+        "llama-server",
+        6624
+      ],
+      [
+        "llama-simple",
+        20024
+      ],
+      [
+        "llama-simple-chat",
+        24736
+      ],
+      [
+        "llama-speculative",
+        74168
+      ],
+      [
+        "llama-speculative-simple",
+        45720
+      ],
+      [
+        "llama-tokenize",
+        36704
+      ],
+      [
+        "llama-tts",
+        41208
+      ],
+      [
+        "llama-vdot",
+        20504
+      ],
+      [
+        ".kpack/blas_lib_gfx1150.kpack",
+        4852628
+      ],
+      [
+        ".kpack/fft_lib_gfx1150.kpack",
+        2825
+      ],
+      [
+        ".kpack/hiptensor_lib_gfx1150.kpack",
+        35456851
+      ],
+      [
+        ".kpack/miopen_lib_gfx1150.kpack",
+        1577
+      ],
+      [
+        ".kpack/rand_lib_gfx1150.kpack",
+        3366753
+      ],
+      [
+        ".kpack/rocalution_lib_gfx1150.kpack",
+        1038507
+      ],
+      [
+        ".kpack/solver_lib_gfx1150.kpack",
+        27040550
+      ],
+      [
+        ".kpack/sparse_lib_gfx1150.kpack",
+        15703532
+      ],
+      [
+        "hipblaslt/library/gfx1150/Kernels.so-000-gfx1150.hsaco",
+        3337752
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_BB_BB_HA_Bias_Aux_SAV_UA_Type_BB_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_gfx1150.co",
+        149517
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_BB_BB_HA_Bias_Aux_SAV_UA_Type_BB_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_gfx1150.dat.zlib",
+        9803
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_BB_BB_HA_Bias_Aux_SAV_UA_Type_BB_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_gfx1150.co",
+        357762
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_BB_BB_HA_Bias_Aux_SAV_UA_Type_BB_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_gfx1150.dat.zlib",
+        48640
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_BB_BB_HA_Bias_Aux_SAV_UA_Type_BB_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_gfx1150.co",
+        264398
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_BB_BB_HA_Bias_Aux_SAV_UA_Type_BB_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_gfx1150.dat.zlib",
+        12086
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_BB_BB_HA_Bias_Aux_SAV_UA_Type_BB_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1150.co",
+        496777
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_BB_BB_HA_Bias_Aux_SAV_UA_Type_BB_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1150.dat.zlib",
+        53621
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_BB_BB_HA_Bias_SAV_UA_Type_BB_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_gfx1150.co",
+        144285
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_BB_BB_HA_Bias_SAV_UA_Type_BB_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_gfx1150.dat.zlib",
+        9782
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_BB_BB_HA_Bias_SAV_UA_Type_BB_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_gfx1150.co",
+        342577
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_BB_BB_HA_Bias_SAV_UA_Type_BB_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_gfx1150.dat.zlib",
+        48749
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_BB_BB_HA_Bias_SAV_UA_Type_BB_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_gfx1150.co",
+        251724
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_BB_BB_HA_Bias_SAV_UA_Type_BB_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_gfx1150.dat.zlib",
+        12067
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_BB_BB_HA_Bias_SAV_UA_Type_BB_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1150.co",
+        468040
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_BB_BB_HA_Bias_SAV_UA_Type_BB_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1150.dat.zlib",
+        53254
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_BB_SB_HA_Bias_SAV_UA_Type_BS_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_gfx1150.co",
+        40790
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_BB_SB_HA_Bias_SAV_UA_Type_BS_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_gfx1150.dat.zlib",
+        3592
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_BB_SB_HA_Bias_SAV_UA_Type_BS_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_gfx1150.co",
+        48074
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_BB_SB_HA_Bias_SAV_UA_Type_BS_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_gfx1150.dat.zlib",
+        3609
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_BB_SB_HA_Bias_SAV_UA_Type_BS_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_gfx1150.co",
+        41338
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_BB_SB_HA_Bias_SAV_UA_Type_BS_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_gfx1150.dat.zlib",
+        3507
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_BB_SB_HA_Bias_SAV_UA_Type_BS_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1150.co",
+        32117
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_BB_SB_HA_Bias_SAV_UA_Type_BS_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1150.dat.zlib",
+        3430
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_BB_SB_HA_Bias_Type_BS_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_gfx1150.co",
+        20619
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_BB_SB_HA_Bias_Type_BS_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_gfx1150.dat.zlib",
+        15843
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_BB_SB_HA_Bias_Type_BS_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_gfx1150.co",
+        17901
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_BB_SB_HA_Bias_Type_BS_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_gfx1150.dat.zlib",
+        15483
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_BB_SB_HA_Bias_Type_BS_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1150.co",
+        16380
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_BB_SB_HA_Bias_Type_BS_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1150.dat.zlib",
+        15371
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_DD_DD_UA_Type_DD_Contraction_l_Ailk_Bjlk_Cijk_Dijk_gfx1150.co",
+        13270
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_DD_DD_UA_Type_DD_Contraction_l_Ailk_Bjlk_Cijk_Dijk_gfx1150.dat.zlib",
+        5906
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_DD_DD_UA_Type_DD_Contraction_l_Ailk_Bljk_Cijk_Dijk_gfx1150.co",
+        13336
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_DD_DD_UA_Type_DD_Contraction_l_Ailk_Bljk_Cijk_Dijk_gfx1150.dat.zlib",
+        5887
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_DD_DD_UA_Type_DD_Contraction_l_Alik_Bjlk_Cijk_Dijk_gfx1150.co",
+        13390
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_DD_DD_UA_Type_DD_Contraction_l_Alik_Bjlk_Cijk_Dijk_gfx1150.dat.zlib",
+        5971
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_DD_DD_UA_Type_DD_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1150.co",
+        13354
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_DD_DD_UA_Type_DD_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1150.dat.zlib",
+        5938
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_HH_HH_HA_Bias_Aux_SAV_UA_Type_HH_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_gfx1150.co",
+        142407
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_HH_HH_HA_Bias_Aux_SAV_UA_Type_HH_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_gfx1150.dat.zlib",
+        9835
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_HH_HH_HA_Bias_Aux_SAV_UA_Type_HH_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_gfx1150.co",
+        342736
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_HH_HH_HA_Bias_Aux_SAV_UA_Type_HH_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_gfx1150.dat.zlib",
+        48926
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_HH_HH_HA_Bias_Aux_SAV_UA_Type_HH_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_gfx1150.co",
+        252896
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_HH_HH_HA_Bias_Aux_SAV_UA_Type_HH_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_gfx1150.dat.zlib",
+        12686
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_HH_HH_HA_Bias_Aux_SAV_UA_Type_HH_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1150.co",
+        462694
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_HH_HH_HA_Bias_Aux_SAV_UA_Type_HH_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1150.dat.zlib",
+        53484
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_HH_HH_HA_Bias_SAV_UA_Type_HH_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_gfx1150.co",
+        137340
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_HH_HH_HA_Bias_SAV_UA_Type_HH_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_gfx1150.dat.zlib",
+        9760
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_HH_HH_HA_Bias_SAV_UA_Type_HH_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_gfx1150.co",
+        329333
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_HH_HH_HA_Bias_SAV_UA_Type_HH_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_gfx1150.dat.zlib",
+        48622
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_HH_HH_HA_Bias_SAV_UA_Type_HH_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_gfx1150.co",
+        240818
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_HH_HH_HA_Bias_SAV_UA_Type_HH_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_gfx1150.dat.zlib",
+        12637
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_HH_HH_HA_Bias_SAV_UA_Type_HH_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1150.co",
+        442358
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_HH_HH_HA_Bias_SAV_UA_Type_HH_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1150.dat.zlib",
+        53446
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_HH_HH_HA_SAV_UA_Type_HH_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1150.co",
+        59058
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_HH_HH_HA_SAV_UA_Type_HH_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1150.dat.zlib",
+        3940
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_HH_SH_HA_Bias_SAV_UA_Type_HS_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_gfx1150.co",
+        55358
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_HH_SH_HA_Bias_SAV_UA_Type_HS_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_gfx1150.dat.zlib",
+        3802
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_HH_SH_HA_Bias_SAV_UA_Type_HS_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_gfx1150.co",
+        47743
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_HH_SH_HA_Bias_SAV_UA_Type_HS_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_gfx1150.dat.zlib",
+        3644
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_HH_SH_HA_Bias_SAV_UA_Type_HS_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_gfx1150.co",
+        55352
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_HH_SH_HA_Bias_SAV_UA_Type_HS_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_gfx1150.dat.zlib",
+        3917
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_HH_SH_HA_Bias_SAV_UA_Type_HS_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1150.co",
+        27488
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_HH_SH_HA_Bias_SAV_UA_Type_HS_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1150.dat.zlib",
+        3136
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_HH_SH_HA_Bias_Type_HS_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_gfx1150.co",
+        20655
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_HH_SH_HA_Bias_Type_HS_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_gfx1150.dat.zlib",
+        15820
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_HH_SH_HA_Bias_Type_HS_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_gfx1150.co",
+        17897
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_HH_SH_HA_Bias_Type_HS_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_gfx1150.dat.zlib",
+        15523
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_HH_SH_HA_Bias_Type_HS_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1150.co",
+        16312
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_HH_SH_HA_Bias_Type_HS_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1150.dat.zlib",
+        15396
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_I8I8_I8I8_HA_SAV_UA_Type_I8I8_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_gfx1150.co",
+        33576
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_I8I8_I8I8_HA_SAV_UA_Type_I8I8_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_gfx1150.dat.zlib",
+        3420
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_I8I8_I8I8_HA_SAV_UA_Type_I8I8_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_gfx1150.co",
+        38653
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_I8I8_I8I8_HA_SAV_UA_Type_I8I8_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_gfx1150.dat.zlib",
+        3491
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_I8I8_I8I8_HA_SAV_UA_Type_I8I8_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_gfx1150.co",
+        57160
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_I8I8_I8I8_HA_SAV_UA_Type_I8I8_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_gfx1150.dat.zlib",
+        3690
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_I8I8_I8I8_HA_SAV_UA_Type_I8I8_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1150.co",
+        39113
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_I8I8_I8I8_HA_SAV_UA_Type_I8I8_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1150.dat.zlib",
+        3796
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_I8I8_II8_HA_SAV_UA_Type_I8I_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_gfx1150.co",
+        28270
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_I8I8_II8_HA_SAV_UA_Type_I8I_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_gfx1150.dat.zlib",
+        3287
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_I8I8_II8_HA_SAV_UA_Type_I8I_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_gfx1150.co",
+        43033
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_I8I8_II8_HA_SAV_UA_Type_I8I_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_gfx1150.dat.zlib",
+        3638
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_I8I8_II8_HA_SAV_UA_Type_I8I_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_gfx1150.co",
+        56011
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_I8I8_II8_HA_SAV_UA_Type_I8I_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_gfx1150.dat.zlib",
+        3563
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_I8I8_II8_HA_SAV_UA_Type_I8I_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1150.co",
+        34250
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_I8I8_II8_HA_SAV_UA_Type_I8I_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1150.dat.zlib",
+        3557
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_SS_SS_HA_Bias_SAV_UA_Type_SS_Contraction_l_Ailk_Bjlk_Cijk_Dijk_gfx1150.co",
+        15638
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_SS_SS_HA_Bias_SAV_UA_Type_SS_Contraction_l_Ailk_Bjlk_Cijk_Dijk_gfx1150.dat.zlib",
+        4008
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_SS_SS_HA_Bias_SAV_UA_Type_SS_Contraction_l_Ailk_Bljk_Cijk_Dijk_gfx1150.co",
+        15623
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_SS_SS_HA_Bias_SAV_UA_Type_SS_Contraction_l_Ailk_Bljk_Cijk_Dijk_gfx1150.dat.zlib",
+        4006
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_SS_SS_HA_Bias_SAV_UA_Type_SS_Contraction_l_Alik_Bjlk_Cijk_Dijk_gfx1150.co",
+        15646
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_SS_SS_HA_Bias_SAV_UA_Type_SS_Contraction_l_Alik_Bjlk_Cijk_Dijk_gfx1150.dat.zlib",
+        3993
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_SS_SS_HA_Bias_SAV_UA_Type_SS_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1150.co",
+        15550
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_SS_SS_HA_Bias_SAV_UA_Type_SS_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1150.dat.zlib",
+        4011
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLibrary_lazy_gfx1150.dat.zlib",
+        1298
+      ],
+      [
+        "hipblaslt/library/gfx1150/TensileLiteLibrary_lazy_gfx1150_Mapping.dat.zlib",
+        459
+      ],
+      [
+        "hipblaslt/library/gfx1150/extop_gfx1150.co",
+        41736
+      ],
+      [
+        "hipblaslt/library/gfx1150/hipblasltExtOpLibrary_gfx1150.dat.zlib",
+        363
+      ],
+      [
+        "hipblaslt/library/gfx1150/hipblasltTransform_gfx1150.hsaco",
+        269064
+      ],
+      [
+        "rocblas/library/gfx1150/Kernels.so-000-gfx1150.hsaco",
+        235640
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_4xi8I_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1150.dat",
+        42058
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_4xi8I_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1150.hsaco",
+        171776
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_4xi8I_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1150.dat",
+        35978
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_4xi8I_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1150.hsaco",
+        142584
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_4xi8I_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1150.dat",
+        42144
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_4xi8I_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1150.hsaco",
+        171008
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_4xi8I_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1150.dat",
+        35894
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_4xi8I_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1150.hsaco",
+        142328
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_BB_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1150.dat",
+        54113
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_BB_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1150.hsaco",
+        470624
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_BB_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_gfx1150.co",
+        160392
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_BB_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_gfx1150.dat",
+        235828
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_BB_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1150.dat",
+        51302
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_BB_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1150.hsaco",
+        443792
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_BB_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_gfx1150.co",
+        105290
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_BB_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_gfx1150.dat",
+        207928
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_BB_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1150.dat",
+        38122
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_BB_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1150.hsaco",
+        185760
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_BB_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_gfx1150.co",
+        182963
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_BB_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_gfx1150.dat",
+        306532
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_BB_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1150.dat",
+        51130
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_BB_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1150.hsaco",
+        440208
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_BB_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1150.co",
+        75230
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_BB_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1150.dat",
+        140929
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_BS_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1150.dat",
+        52608
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_BS_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1150.hsaco",
+        458680
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_BS_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1150.dat",
+        30868
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_BS_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1150.hsaco",
+        253720
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_BS_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1150.dat",
+        16518
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_BS_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1150.hsaco",
+        82672
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_BS_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1150.dat",
+        27323
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_BS_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1150.hsaco",
+        206856
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_CC_Contraction_l_Ailk_BjlkC_Cijk_Dijk_fallback_gfx1150.dat",
+        7022
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_CC_Contraction_l_Ailk_BjlkC_Cijk_Dijk_fallback_gfx1150.hsaco",
+        44224
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_CC_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1150.dat",
+        7014
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_CC_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1150.hsaco",
+        44216
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_CC_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1150.dat",
+        7014
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_CC_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1150.hsaco",
+        43704
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_CC_Contraction_l_AlikC_BjlkC_Cijk_Dijk_fallback_gfx1150.dat",
+        7034
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_CC_Contraction_l_AlikC_BjlkC_Cijk_Dijk_fallback_gfx1150.hsaco",
+        45512
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_CC_Contraction_l_AlikC_Bjlk_Cijk_Dijk_fallback_gfx1150.dat",
+        7022
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_CC_Contraction_l_AlikC_Bjlk_Cijk_Dijk_fallback_gfx1150.hsaco",
+        43456
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_CC_Contraction_l_AlikC_Bljk_Cijk_Dijk_fallback_gfx1150.dat",
+        7022
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_CC_Contraction_l_AlikC_Bljk_Cijk_Dijk_fallback_gfx1150.hsaco",
+        43200
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_CC_Contraction_l_Alik_BjlkC_Cijk_Dijk_fallback_gfx1150.dat",
+        7018
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_CC_Contraction_l_Alik_BjlkC_Cijk_Dijk_fallback_gfx1150.hsaco",
+        44224
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_CC_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1150.dat",
+        7018
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_CC_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1150.hsaco",
+        43448
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_CC_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1150.dat",
+        7010
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_CC_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1150.hsaco",
+        43192
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_DD_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1150.dat",
+        6818
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_DD_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1150.hsaco",
+        20432
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_DD_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1150.dat",
+        8447
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_DD_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1150.hsaco",
+        34368
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_DD_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1150.dat",
+        6826
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_DD_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1150.hsaco",
+        20432
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_DD_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1150.dat",
+        6822
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_DD_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1150.hsaco",
+        19920
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_HH_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1150.dat",
+        26592
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_HH_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1150.hsaco",
+        192160
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_HH_Contraction_l_Ailk_Bjlk_Cijk_Dijk_gfx1150.co",
+        171191
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_HH_Contraction_l_Ailk_Bjlk_Cijk_Dijk_gfx1150.dat",
+        248695
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_HH_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1150.dat",
+        20068
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_HH_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1150.hsaco",
+        90024
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_HH_Contraction_l_Ailk_Bljk_Cijk_Dijk_gfx1150.co",
+        148785
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_HH_Contraction_l_Ailk_Bljk_Cijk_Dijk_gfx1150.dat",
+        311293
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_HH_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1150.dat",
+        20128
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_HH_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1150.hsaco",
+        105384
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_HH_Contraction_l_Alik_Bjlk_Cijk_Dijk_gfx1150.co",
+        146713
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_HH_Contraction_l_Alik_Bjlk_Cijk_Dijk_gfx1150.dat",
+        231814
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_HH_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1150.dat",
+        20110
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_HH_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1150.hsaco",
+        89000
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_HH_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1150.co",
+        75645
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_HH_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1150.dat",
+        159463
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_HH_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1150.dat",
+        71918
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_HH_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1150.hsaco",
+        394608
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_HH_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_gfx1150.co",
+        104670
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_HH_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_gfx1150.dat",
+        135208
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_HH_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1150.dat",
+        50406
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_HH_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1150.hsaco",
+        202936
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_HH_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_gfx1150.co",
+        173634
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_HH_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_gfx1150.dat",
+        377706
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_HH_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1150.dat",
+        43850
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_HH_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1150.hsaco",
+        107968
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_HH_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_gfx1150.co",
+        140554
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_HH_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_gfx1150.dat",
+        242865
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_HH_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1150.dat",
+        43788
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_HH_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1150.hsaco",
+        168392
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_HH_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1150.co",
+        93517
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_HH_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1150.dat",
+        218746
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_HS_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1150.dat",
+        44856
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_HS_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1150.hsaco",
+        338312
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_HS_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1150.dat",
+        27009
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_HS_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1150.hsaco",
+        211472
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_HS_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1150.dat",
+        19711
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_HS_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1150.hsaco",
+        103160
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_HS_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1150.dat",
+        30630
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_HS_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1150.hsaco",
+        248088
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_I8I_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1150.dat",
+        68541
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_I8I_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1150.hsaco",
+        516976
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_I8I_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_gfx1150.co",
+        241604
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_I8I_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_gfx1150.dat",
+        315964
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_I8I_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1150.dat",
+        54690
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_I8I_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1150.hsaco",
+        353632
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_I8I_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_gfx1150.co",
+        211568
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_I8I_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_gfx1150.dat",
+        382863
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_I8I_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1150.dat",
+        65348
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_I8I_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1150.hsaco",
+        496224
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_I8I_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_gfx1150.co",
+        229737
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_I8I_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_gfx1150.dat",
+        361973
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_I8I_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1150.dat",
+        63404
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_I8I_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1150.hsaco",
+        432336
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_I8I_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1150.co",
+        125158
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_I8I_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1150.dat",
+        306843
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_SS_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1150.dat",
+        6826
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_SS_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1150.hsaco",
+        55768
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_SS_Contraction_l_Ailk_Bjlk_Cijk_Dijk_gfx1150.co",
+        4014
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_SS_Contraction_l_Ailk_Bjlk_Cijk_Dijk_gfx1150.dat",
+        1936
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_SS_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1150.dat",
+        6814
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_SS_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1150.hsaco",
+        36560
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_SS_Contraction_l_Ailk_Bljk_Cijk_Dijk_gfx1150.co",
+        4016
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_SS_Contraction_l_Ailk_Bljk_Cijk_Dijk_gfx1150.dat",
+        1936
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_SS_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1150.dat",
+        6826
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_SS_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1150.hsaco",
+        36304
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_SS_Contraction_l_Alik_Bjlk_Cijk_Dijk_gfx1150.co",
+        4016
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_SS_Contraction_l_Alik_Bjlk_Cijk_Dijk_gfx1150.dat",
+        1936
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_SS_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1150.dat",
+        6830
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_SS_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1150.hsaco",
+        44760
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_SS_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1150.co",
+        4025
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_SS_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1150.dat",
+        1936
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_ZZ_Contraction_l_Ailk_BjlkC_Cijk_Dijk_fallback_gfx1150.dat",
+        7054
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_ZZ_Contraction_l_Ailk_BjlkC_Cijk_Dijk_fallback_gfx1150.hsaco",
+        48320
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_ZZ_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1150.dat",
+        7042
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_ZZ_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1150.hsaco",
+        48312
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_ZZ_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1150.dat",
+        7050
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_ZZ_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1150.hsaco",
+        48312
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_ZZ_Contraction_l_AlikC_BjlkC_Cijk_Dijk_fallback_gfx1150.dat",
+        7066
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_ZZ_Contraction_l_AlikC_BjlkC_Cijk_Dijk_fallback_gfx1150.hsaco",
+        48328
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_ZZ_Contraction_l_AlikC_Bjlk_Cijk_Dijk_fallback_gfx1150.dat",
+        7062
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_ZZ_Contraction_l_AlikC_Bjlk_Cijk_Dijk_fallback_gfx1150.hsaco",
+        48320
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_ZZ_Contraction_l_AlikC_Bljk_Cijk_Dijk_fallback_gfx1150.dat",
+        7050
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_ZZ_Contraction_l_AlikC_Bljk_Cijk_Dijk_fallback_gfx1150.hsaco",
+        47552
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_ZZ_Contraction_l_Alik_BjlkC_Cijk_Dijk_fallback_gfx1150.dat",
+        7062
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_ZZ_Contraction_l_Alik_BjlkC_Cijk_Dijk_fallback_gfx1150.hsaco",
+        48320
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_ZZ_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1150.dat",
+        7046
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_ZZ_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1150.hsaco",
+        48312
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_ZZ_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1150.dat",
+        7042
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_Type_ZZ_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1150.hsaco",
+        47544
+      ],
+      [
+        "rocblas/library/gfx1150/TensileLibrary_lazy_gfx1150.dat",
+        24618
+      ]
+    ]
+  }
+}
