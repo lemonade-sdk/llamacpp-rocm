@@ -387,9 +387,9 @@ Everything else in the row means the same:
 | `gfx_family` | the GPU family the archive serves | — |
 | `version_qualified` | not present (a release here is all or nothing) | both archives of a ROCm version exist and qualified |
 | `tier1` | Tier 1 runs only on gfx1151 (`not_applicable` elsewhere); `missing` blocks | Tier 1 runs on every archive; `missing` does not block |
-| `not_applicable` | T1.x outside gfx1151; T0.11 on a run with no release | T0.10, T0.11 on an archive dropped before the release checks |
+| `not_applicable` | T1.x outside gfx1151; T0.11 on a run with no release | T0.10, T0.11 on an archive dropped before the release checks; T0.10 is `skip` on Linux |
 | `blocked_by` | also `tier1 missing`, `T0.11 missing` | no `tier1 missing`, no `T0.11 missing` |
-| `results` keys | T0.1–T0.3, T0.5–T0.9, T0.11, T0.13, T1.1–T1.6 | T0.1–T0.12, T1.1–T1.5 |
+| `results` keys | T0.1–T0.3, T0.5–T0.9, T0.11, T0.13, T1.1–T1.6 | T0.1–T0.8, T0.10–T0.12, T1.1–T1.5 (T0.9 retired; older rows still carry T0.9) |
 | placeholder `gfx` | requested targets, all in `missing` | all zero |
 | `latest/` file | `<os>-rocm-<gfx_family>.json` | `<os>-rocm-<rocm_version>.json` |
 
