@@ -24,6 +24,8 @@ beyond Python is guaranteed.
 import datetime
 import json
 import os
+import re
+import sys
 import time
 import traceback
 
@@ -50,6 +52,14 @@ def now_iso():
         .isoformat()
         .replace("+00:00", "Z")
     )
+
+
+def test_order(test_id):
+    """Sort "T0.10" after "T0.9", and unknown ids after known ones."""
+    match = re.match(r"^T(\d+)\.(\d+)$", test_id or "")
+    if match:
+        return (int(match.group(1)), int(match.group(2)), "")
+    return (sys.maxsize, sys.maxsize, test_id or "")
 
 
 def build_meta(
@@ -237,6 +247,10 @@ def merge_fragments(fragments, extra_meta=None):
                 continue
             bucket["tests"].append(test)
             seen.add(test.get("id"))
+    # Fragments arrive in file-name order, which listed the release job's check
+    # (tier0-final-*) first; list each tier's tests by id instead.
+    for bucket in tiers.values():
+        bucket["tests"].sort(key=lambda test: test_order(test.get("id")))
 
     overall = STATUS_PASS
     totals = {STATUS_PASS: 0, STATUS_FAIL: 0, STATUS_WARN: 0, STATUS_SKIP: 0, "total": 0}
