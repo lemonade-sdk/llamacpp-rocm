@@ -72,8 +72,8 @@ Unzips the gfx1151 archive into an empty folder, starts `llama-server` from it w
 | T1.5 | the model reasoned, answered and stopped cleanly | no |
 | T1.6 | every ROCm library inside the running server was loaded from the archive | yes |
 
-**T1.2 does not trust the obvious line.** `offloaded 29/29 layers to GPU` is printed from what `-ngl` asked for and appears unchanged on a machine with no GPU. T1.2 instead requires both `using device ROCm0 (...)` and a **non-zero** `ROCm0 model buffer size` — llama.cpp first prints a `0.00 MiB` line from a dry
-run before anything is allocated. That is why the server runs with `-lv 4`; without it none of these lines are printed.
+**T1.2 does not trust the obvious line.** `offloaded 29/29 layers to GPU` is printed from what `-ngl` asked for and appears unchanged on a machine with no GPU. T1.2 instead requires both `using device ROCm0 (...)` and a **non-zero** `ROCm0 model buffer size` — llama.cpp's memory-fit dry run, which allocates nothing,
+reports a `0.00 MiB` buffer when logging is verbose enough (`-lv 5` or higher). The server runs with `-lv 4` because without it none of these lines are printed.
 
 **T1.6 catches what static checks cannot.** It reads the running server's loaded-library list (`/proc/<pid>/maps` on Linux, the process module list on Windows). If a bundled library were missing or broken and the machine had its
 own ROCm, the server would quietly use that one and every other check would pass; on a user's clean machine it would then fail.

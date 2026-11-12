@@ -75,9 +75,9 @@ SERVER_ARGS = ["--ctx-size", "4096", "--jinja", "--metrics", "-lv", "4"]
 # neither can appear unless one was found and used:
 #   "llama_prepare_model_devices: using device ROCm0 (...) - 32612 MiB free"
 #   "load_tensors:        ROCm0 model buffer size =   358.78 MiB"
-# The buffer size must be above zero: llama.cpp first sizes everything up in a
-# dry run that prints "ROCm0 model buffer size = 0.00 MiB" before any memory is
-# actually allocated.
+# The buffer size must be above zero: llama.cpp's memory-fit dry run, which
+# allocates nothing, reports "ROCm0 model buffer size = 0.00 MiB" when logging
+# is verbose enough to show it (-lv 5 or higher).
 DEVICE_RE = re.compile(r"using device (ROCm\d+)(?: \((.*?)\)(?= \(| -|$))?", re.M)
 BUFFER_RE = re.compile(r"(ROCm\d+) model buffer size\s*=\s*([0-9.]+) MiB")
 
