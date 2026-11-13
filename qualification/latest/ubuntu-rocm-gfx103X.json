@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
   "kind": "qualification_record",
-  "generated_at": "2026-11-12T14:26:36Z",
+  "generated_at": "2026-11-13T14:11:39Z",
   "build": {
-    "build_id": "llama-ubuntu-rocm-gfx103X-x64.zip@43223546182",
-    "artifact": "llama-b1374-ubuntu-rocm-gfx103X-x64.zip",
+    "build_id": "llama-ubuntu-rocm-gfx103X-x64.zip@43430286123",
+    "artifact": "llama-b1375-ubuntu-rocm-gfx103X-x64.zip",
     "os": "ubuntu",
     "gfx_family": "gfx103X",
     "gpu_targets": [
@@ -13,12 +13,12 @@
       "gfx1032",
       "gfx1034"
     ],
-    "rocm_version": "10.3.0a20261112",
-    "upstream_sha": "827466b9efa0574806bad7732bcd78bfb6d9311d",
-    "release_tag": "b1374",
+    "rocm_version": "10.3.0a20261113",
+    "upstream_sha": "ae93877c8f3bf9f39f0ee4ffb3ef1697c416a7c3",
+    "release_tag": "b1375",
     "hardware_validated": false,
     "hardware_gfx_target": null,
-    "run_id": "43223546182",
+    "run_id": "43430286123",
     "run_attempt": "1",
     "runner_env": null
   },
@@ -44,24 +44,6 @@
       },
       "tests": [
         {
-          "id": "T0.11",
-          "name": "published archive is the tested archive",
-          "tier": "tier0",
-          "status": "pass",
-          "gating": true,
-          "duration_ms": 608,
-          "error": null,
-          "details": {
-            "expected_sha256": "8b71e70d8a75fd4b1c853c09532739732164df0368eddcba6bca571639bafe68",
-            "expected_bytes": 1139775334,
-            "sha256": "8b71e70d8a75fd4b1c853c09532739732164df0368eddcba6bca571639bafe68",
-            "bytes": 1139775334,
-            "entries": 1189,
-            "missing": [],
-            "not_executable": []
-          }
-        },
-        {
           "id": "T0.1",
           "name": "archive contents",
           "tier": "tier0",
@@ -72,7 +54,7 @@
           "details": {
             "missing": [],
             "files": 1186,
-            "bytes": 3302341182
+            "bytes": 3304950690
           }
         },
         {
@@ -88,7 +70,7 @@
             "exists": true,
             "targets": 4,
             "min_bytes": 67108864,
-            "bytes": 196536080
+            "bytes": 196533112
           }
         },
         {
@@ -97,12 +79,12 @@
           "tier": "tier0",
           "status": "pass",
           "gating": true,
-          "duration_ms": 3555,
+          "duration_ms": 2840,
           "error": null,
           "details": {
             "binary": "libggml-hip.so",
-            "bytes_scanned": 196536080,
-            "bundle_magic_count": 142,
+            "bytes_scanned": 196533112,
+            "bundle_magic_count": 141,
             "expected_count": 4,
             "present_count": 4,
             "expected": [
@@ -120,10 +102,10 @@
             "missing": [],
             "extra": [],
             "entries_per_target": {
-              "gfx1030": 142,
-              "gfx1031": 142,
-              "gfx1032": 142,
-              "gfx1034": 142
+              "gfx1030": 141,
+              "gfx1031": 141,
+              "gfx1032": 141,
+              "gfx1034": 141
             },
             "entry_count_uniform": true
           }
@@ -134,7 +116,7 @@
           "tier": "tier0",
           "status": "pass",
           "gating": true,
-          "duration_ms": 139,
+          "duration_ms": 115,
           "error": null,
           "details": {
             "binaries_scanned": 135,
@@ -152,18 +134,18 @@
             "llama_server_closure": [
               "libamd_comgr.so.3",
               "libamdhip64.so.7",
-              "libggml-base.so.0",
-              "libggml-cpu.so.0",
-              "libggml-hip.so.0",
-              "libggml-rpc.so.0",
-              "libggml.so.0",
+              "libggml-base.so.1",
+              "libggml-cpu.so.1",
+              "libggml-hip.so.1",
+              "libggml-rpc.so.1",
+              "libggml.so.1",
               "libhipblas.so.3",
               "libhipblaslt.so.1",
               "libhsa-runtime64.so.1",
-              "libllama-common.so.0",
+              "libllama-common.so.1",
               "libllama-server-impl.so",
-              "libllama.so.0",
-              "libmtmd.so.0",
+              "libllama.so.1",
+              "libmtmd.so.1",
               "liborigami.so.1",
               "librocblas.so.5",
               "librocm_kpack.so.0",
@@ -213,7 +195,7 @@
           "tier": "tier0",
           "status": "pass",
           "gating": true,
-          "duration_ms": 246,
+          "duration_ms": 184,
           "error": null,
           "details": {
             "glibc_required": "2.34",
@@ -229,24 +211,24 @@
               "libamd_comgr.so.3.5.0": "2.27",
               "libamdhip64.so": "2.17",
               "libamdhip64.so.7": "2.17",
-              "libamdhip64.so.7.18.26451-0000000": "2.17",
+              "libamdhip64.so.7.18.26452-0000000": "2.17",
               "libclang-cpp.so": "2.14",
               "libclang-cpp.so.24.0git": "2.14",
               "libggml-base.so": "2.29",
-              "libggml-base.so.0": "2.29",
-              "libggml-base.so.0.29.0": "2.29",
+              "libggml-base.so.1": "2.29",
+              "libggml-base.so.1.0.0": "2.29",
               "libggml-cpu.so": "2.34",
-              "libggml-cpu.so.0": "2.34",
-              "libggml-cpu.so.0.29.0": "2.34",
+              "libggml-cpu.so.1": "2.34",
+              "libggml-cpu.so.1.0.0": "2.34",
               "libggml-hip.so": "2.34",
-              "libggml-hip.so.0": "2.34",
-              "libggml-hip.so.0.29.0": "2.34",
+              "libggml-hip.so.1": "2.34",
+              "libggml-hip.so.1.0.0": "2.34",
               "libggml-rpc.so": "2.34",
-              "libggml-rpc.so.0": "2.34",
-              "libggml-rpc.so.0.29.0": "2.34",
+              "libggml-rpc.so.1": "2.34",
+              "libggml-rpc.so.1.0.0": "2.34",
               "libggml.so": "2.34",
-              "libggml.so.0": "2.34",
-              "libggml.so.0.29.0": "2.34",
+              "libggml.so.1": "2.34",
+              "libggml.so.1.0.0": "2.34",
               "libhipblas.so": "2.2.5",
               "libhipblas.so.3": "2.2.5",
               "libhipblas.so.3.9": "2.2.5",
@@ -260,19 +242,19 @@
               "libllama-bench-impl.so": "2.32",
               "libllama-cli-impl.so": "2.32",
               "libllama-common.so": "2.34",
-              "libllama-common.so.0": "2.34",
-              "libllama-common.so.0.9.0": "2.34",
+              "libllama-common.so.1": "2.34",
+              "libllama-common.so.1.0.0": "2.34",
               "libllama-completion-impl.so": "2.32",
               "libllama-fit-params-impl.so": "2.14",
               "libllama-perplexity-impl.so": "2.29",
               "libllama-quantize-impl.so": "2.14",
               "libllama-server-impl.so": "2.34",
               "libllama.so": "2.34",
-              "libllama.so.0": "2.34",
-              "libllama.so.0.9.0": "2.34",
+              "libllama.so.1": "2.34",
+              "libllama.so.1.0.0": "2.34",
               "libmtmd.so": "2.32",
-              "libmtmd.so.0": "2.32",
-              "libmtmd.so.0.9.0": "2.32",
+              "libmtmd.so.1": "2.32",
+              "libmtmd.so.1.0.0": "2.32",
               "libomp.so": "2.17",
               "liborigami.so": "2.17",
               "liborigami.so.1": "2.17",
@@ -365,7 +347,7 @@
           "tier": "tier0",
           "status": "pass",
           "gating": true,
-          "duration_ms": 135,
+          "duration_ms": 111,
           "error": null,
           "details": {
             "leaked": {},
@@ -378,11 +360,11 @@
           "tier": "tier0",
           "status": "pass",
           "gating": true,
-          "duration_ms": 147,
+          "duration_ms": 131,
           "error": null,
           "details": {
             "returncode": 0,
-            "help_bytes": 62981,
+            "help_bytes": 62823,
             "flags_checked": 16,
             "flags_missing": []
           }
@@ -393,17 +375,17 @@
           "tier": "tier0",
           "status": "pass",
           "gating": true,
-          "duration_ms": 133,
+          "duration_ms": 119,
           "error": null,
           "details": {
-            "archive_upstream_sha": "827466b9efa0574806bad7732bcd78bfb6d9311d",
-            "expected_upstream_sha": "827466b9efa0574806bad7732bcd78bfb6d9311d",
-            "archive_rocm_version": "10.3.0a20261112",
-            "expected_rocm_version": "10.3.0a20261112",
+            "archive_upstream_sha": "ae93877c8f3bf9f39f0ee4ffb3ef1697c416a7c3",
+            "expected_upstream_sha": "ae93877c8f3bf9f39f0ee4ffb3ef1697c416a7c3",
+            "archive_rocm_version": "10.3.0a20261113",
+            "expected_rocm_version": "10.3.0a20261113",
             "version_returncode": 0,
-            "version_output": "version: 0.9.0-dev (build 12341, commit 827466b9e)\nbuilt with Clang 24.0.0 for Linux",
-            "binary_commit": "827466b9e",
-            "binary_build_number": 12341,
+            "version_output": "version: 1.0.0-dev (build 12365, commit ae93877c8)\nbuilt with Clang 24.0.0 for Linux",
+            "binary_commit": "ae93877c8",
+            "binary_build_number": 12365,
             "compared": [
               "archive commit",
               "archive ROCm version",
@@ -412,12 +394,30 @@
           }
         },
         {
+          "id": "T0.11",
+          "name": "published archive is the tested archive",
+          "tier": "tier0",
+          "status": "pass",
+          "gating": true,
+          "duration_ms": 729,
+          "error": null,
+          "details": {
+            "expected_sha256": "220c9e1f416b04beee864deedd6a064a44048d23dbf1c5c38371bf7faf685bc2",
+            "expected_bytes": 1142400590,
+            "sha256": "220c9e1f416b04beee864deedd6a064a44048d23dbf1c5c38371bf7faf685bc2",
+            "bytes": 1142400590,
+            "entries": 1189,
+            "missing": [],
+            "not_executable": []
+          }
+        },
+        {
           "id": "T0.13",
           "name": "kernel data per target",
           "tier": "tier0",
           "status": "pass",
           "gating": true,
-          "duration_ms": 1,
+          "duration_ms": 0,
           "error": null,
           "details": {
             "per_target": {
@@ -564,14 +564,14 @@
     "hardware_validated": []
   },
   "versions": {
-    "rocm_nightly": "10.3.0a20261112",
-    "llamacpp_commit": "827466b9efa0574806bad7732bcd78bfb6d9311d",
-    "binary_reports_commit": "827466b9e",
-    "binary_reports_build": 12341
+    "rocm_nightly": "10.3.0a20261113",
+    "llamacpp_commit": "ae93877c8f3bf9f39f0ee4ffb3ef1697c416a7c3",
+    "binary_reports_commit": "ae93877c8",
+    "binary_reports_build": 12365
   },
   "bundle": {
     "files": 1186,
-    "bytes": 3302341182,
+    "bytes": 3304950690,
     "manifest": [
       [
         "LICENSE",
@@ -603,15 +603,15 @@
       ],
       [
         "libamdhip64.so",
-        6717472
+        6717728
       ],
       [
         "libamdhip64.so.7",
-        6717472
+        6717728
       ],
       [
-        "libamdhip64.so.7.18.26451-0000000",
-        6717472
+        "libamdhip64.so.7.18.26452-0000000",
+        6717728
       ],
       [
         "libclang-cpp.so",
@@ -623,50 +623,50 @@
       ],
       [
         "libggml-base.so",
-        926176
+        922168
       ],
       [
-        "libggml-base.so.0",
-        926176
+        "libggml-base.so.1",
+        922168
       ],
       [
-        "libggml-base.so.0.29.0",
-        926176
+        "libggml-base.so.1.0.0",
+        922168
       ],
       [
         "libggml-cpu.so",
-        1100200
+        1098760
       ],
       [
-        "libggml-cpu.so.0",
-        1100200
+        "libggml-cpu.so.1",
+        1098760
       ],
       [
-        "libggml-cpu.so.0.29.0",
-        1100200
+        "libggml-cpu.so.1.0.0",
+        1098760
       ],
       [
         "libggml-hip.so",
-        196536080
+        196533112
       ],
       [
-        "libggml-hip.so.0",
-        196536080
+        "libggml-hip.so.1",
+        196533112
       ],
       [
-        "libggml-hip.so.0.29.0",
-        196536080
+        "libggml-hip.so.1.0.0",
+        196533112
       ],
       [
         "libggml-rpc.so",
         318768
       ],
       [
-        "libggml-rpc.so.0",
+        "libggml-rpc.so.1",
         318768
       ],
       [
-        "libggml-rpc.so.0.29.0",
+        "libggml-rpc.so.1.0.0",
         318768
       ],
       [
@@ -674,11 +674,11 @@
         46768
       ],
       [
-        "libggml.so.0",
+        "libggml.so.1",
         46768
       ],
       [
-        "libggml.so.0.29.0",
+        "libggml.so.1.0.0",
         46768
       ],
       [
@@ -695,27 +695,27 @@
       ],
       [
         "libhipblaslt.so",
-        3638144
+        3654528
       ],
       [
         "libhipblaslt.so.1",
-        3638144
+        3654528
       ],
       [
         "libhipblaslt.so.1.5",
-        3638144
+        3654528
       ],
       [
         "libhsa-runtime64.so",
-        5087536
+        5089448
       ],
       [
         "libhsa-runtime64.so.1",
-        5087536
+        5089448
       ],
       [
         "libhsa-runtime64.so.1.22.0",
-        5087536
+        5089448
       ],
       [
         "libllama-batched-bench-impl.so",
@@ -731,15 +731,15 @@
       ],
       [
         "libllama-common.so",
-        20702896
+        20701664
       ],
       [
-        "libllama-common.so.0",
-        20702896
+        "libllama-common.so.1",
+        20701664
       ],
       [
-        "libllama-common.so.0.9.0",
-        20702896
+        "libllama-common.so.1.0.0",
+        20701664
       ],
       [
         "libllama-completion-impl.so",
@@ -759,30 +759,30 @@
       ],
       [
         "libllama-server-impl.so",
-        22593424
+        22604008
       ],
       [
         "libllama.so",
-        5218568
+        5192296
       ],
       [
-        "libllama.so.0",
-        5218568
+        "libllama.so.1",
+        5192296
       ],
       [
-        "libllama.so.0.9.0",
-        5218568
+        "libllama.so.1.0.0",
+        5192296
       ],
       [
         "libmtmd.so",
         2131832
       ],
       [
-        "libmtmd.so.0",
+        "libmtmd.so.1",
         2131832
       ],
       [
-        "libmtmd.so.0.9.0",
+        "libmtmd.so.1.0.0",
         2131832
       ],
       [
@@ -803,15 +803,15 @@
       ],
       [
         "librocblas.so",
-        27833216
+        27837312
       ],
       [
         "librocblas.so.5",
-        27833216
+        27837312
       ],
       [
         "librocblas.so.5.9",
-        27833216
+        27837312
       ],
       [
         "librocm_kpack.so",
@@ -883,15 +883,15 @@
       ],
       [
         "librocroller.so",
-        233485376
+        233486784
       ],
       [
         "librocroller.so.1",
-        233485376
+        233486784
       ],
       [
         "librocroller.so.1.0.0",
-        233485376
+        233486784
       ],
       [
         "librocsolver.so",
@@ -919,15 +919,15 @@
       ],
       [
         "libtensilelite-host.so",
-        7273584
+        7285304
       ],
       [
         "libtensilelite-host.so.1",
-        7273584
+        7285304
       ],
       [
         "libtensilelite-host.so.1.0",
-        7273584
+        7285304
       ],
       [
         "llama",
@@ -1015,7 +1015,7 @@
       ],
       [
         "llama-imatrix",
-        217304
+        217216
       ],
       [
         "llama-llava-cli",
@@ -1119,31 +1119,31 @@
       ],
       [
         ".kpack/blas_lib_gfx1030.kpack",
-        4612597
+        4612700
       ],
       [
         ".kpack/blas_lib_gfx1031.kpack",
-        4612617
+        4612720
       ],
       [
         ".kpack/blas_lib_gfx1032.kpack",
-        4612609
+        4612708
       ],
       [
         ".kpack/blas_lib_gfx1033.kpack",
-        4612606
+        4612710
       ],
       [
         ".kpack/blas_lib_gfx1034.kpack",
-        4612626
+        4612732
       ],
       [
         ".kpack/blas_lib_gfx1035.kpack",
-        4612640
+        4612743
       ],
       [
         ".kpack/blas_lib_gfx1036.kpack",
-        4612585
+        4612689
       ],
       [
         ".kpack/fft_lib_gfx1030.kpack",
@@ -1231,31 +1231,31 @@
       ],
       [
         ".kpack/rccl_lib_gfx1030.kpack",
-        18095842
+        18095312
       ],
       [
         ".kpack/rccl_lib_gfx1031.kpack",
-        18095893
+        18095365
       ],
       [
         ".kpack/rccl_lib_gfx1032.kpack",
-        18095856
+        18095315
       ],
       [
         ".kpack/rccl_lib_gfx1033.kpack",
-        18095889
+        18095354
       ],
       [
         ".kpack/rccl_lib_gfx1034.kpack",
-        18095853
+        18095322
       ],
       [
         ".kpack/rccl_lib_gfx1035.kpack",
-        18095910
+        18095374
       ],
       [
         ".kpack/rccl_lib_gfx1036.kpack",
-        18095875
+        18095341
       ],
       [
         ".kpack/rocalution_lib_gfx1030.kpack",
@@ -1315,59 +1315,59 @@
       ],
       [
         ".kpack/sparse_lib_gfx1030.kpack",
-        14730312
+        15101724
       ],
       [
         ".kpack/sparse_lib_gfx1031.kpack",
-        15747130
+        16118541
       ],
       [
         ".kpack/sparse_lib_gfx1032.kpack",
-        15747312
+        16118724
       ],
       [
         ".kpack/sparse_lib_gfx1033.kpack",
-        15747166
+        16118625
       ],
       [
         ".kpack/sparse_lib_gfx1034.kpack",
-        15747334
+        16118755
       ],
       [
         ".kpack/sparse_lib_gfx1035.kpack",
-        15747347
+        16118766
       ],
       [
         ".kpack/sparse_lib_gfx1036.kpack",
-        15747227
+        16118639
       ],
       [
         "rocblas/library/Kernels.so-000-gfx1030.hsaco",
-        240736
+        240480
       ],
       [
         "rocblas/library/Kernels.so-000-gfx1031.hsaco",
-        240736
+        240480
       ],
       [
         "rocblas/library/Kernels.so-000-gfx1032.hsaco",
-        240736
+        240480
       ],
       [
         "rocblas/library/Kernels.so-000-gfx1033.hsaco",
-        240736
+        240480
       ],
       [
         "rocblas/library/Kernels.so-000-gfx1034.hsaco",
-        240736
+        240480
       ],
       [
         "rocblas/library/Kernels.so-000-gfx1035.hsaco",
-        240736
+        240480
       ],
       [
         "rocblas/library/Kernels.so-000-gfx1036.hsaco",
-        240736
+        240480
       ],
       [
         "rocblas/library/TensileLibrary_Type_4xi8I_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1030.dat",
@@ -1427,7 +1427,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_4xi8I_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1030.dat",
-        34326
+        34578
       ],
       [
         "rocblas/library/TensileLibrary_Type_4xi8I_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1030.hsaco",
@@ -1435,7 +1435,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_4xi8I_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1031.dat",
-        34326
+        34578
       ],
       [
         "rocblas/library/TensileLibrary_Type_4xi8I_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1031.hsaco",
@@ -1443,7 +1443,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_4xi8I_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1032.dat",
-        34326
+        34578
       ],
       [
         "rocblas/library/TensileLibrary_Type_4xi8I_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1032.hsaco",
@@ -1451,7 +1451,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_4xi8I_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1033.dat",
-        34326
+        34578
       ],
       [
         "rocblas/library/TensileLibrary_Type_4xi8I_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1033.hsaco",
@@ -1459,7 +1459,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_4xi8I_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1034.dat",
-        34326
+        34578
       ],
       [
         "rocblas/library/TensileLibrary_Type_4xi8I_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1034.hsaco",
@@ -1467,7 +1467,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_4xi8I_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1035.dat",
-        34326
+        34578
       ],
       [
         "rocblas/library/TensileLibrary_Type_4xi8I_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1035.hsaco",
@@ -1475,7 +1475,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_4xi8I_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1036.dat",
-        34326
+        34578
       ],
       [
         "rocblas/library/TensileLibrary_Type_4xi8I_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1036.hsaco",
@@ -1539,7 +1539,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_4xi8I_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1030.dat",
-        34242
+        34494
       ],
       [
         "rocblas/library/TensileLibrary_Type_4xi8I_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1030.hsaco",
@@ -1547,7 +1547,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_4xi8I_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1031.dat",
-        34242
+        34494
       ],
       [
         "rocblas/library/TensileLibrary_Type_4xi8I_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1031.hsaco",
@@ -1555,7 +1555,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_4xi8I_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1032.dat",
-        34242
+        34494
       ],
       [
         "rocblas/library/TensileLibrary_Type_4xi8I_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1032.hsaco",
@@ -1563,7 +1563,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_4xi8I_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1033.dat",
-        34242
+        34494
       ],
       [
         "rocblas/library/TensileLibrary_Type_4xi8I_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1033.hsaco",
@@ -1571,7 +1571,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_4xi8I_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1034.dat",
-        34242
+        34494
       ],
       [
         "rocblas/library/TensileLibrary_Type_4xi8I_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1034.hsaco",
@@ -1579,7 +1579,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_4xi8I_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1035.dat",
-        34242
+        34494
       ],
       [
         "rocblas/library/TensileLibrary_Type_4xi8I_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1035.hsaco",
@@ -1587,7 +1587,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_4xi8I_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1036.dat",
-        34242
+        34494
       ],
       [
         "rocblas/library/TensileLibrary_Type_4xi8I_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1036.hsaco",
@@ -1595,7 +1595,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_BB_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1030.dat",
-        52135
+        52013
       ],
       [
         "rocblas/library/TensileLibrary_Type_BB_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1030.hsaco",
@@ -1603,7 +1603,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_BB_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1031.dat",
-        52135
+        52013
       ],
       [
         "rocblas/library/TensileLibrary_Type_BB_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1031.hsaco",
@@ -1611,7 +1611,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_BB_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1032.dat",
-        52135
+        52013
       ],
       [
         "rocblas/library/TensileLibrary_Type_BB_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1032.hsaco",
@@ -1619,7 +1619,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_BB_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1033.dat",
-        52135
+        52013
       ],
       [
         "rocblas/library/TensileLibrary_Type_BB_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1033.hsaco",
@@ -1627,7 +1627,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_BB_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1034.dat",
-        52135
+        52013
       ],
       [
         "rocblas/library/TensileLibrary_Type_BB_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1034.hsaco",
@@ -1635,7 +1635,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_BB_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1035.dat",
-        52135
+        52013
       ],
       [
         "rocblas/library/TensileLibrary_Type_BB_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1035.hsaco",
@@ -1643,7 +1643,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_BB_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1036.dat",
-        52135
+        52013
       ],
       [
         "rocblas/library/TensileLibrary_Type_BB_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1036.hsaco",
@@ -1651,7 +1651,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_BB_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1030.dat",
-        49078
+        49342
       ],
       [
         "rocblas/library/TensileLibrary_Type_BB_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1030.hsaco",
@@ -1659,7 +1659,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_BB_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1031.dat",
-        49078
+        49342
       ],
       [
         "rocblas/library/TensileLibrary_Type_BB_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1031.hsaco",
@@ -1667,7 +1667,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_BB_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1032.dat",
-        49078
+        49342
       ],
       [
         "rocblas/library/TensileLibrary_Type_BB_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1032.hsaco",
@@ -1675,7 +1675,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_BB_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1033.dat",
-        49078
+        49342
       ],
       [
         "rocblas/library/TensileLibrary_Type_BB_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1033.hsaco",
@@ -1683,7 +1683,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_BB_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1034.dat",
-        49078
+        49342
       ],
       [
         "rocblas/library/TensileLibrary_Type_BB_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1034.hsaco",
@@ -1691,7 +1691,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_BB_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1035.dat",
-        49078
+        49342
       ],
       [
         "rocblas/library/TensileLibrary_Type_BB_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1035.hsaco",
@@ -1699,7 +1699,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_BB_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1036.dat",
-        49078
+        49342
       ],
       [
         "rocblas/library/TensileLibrary_Type_BB_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1036.hsaco",
@@ -1707,7 +1707,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_BB_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1030.dat",
-        36638
+        36722
       ],
       [
         "rocblas/library/TensileLibrary_Type_BB_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1030.hsaco",
@@ -1715,7 +1715,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_BB_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1031.dat",
-        36638
+        36722
       ],
       [
         "rocblas/library/TensileLibrary_Type_BB_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1031.hsaco",
@@ -1723,7 +1723,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_BB_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1032.dat",
-        36638
+        36722
       ],
       [
         "rocblas/library/TensileLibrary_Type_BB_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1032.hsaco",
@@ -1731,7 +1731,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_BB_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1033.dat",
-        36638
+        36722
       ],
       [
         "rocblas/library/TensileLibrary_Type_BB_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1033.hsaco",
@@ -1739,7 +1739,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_BB_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1034.dat",
-        36638
+        36722
       ],
       [
         "rocblas/library/TensileLibrary_Type_BB_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1034.hsaco",
@@ -1747,7 +1747,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_BB_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1035.dat",
-        36638
+        36722
       ],
       [
         "rocblas/library/TensileLibrary_Type_BB_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1035.hsaco",
@@ -1755,7 +1755,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_BB_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1036.dat",
-        36638
+        36722
       ],
       [
         "rocblas/library/TensileLibrary_Type_BB_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1036.hsaco",
@@ -1763,7 +1763,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_BB_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1030.dat",
-        49346
+        49170
       ],
       [
         "rocblas/library/TensileLibrary_Type_BB_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1030.hsaco",
@@ -1771,7 +1771,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_BB_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1031.dat",
-        49346
+        49170
       ],
       [
         "rocblas/library/TensileLibrary_Type_BB_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1031.hsaco",
@@ -1779,7 +1779,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_BB_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1032.dat",
-        49346
+        49170
       ],
       [
         "rocblas/library/TensileLibrary_Type_BB_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1032.hsaco",
@@ -1787,7 +1787,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_BB_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1033.dat",
-        49346
+        49170
       ],
       [
         "rocblas/library/TensileLibrary_Type_BB_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1033.hsaco",
@@ -1795,7 +1795,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_BB_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1034.dat",
-        49346
+        49170
       ],
       [
         "rocblas/library/TensileLibrary_Type_BB_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1034.hsaco",
@@ -1803,7 +1803,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_BB_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1035.dat",
-        49346
+        49170
       ],
       [
         "rocblas/library/TensileLibrary_Type_BB_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1035.hsaco",
@@ -1811,7 +1811,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_BB_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1036.dat",
-        49346
+        49170
       ],
       [
         "rocblas/library/TensileLibrary_Type_BB_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1036.hsaco",
@@ -1819,7 +1819,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_BS_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1030.dat",
-        50528
+        50648
       ],
       [
         "rocblas/library/TensileLibrary_Type_BS_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1030.hsaco",
@@ -1827,7 +1827,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_BS_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1031.dat",
-        50528
+        50648
       ],
       [
         "rocblas/library/TensileLibrary_Type_BS_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1031.hsaco",
@@ -1835,7 +1835,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_BS_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1032.dat",
-        50528
+        50648
       ],
       [
         "rocblas/library/TensileLibrary_Type_BS_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1032.hsaco",
@@ -1843,7 +1843,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_BS_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1033.dat",
-        50528
+        50648
       ],
       [
         "rocblas/library/TensileLibrary_Type_BS_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1033.hsaco",
@@ -1851,7 +1851,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_BS_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1034.dat",
-        50528
+        50648
       ],
       [
         "rocblas/library/TensileLibrary_Type_BS_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1034.hsaco",
@@ -1859,7 +1859,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_BS_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1035.dat",
-        50528
+        50648
       ],
       [
         "rocblas/library/TensileLibrary_Type_BS_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1035.hsaco",
@@ -1867,7 +1867,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_BS_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1036.dat",
-        50528
+        50648
       ],
       [
         "rocblas/library/TensileLibrary_Type_BS_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1036.hsaco",
@@ -1875,63 +1875,63 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_BS_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1030.dat",
-        29703
+        29748
       ],
       [
         "rocblas/library/TensileLibrary_Type_BS_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1030.hsaco",
-        234096
+        233840
       ],
       [
         "rocblas/library/TensileLibrary_Type_BS_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1031.dat",
-        29703
+        29748
       ],
       [
         "rocblas/library/TensileLibrary_Type_BS_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1031.hsaco",
-        234096
+        233840
       ],
       [
         "rocblas/library/TensileLibrary_Type_BS_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1032.dat",
-        29703
+        29748
       ],
       [
         "rocblas/library/TensileLibrary_Type_BS_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1032.hsaco",
-        234096
+        233840
       ],
       [
         "rocblas/library/TensileLibrary_Type_BS_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1033.dat",
-        29703
+        29748
       ],
       [
         "rocblas/library/TensileLibrary_Type_BS_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1033.hsaco",
-        234096
+        233840
       ],
       [
         "rocblas/library/TensileLibrary_Type_BS_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1034.dat",
-        29703
+        29748
       ],
       [
         "rocblas/library/TensileLibrary_Type_BS_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1034.hsaco",
-        234096
+        233840
       ],
       [
         "rocblas/library/TensileLibrary_Type_BS_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1035.dat",
-        29703
+        29748
       ],
       [
         "rocblas/library/TensileLibrary_Type_BS_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1035.hsaco",
-        234096
+        233840
       ],
       [
         "rocblas/library/TensileLibrary_Type_BS_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1036.dat",
-        29703
+        29748
       ],
       [
         "rocblas/library/TensileLibrary_Type_BS_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1036.hsaco",
-        234096
+        233840
       ],
       [
         "rocblas/library/TensileLibrary_Type_BS_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1030.dat",
-        15876
+        15958
       ],
       [
         "rocblas/library/TensileLibrary_Type_BS_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1030.hsaco",
@@ -1939,7 +1939,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_BS_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1031.dat",
-        15876
+        15958
       ],
       [
         "rocblas/library/TensileLibrary_Type_BS_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1031.hsaco",
@@ -1947,7 +1947,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_BS_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1032.dat",
-        15876
+        15958
       ],
       [
         "rocblas/library/TensileLibrary_Type_BS_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1032.hsaco",
@@ -1955,7 +1955,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_BS_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1033.dat",
-        15876
+        15958
       ],
       [
         "rocblas/library/TensileLibrary_Type_BS_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1033.hsaco",
@@ -1963,7 +1963,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_BS_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1034.dat",
-        15876
+        15958
       ],
       [
         "rocblas/library/TensileLibrary_Type_BS_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1034.hsaco",
@@ -1971,7 +1971,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_BS_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1035.dat",
-        15876
+        15958
       ],
       [
         "rocblas/library/TensileLibrary_Type_BS_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1035.hsaco",
@@ -1979,7 +1979,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_BS_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1036.dat",
-        15876
+        15958
       ],
       [
         "rocblas/library/TensileLibrary_Type_BS_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1036.hsaco",
@@ -2043,7 +2043,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Ailk_BjlkC_Cijk_Dijk_fallback_gfx1030.dat",
-        6738
+        6742
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Ailk_BjlkC_Cijk_Dijk_fallback_gfx1030.hsaco",
@@ -2051,7 +2051,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Ailk_BjlkC_Cijk_Dijk_fallback_gfx1031.dat",
-        6738
+        6742
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Ailk_BjlkC_Cijk_Dijk_fallback_gfx1031.hsaco",
@@ -2059,7 +2059,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Ailk_BjlkC_Cijk_Dijk_fallback_gfx1032.dat",
-        6738
+        6742
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Ailk_BjlkC_Cijk_Dijk_fallback_gfx1032.hsaco",
@@ -2067,7 +2067,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Ailk_BjlkC_Cijk_Dijk_fallback_gfx1033.dat",
-        6738
+        6742
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Ailk_BjlkC_Cijk_Dijk_fallback_gfx1033.hsaco",
@@ -2075,7 +2075,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Ailk_BjlkC_Cijk_Dijk_fallback_gfx1034.dat",
-        6738
+        6742
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Ailk_BjlkC_Cijk_Dijk_fallback_gfx1034.hsaco",
@@ -2083,7 +2083,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Ailk_BjlkC_Cijk_Dijk_fallback_gfx1035.dat",
-        6738
+        6742
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Ailk_BjlkC_Cijk_Dijk_fallback_gfx1035.hsaco",
@@ -2091,7 +2091,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Ailk_BjlkC_Cijk_Dijk_fallback_gfx1036.dat",
-        6738
+        6742
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Ailk_BjlkC_Cijk_Dijk_fallback_gfx1036.hsaco",
@@ -2099,7 +2099,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1030.dat",
-        6738
+        6734
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1030.hsaco",
@@ -2107,7 +2107,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1031.dat",
-        6738
+        6734
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1031.hsaco",
@@ -2115,7 +2115,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1032.dat",
-        6738
+        6734
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1032.hsaco",
@@ -2123,7 +2123,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1033.dat",
-        6738
+        6734
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1033.hsaco",
@@ -2131,7 +2131,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1034.dat",
-        6738
+        6734
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1034.hsaco",
@@ -2139,7 +2139,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1035.dat",
-        6738
+        6734
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1035.hsaco",
@@ -2147,7 +2147,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1036.dat",
-        6738
+        6734
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1036.hsaco",
@@ -2155,7 +2155,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1030.dat",
-        6738
+        6734
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1030.hsaco",
@@ -2163,7 +2163,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1031.dat",
-        6738
+        6734
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1031.hsaco",
@@ -2171,7 +2171,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1032.dat",
-        6738
+        6734
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1032.hsaco",
@@ -2179,7 +2179,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1033.dat",
-        6738
+        6734
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1033.hsaco",
@@ -2187,7 +2187,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1034.dat",
-        6738
+        6734
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1034.hsaco",
@@ -2195,7 +2195,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1035.dat",
-        6738
+        6734
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1035.hsaco",
@@ -2203,7 +2203,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1036.dat",
-        6738
+        6734
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1036.hsaco",
@@ -2211,7 +2211,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_AlikC_BjlkC_Cijk_Dijk_fallback_gfx1030.dat",
-        6746
+        6754
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_AlikC_BjlkC_Cijk_Dijk_fallback_gfx1030.hsaco",
@@ -2219,7 +2219,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_AlikC_BjlkC_Cijk_Dijk_fallback_gfx1031.dat",
-        6746
+        6754
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_AlikC_BjlkC_Cijk_Dijk_fallback_gfx1031.hsaco",
@@ -2227,7 +2227,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_AlikC_BjlkC_Cijk_Dijk_fallback_gfx1032.dat",
-        6746
+        6754
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_AlikC_BjlkC_Cijk_Dijk_fallback_gfx1032.hsaco",
@@ -2235,7 +2235,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_AlikC_BjlkC_Cijk_Dijk_fallback_gfx1033.dat",
-        6746
+        6754
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_AlikC_BjlkC_Cijk_Dijk_fallback_gfx1033.hsaco",
@@ -2243,7 +2243,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_AlikC_BjlkC_Cijk_Dijk_fallback_gfx1034.dat",
-        6746
+        6754
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_AlikC_BjlkC_Cijk_Dijk_fallback_gfx1034.hsaco",
@@ -2251,7 +2251,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_AlikC_BjlkC_Cijk_Dijk_fallback_gfx1035.dat",
-        6746
+        6754
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_AlikC_BjlkC_Cijk_Dijk_fallback_gfx1035.hsaco",
@@ -2259,7 +2259,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_AlikC_BjlkC_Cijk_Dijk_fallback_gfx1036.dat",
-        6746
+        6754
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_AlikC_BjlkC_Cijk_Dijk_fallback_gfx1036.hsaco",
@@ -2379,7 +2379,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Alik_BjlkC_Cijk_Dijk_fallback_gfx1030.dat",
-        6750
+        6738
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Alik_BjlkC_Cijk_Dijk_fallback_gfx1030.hsaco",
@@ -2387,7 +2387,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Alik_BjlkC_Cijk_Dijk_fallback_gfx1031.dat",
-        6750
+        6738
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Alik_BjlkC_Cijk_Dijk_fallback_gfx1031.hsaco",
@@ -2395,7 +2395,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Alik_BjlkC_Cijk_Dijk_fallback_gfx1032.dat",
-        6750
+        6738
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Alik_BjlkC_Cijk_Dijk_fallback_gfx1032.hsaco",
@@ -2403,7 +2403,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Alik_BjlkC_Cijk_Dijk_fallback_gfx1033.dat",
-        6750
+        6738
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Alik_BjlkC_Cijk_Dijk_fallback_gfx1033.hsaco",
@@ -2411,7 +2411,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Alik_BjlkC_Cijk_Dijk_fallback_gfx1034.dat",
-        6750
+        6738
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Alik_BjlkC_Cijk_Dijk_fallback_gfx1034.hsaco",
@@ -2419,7 +2419,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Alik_BjlkC_Cijk_Dijk_fallback_gfx1035.dat",
-        6750
+        6738
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Alik_BjlkC_Cijk_Dijk_fallback_gfx1035.hsaco",
@@ -2427,7 +2427,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Alik_BjlkC_Cijk_Dijk_fallback_gfx1036.dat",
-        6750
+        6738
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Alik_BjlkC_Cijk_Dijk_fallback_gfx1036.hsaco",
@@ -2435,7 +2435,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1030.dat",
-        6734
+        6738
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1030.hsaco",
@@ -2443,7 +2443,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1031.dat",
-        6734
+        6738
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1031.hsaco",
@@ -2451,7 +2451,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1032.dat",
-        6734
+        6738
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1032.hsaco",
@@ -2459,7 +2459,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1033.dat",
-        6734
+        6738
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1033.hsaco",
@@ -2467,7 +2467,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1034.dat",
-        6734
+        6738
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1034.hsaco",
@@ -2475,7 +2475,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1035.dat",
-        6734
+        6738
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1035.hsaco",
@@ -2483,7 +2483,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1036.dat",
-        6734
+        6738
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1036.hsaco",
@@ -2491,7 +2491,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1030.dat",
-        6738
+        6730
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1030.hsaco",
@@ -2499,7 +2499,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1031.dat",
-        6738
+        6730
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1031.hsaco",
@@ -2507,7 +2507,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1032.dat",
-        6738
+        6730
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1032.hsaco",
@@ -2515,7 +2515,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1033.dat",
-        6738
+        6730
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1033.hsaco",
@@ -2523,7 +2523,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1034.dat",
-        6738
+        6730
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1034.hsaco",
@@ -2531,7 +2531,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1035.dat",
-        6738
+        6730
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1035.hsaco",
@@ -2539,7 +2539,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1036.dat",
-        6738
+        6730
       ],
       [
         "rocblas/library/TensileLibrary_Type_CC_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1036.hsaco",
@@ -2547,63 +2547,63 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_DD_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1030.dat",
-        6542
+        6538
       ],
       [
         "rocblas/library/TensileLibrary_Type_DD_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1030.hsaco",
-        18608
+        18864
       ],
       [
         "rocblas/library/TensileLibrary_Type_DD_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1031.dat",
-        6542
+        6538
       ],
       [
         "rocblas/library/TensileLibrary_Type_DD_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1031.hsaco",
-        18608
+        18864
       ],
       [
         "rocblas/library/TensileLibrary_Type_DD_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1032.dat",
-        6542
+        6538
       ],
       [
         "rocblas/library/TensileLibrary_Type_DD_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1032.hsaco",
-        18608
+        18864
       ],
       [
         "rocblas/library/TensileLibrary_Type_DD_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1033.dat",
-        6542
+        6538
       ],
       [
         "rocblas/library/TensileLibrary_Type_DD_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1033.hsaco",
-        18608
+        18864
       ],
       [
         "rocblas/library/TensileLibrary_Type_DD_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1034.dat",
-        6542
+        6538
       ],
       [
         "rocblas/library/TensileLibrary_Type_DD_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1034.hsaco",
-        18608
+        18864
       ],
       [
         "rocblas/library/TensileLibrary_Type_DD_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1035.dat",
-        6542
+        6538
       ],
       [
         "rocblas/library/TensileLibrary_Type_DD_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1035.hsaco",
-        18608
+        18864
       ],
       [
         "rocblas/library/TensileLibrary_Type_DD_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1036.dat",
-        6542
+        6538
       ],
       [
         "rocblas/library/TensileLibrary_Type_DD_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1036.hsaco",
-        18608
+        18864
       ],
       [
         "rocblas/library/TensileLibrary_Type_DD_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1030.dat",
-        8089
+        8097
       ],
       [
         "rocblas/library/TensileLibrary_Type_DD_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1030.hsaco",
@@ -2611,7 +2611,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_DD_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1031.dat",
-        8089
+        8097
       ],
       [
         "rocblas/library/TensileLibrary_Type_DD_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1031.hsaco",
@@ -2619,7 +2619,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_DD_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1032.dat",
-        8089
+        8097
       ],
       [
         "rocblas/library/TensileLibrary_Type_DD_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1032.hsaco",
@@ -2627,7 +2627,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_DD_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1033.dat",
-        8089
+        8097
       ],
       [
         "rocblas/library/TensileLibrary_Type_DD_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1033.hsaco",
@@ -2635,7 +2635,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_DD_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1034.dat",
-        8089
+        8097
       ],
       [
         "rocblas/library/TensileLibrary_Type_DD_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1034.hsaco",
@@ -2643,7 +2643,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_DD_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1035.dat",
-        8089
+        8097
       ],
       [
         "rocblas/library/TensileLibrary_Type_DD_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1035.hsaco",
@@ -2651,7 +2651,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_DD_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1036.dat",
-        8089
+        8097
       ],
       [
         "rocblas/library/TensileLibrary_Type_DD_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1036.hsaco",
@@ -2659,7 +2659,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_DD_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1030.dat",
-        6542
+        6546
       ],
       [
         "rocblas/library/TensileLibrary_Type_DD_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1030.hsaco",
@@ -2667,7 +2667,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_DD_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1031.dat",
-        6542
+        6546
       ],
       [
         "rocblas/library/TensileLibrary_Type_DD_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1031.hsaco",
@@ -2675,7 +2675,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_DD_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1032.dat",
-        6542
+        6546
       ],
       [
         "rocblas/library/TensileLibrary_Type_DD_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1032.hsaco",
@@ -2683,7 +2683,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_DD_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1033.dat",
-        6542
+        6546
       ],
       [
         "rocblas/library/TensileLibrary_Type_DD_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1033.hsaco",
@@ -2691,7 +2691,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_DD_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1034.dat",
-        6542
+        6546
       ],
       [
         "rocblas/library/TensileLibrary_Type_DD_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1034.hsaco",
@@ -2699,7 +2699,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_DD_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1035.dat",
-        6542
+        6546
       ],
       [
         "rocblas/library/TensileLibrary_Type_DD_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1035.hsaco",
@@ -2707,7 +2707,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_DD_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1036.dat",
-        6542
+        6546
       ],
       [
         "rocblas/library/TensileLibrary_Type_DD_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1036.hsaco",
@@ -2715,7 +2715,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_DD_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1030.dat",
-        6538
+        6542
       ],
       [
         "rocblas/library/TensileLibrary_Type_DD_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1030.hsaco",
@@ -2723,7 +2723,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_DD_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1031.dat",
-        6538
+        6542
       ],
       [
         "rocblas/library/TensileLibrary_Type_DD_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1031.hsaco",
@@ -2731,7 +2731,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_DD_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1032.dat",
-        6538
+        6542
       ],
       [
         "rocblas/library/TensileLibrary_Type_DD_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1032.hsaco",
@@ -2739,7 +2739,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_DD_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1033.dat",
-        6538
+        6542
       ],
       [
         "rocblas/library/TensileLibrary_Type_DD_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1033.hsaco",
@@ -2747,7 +2747,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_DD_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1034.dat",
-        6538
+        6542
       ],
       [
         "rocblas/library/TensileLibrary_Type_DD_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1034.hsaco",
@@ -2755,7 +2755,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_DD_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1035.dat",
-        6538
+        6542
       ],
       [
         "rocblas/library/TensileLibrary_Type_DD_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1035.hsaco",
@@ -2763,7 +2763,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_DD_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1036.dat",
-        6538
+        6542
       ],
       [
         "rocblas/library/TensileLibrary_Type_DD_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1036.hsaco",
@@ -2843,7 +2843,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_Contraction_l_Ailk_Bjlk_Cijk_Dijk_gfx1032.co",
-        167138
+        167048
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_Contraction_l_Ailk_Bjlk_Cijk_Dijk_gfx1032.dat",
@@ -2859,7 +2859,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_Contraction_l_Ailk_Bjlk_Cijk_Dijk_gfx1034.co",
-        165029
+        167205
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_Contraction_l_Ailk_Bjlk_Cijk_Dijk_gfx1034.dat",
@@ -2875,7 +2875,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_Contraction_l_Ailk_Bjlk_Cijk_Dijk_gfx1036.co",
-        167107
+        167000
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_Contraction_l_Ailk_Bjlk_Cijk_Dijk_gfx1036.dat",
@@ -2883,7 +2883,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1030.dat",
-        19242
+        19228
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1030.hsaco",
@@ -2891,7 +2891,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1031.dat",
-        19242
+        19228
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1031.hsaco",
@@ -2899,7 +2899,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1032.dat",
-        19242
+        19228
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1032.hsaco",
@@ -2907,7 +2907,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1033.dat",
-        19242
+        19228
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1033.hsaco",
@@ -2915,7 +2915,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1034.dat",
-        19242
+        19228
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1034.hsaco",
@@ -2923,7 +2923,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1035.dat",
-        19242
+        19228
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1035.hsaco",
@@ -2931,7 +2931,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1036.dat",
-        19242
+        19228
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1036.hsaco",
@@ -2939,7 +2939,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_Contraction_l_Ailk_Bljk_Cijk_Dijk_gfx1030.co",
-        287066
+        288021
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_Contraction_l_Ailk_Bljk_Cijk_Dijk_gfx1030.dat",
@@ -2963,7 +2963,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_Contraction_l_Ailk_Bljk_Cijk_Dijk_gfx1033.co",
-        287554
+        286682
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_Contraction_l_Ailk_Bljk_Cijk_Dijk_gfx1033.dat",
@@ -2979,7 +2979,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_Contraction_l_Ailk_Bljk_Cijk_Dijk_gfx1035.co",
-        286935
+        287872
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_Contraction_l_Ailk_Bljk_Cijk_Dijk_gfx1035.dat",
@@ -2987,7 +2987,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_Contraction_l_Ailk_Bljk_Cijk_Dijk_gfx1036.co",
-        287040
+        287987
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_Contraction_l_Ailk_Bljk_Cijk_Dijk_gfx1036.dat",
@@ -3051,7 +3051,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_Contraction_l_Alik_Bjlk_Cijk_Dijk_gfx1030.co",
-        153052
+        153334
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_Contraction_l_Alik_Bjlk_Cijk_Dijk_gfx1030.dat",
@@ -3059,7 +3059,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_Contraction_l_Alik_Bjlk_Cijk_Dijk_gfx1031.co",
-        153367
+        152925
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_Contraction_l_Alik_Bjlk_Cijk_Dijk_gfx1031.dat",
@@ -3075,7 +3075,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_Contraction_l_Alik_Bjlk_Cijk_Dijk_gfx1033.co",
-        151872
+        152912
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_Contraction_l_Alik_Bjlk_Cijk_Dijk_gfx1033.dat",
@@ -3083,7 +3083,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_Contraction_l_Alik_Bjlk_Cijk_Dijk_gfx1034.co",
-        153196
+        152922
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_Contraction_l_Alik_Bjlk_Cijk_Dijk_gfx1034.dat",
@@ -3107,59 +3107,59 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1030.dat",
-        19284
+        19270
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1030.hsaco",
-        80736
+        80992
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1031.dat",
-        19284
+        19270
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1031.hsaco",
-        80736
+        80992
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1032.dat",
-        19284
+        19270
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1032.hsaco",
-        80736
+        80992
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1033.dat",
-        19284
+        19270
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1033.hsaco",
-        80736
+        80992
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1034.dat",
-        19284
+        19270
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1034.hsaco",
-        80736
+        80992
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1035.dat",
-        19284
+        19270
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1035.hsaco",
-        80736
+        80992
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1036.dat",
-        19284
+        19270
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1036.hsaco",
-        80736
+        80992
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1030.co",
@@ -3171,7 +3171,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1031.co",
-        210489
+        211392
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1031.dat",
@@ -3179,7 +3179,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1032.co",
-        211461
+        210831
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1032.dat",
@@ -3187,7 +3187,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1033.co",
-        210603
+        211328
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1033.dat",
@@ -3275,7 +3275,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_gfx1030.co",
-        278300
+        280614
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_gfx1030.dat",
@@ -3283,7 +3283,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_gfx1031.co",
-        280797
+        278476
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_gfx1031.dat",
@@ -3299,7 +3299,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_gfx1033.co",
-        281101
+        278941
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_gfx1033.dat",
@@ -3315,7 +3315,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_gfx1035.co",
-        280665
+        278714
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_gfx1035.dat",
@@ -3331,7 +3331,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1030.dat",
-        48358
+        48446
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1030.hsaco",
@@ -3339,7 +3339,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1031.dat",
-        48358
+        48446
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1031.hsaco",
@@ -3347,7 +3347,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1032.dat",
-        48358
+        48446
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1032.hsaco",
@@ -3355,7 +3355,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1033.dat",
-        48358
+        48446
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1033.hsaco",
@@ -3363,7 +3363,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1034.dat",
-        48358
+        48446
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1034.hsaco",
@@ -3371,7 +3371,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1035.dat",
-        48358
+        48446
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1035.hsaco",
@@ -3379,7 +3379,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1036.dat",
-        48358
+        48446
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1036.hsaco",
@@ -3387,7 +3387,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_gfx1030.co",
-        417489
+        419476
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_gfx1030.dat",
@@ -3395,7 +3395,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_gfx1031.co",
-        417940
+        419232
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_gfx1031.dat",
@@ -3403,7 +3403,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_gfx1032.co",
-        417735
+        419283
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_gfx1032.dat",
@@ -3411,7 +3411,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_gfx1033.co",
-        420091
+        419218
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_gfx1033.dat",
@@ -3419,7 +3419,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_gfx1034.co",
-        419776
+        418352
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_gfx1034.dat",
@@ -3435,7 +3435,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_gfx1036.co",
-        418261
+        419418
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_gfx1036.dat",
@@ -3443,7 +3443,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1030.dat",
-        42084
+        42170
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1030.hsaco",
@@ -3451,7 +3451,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1031.dat",
-        42084
+        42170
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1031.hsaco",
@@ -3459,7 +3459,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1032.dat",
-        42084
+        42170
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1032.hsaco",
@@ -3467,7 +3467,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1033.dat",
-        42084
+        42170
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1033.hsaco",
@@ -3475,7 +3475,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1034.dat",
-        42084
+        42170
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1034.hsaco",
@@ -3483,7 +3483,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1035.dat",
-        42084
+        42170
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1035.hsaco",
@@ -3491,7 +3491,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1036.dat",
-        42084
+        42170
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1036.hsaco",
@@ -3515,7 +3515,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_gfx1032.co",
-        75851
+        73725
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_gfx1032.dat",
@@ -3531,7 +3531,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_gfx1034.co",
-        73697
+        75899
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_gfx1034.dat",
@@ -3539,7 +3539,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_gfx1035.co",
-        75791
+        73709
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_gfx1035.dat",
@@ -3555,63 +3555,63 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1030.dat",
-        42280
+        42108
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1030.hsaco",
-        155208
+        154952
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1031.dat",
-        42280
+        42108
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1031.hsaco",
-        155208
+        154952
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1032.dat",
-        42280
+        42108
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1032.hsaco",
-        155208
+        154952
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1033.dat",
-        42280
+        42108
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1033.hsaco",
-        155208
+        154952
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1034.dat",
-        42280
+        42108
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1034.hsaco",
-        155208
+        154952
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1035.dat",
-        42280
+        42108
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1035.hsaco",
-        155208
+        154952
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1036.dat",
-        42280
+        42108
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1036.hsaco",
-        155208
+        154952
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1030.co",
-        368118
+        369311
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1030.dat",
@@ -3619,7 +3619,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1031.co",
-        368465
+        370050
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1031.dat",
@@ -3627,7 +3627,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1032.co",
-        368293
+        369845
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1032.dat",
@@ -3635,7 +3635,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1033.co",
-        370775
+        369709
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1033.dat",
@@ -3643,7 +3643,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1034.co",
-        370439
+        368420
       ],
       [
         "rocblas/library/TensileLibrary_Type_HH_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1034.dat",
@@ -3667,7 +3667,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HS_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1030.dat",
-        43350
+        43176
       ],
       [
         "rocblas/library/TensileLibrary_Type_HS_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1030.hsaco",
@@ -3675,7 +3675,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HS_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1031.dat",
-        43350
+        43176
       ],
       [
         "rocblas/library/TensileLibrary_Type_HS_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1031.hsaco",
@@ -3683,7 +3683,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HS_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1032.dat",
-        43350
+        43176
       ],
       [
         "rocblas/library/TensileLibrary_Type_HS_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1032.hsaco",
@@ -3691,7 +3691,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HS_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1033.dat",
-        43350
+        43176
       ],
       [
         "rocblas/library/TensileLibrary_Type_HS_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1033.hsaco",
@@ -3699,7 +3699,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HS_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1034.dat",
-        43350
+        43176
       ],
       [
         "rocblas/library/TensileLibrary_Type_HS_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1034.hsaco",
@@ -3707,7 +3707,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HS_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1035.dat",
-        43350
+        43176
       ],
       [
         "rocblas/library/TensileLibrary_Type_HS_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1035.hsaco",
@@ -3715,7 +3715,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HS_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1036.dat",
-        43350
+        43176
       ],
       [
         "rocblas/library/TensileLibrary_Type_HS_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1036.hsaco",
@@ -3779,7 +3779,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HS_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1030.dat",
-        19109
+        19011
       ],
       [
         "rocblas/library/TensileLibrary_Type_HS_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1030.hsaco",
@@ -3787,7 +3787,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HS_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1031.dat",
-        19109
+        19011
       ],
       [
         "rocblas/library/TensileLibrary_Type_HS_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1031.hsaco",
@@ -3795,7 +3795,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HS_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1032.dat",
-        19109
+        19011
       ],
       [
         "rocblas/library/TensileLibrary_Type_HS_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1032.hsaco",
@@ -3803,7 +3803,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HS_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1033.dat",
-        19109
+        19011
       ],
       [
         "rocblas/library/TensileLibrary_Type_HS_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1033.hsaco",
@@ -3811,7 +3811,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HS_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1034.dat",
-        19109
+        19011
       ],
       [
         "rocblas/library/TensileLibrary_Type_HS_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1034.hsaco",
@@ -3819,7 +3819,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HS_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1035.dat",
-        19109
+        19011
       ],
       [
         "rocblas/library/TensileLibrary_Type_HS_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1035.hsaco",
@@ -3827,7 +3827,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HS_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1036.dat",
-        19109
+        19011
       ],
       [
         "rocblas/library/TensileLibrary_Type_HS_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1036.hsaco",
@@ -3839,7 +3839,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HS_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1030.hsaco",
-        230256
+        230512
       ],
       [
         "rocblas/library/TensileLibrary_Type_HS_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1031.dat",
@@ -3847,7 +3847,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HS_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1031.hsaco",
-        230256
+        230512
       ],
       [
         "rocblas/library/TensileLibrary_Type_HS_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1032.dat",
@@ -3855,7 +3855,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HS_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1032.hsaco",
-        230256
+        230512
       ],
       [
         "rocblas/library/TensileLibrary_Type_HS_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1033.dat",
@@ -3863,7 +3863,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HS_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1033.hsaco",
-        230256
+        230512
       ],
       [
         "rocblas/library/TensileLibrary_Type_HS_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1034.dat",
@@ -3871,7 +3871,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HS_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1034.hsaco",
-        230256
+        230512
       ],
       [
         "rocblas/library/TensileLibrary_Type_HS_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1035.dat",
@@ -3879,7 +3879,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HS_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1035.hsaco",
-        230256
+        230512
       ],
       [
         "rocblas/library/TensileLibrary_Type_HS_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1036.dat",
@@ -3887,11 +3887,11 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_HS_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1036.hsaco",
-        230256
+        230512
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1030.dat",
-        66833
+        66371
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1030.hsaco",
@@ -3899,7 +3899,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1031.dat",
-        66833
+        66371
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1031.hsaco",
@@ -3907,7 +3907,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1032.dat",
-        66833
+        66371
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1032.hsaco",
@@ -3915,7 +3915,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1033.dat",
-        66833
+        66371
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1033.hsaco",
@@ -3923,7 +3923,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1034.dat",
-        66833
+        66371
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1034.hsaco",
@@ -3931,7 +3931,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1035.dat",
-        66833
+        66371
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1035.hsaco",
@@ -3939,7 +3939,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1036.dat",
-        66833
+        66371
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1036.hsaco",
@@ -3955,7 +3955,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_gfx1031.co",
-        141148
+        140662
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_gfx1031.dat",
@@ -3971,7 +3971,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_gfx1033.co",
-        141297
+        140715
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_gfx1033.dat",
@@ -3987,7 +3987,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_gfx1035.co",
-        140717
+        141212
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Ailk_Bjlk_Cijk_Dijk_gfx1035.dat",
@@ -4003,7 +4003,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1030.dat",
-        53488
+        53080
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1030.hsaco",
@@ -4011,7 +4011,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1031.dat",
-        53488
+        53080
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1031.hsaco",
@@ -4019,7 +4019,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1032.dat",
-        53488
+        53080
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1032.hsaco",
@@ -4027,7 +4027,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1033.dat",
-        53488
+        53080
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1033.hsaco",
@@ -4035,7 +4035,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1034.dat",
-        53488
+        53080
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1034.hsaco",
@@ -4043,7 +4043,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1035.dat",
-        53488
+        53080
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1035.hsaco",
@@ -4051,7 +4051,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1036.dat",
-        53488
+        53080
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1036.hsaco",
@@ -4059,7 +4059,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_gfx1030.co",
-        108536
+        108594
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_gfx1030.dat",
@@ -4091,7 +4091,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_gfx1034.co",
-        108612
+        108533
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Ailk_Bljk_Cijk_Dijk_gfx1034.dat",
@@ -4115,7 +4115,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1030.dat",
-        62854
+        63318
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1030.hsaco",
@@ -4123,7 +4123,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1031.dat",
-        62854
+        63318
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1031.hsaco",
@@ -4131,7 +4131,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1032.dat",
-        62854
+        63318
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1032.hsaco",
@@ -4139,7 +4139,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1033.dat",
-        62854
+        63318
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1033.hsaco",
@@ -4147,7 +4147,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1034.dat",
-        62854
+        63318
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1034.hsaco",
@@ -4155,7 +4155,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1035.dat",
-        62854
+        63318
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1035.hsaco",
@@ -4163,7 +4163,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1036.dat",
-        62854
+        63318
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1036.hsaco",
@@ -4171,7 +4171,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_gfx1030.co",
-        117790
+        116848
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_gfx1030.dat",
@@ -4195,7 +4195,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_gfx1033.co",
-        118113
+        117460
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_gfx1033.dat",
@@ -4203,7 +4203,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_gfx1034.co",
-        117886
+        117425
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_gfx1034.dat",
@@ -4211,7 +4211,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_gfx1035.co",
-        117533
+        117784
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Alik_Bjlk_Cijk_Dijk_gfx1035.dat",
@@ -4227,59 +4227,59 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1030.dat",
-        61674
+        61444
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1030.hsaco",
-        381360
+        381104
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1031.dat",
-        61674
+        61444
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1031.hsaco",
-        381360
+        381104
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1032.dat",
-        61674
+        61444
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1032.hsaco",
-        381360
+        381104
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1033.dat",
-        61674
+        61444
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1033.hsaco",
-        381360
+        381104
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1034.dat",
-        61674
+        61444
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1034.hsaco",
-        381360
+        381104
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1035.dat",
-        61674
+        61444
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1035.hsaco",
-        381360
+        381104
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1036.dat",
-        61674
+        61444
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1036.hsaco",
-        381360
+        381104
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1030.co",
@@ -4291,7 +4291,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1031.co",
-        117902
+        118581
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1031.dat",
@@ -4299,7 +4299,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1032.co",
-        118502
+        117643
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1032.dat",
@@ -4331,7 +4331,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1036.co",
-        118582
+        117554
       ],
       [
         "rocblas/library/TensileLibrary_Type_I8I_HPA_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1036.dat",
@@ -4339,7 +4339,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1030.dat",
-        6554
+        6546
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1030.hsaco",
@@ -4347,7 +4347,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1031.dat",
-        6554
+        6546
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1031.hsaco",
@@ -4355,7 +4355,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1032.dat",
-        6554
+        6546
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1032.hsaco",
@@ -4363,7 +4363,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1033.dat",
-        6554
+        6546
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1033.hsaco",
@@ -4371,7 +4371,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1034.dat",
-        6554
+        6546
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1034.hsaco",
@@ -4379,7 +4379,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1035.dat",
-        6554
+        6546
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1035.hsaco",
@@ -4387,7 +4387,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1036.dat",
-        6554
+        6546
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1036.hsaco",
@@ -4403,7 +4403,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Ailk_Bjlk_Cijk_Dijk_gfx1031.co",
-        483652
+        483074
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Ailk_Bjlk_Cijk_Dijk_gfx1031.dat",
@@ -4411,7 +4411,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Ailk_Bjlk_Cijk_Dijk_gfx1032.co",
-        482952
+        483028
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Ailk_Bjlk_Cijk_Dijk_gfx1032.dat",
@@ -4435,7 +4435,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Ailk_Bjlk_Cijk_Dijk_gfx1035.co",
-        482465
+        483831
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Ailk_Bjlk_Cijk_Dijk_gfx1035.dat",
@@ -4443,7 +4443,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Ailk_Bjlk_Cijk_Dijk_gfx1036.co",
-        483040
+        483826
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Ailk_Bjlk_Cijk_Dijk_gfx1036.dat",
@@ -4451,7 +4451,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1030.dat",
-        6538
+        6534
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1030.hsaco",
@@ -4459,7 +4459,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1031.dat",
-        6538
+        6534
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1031.hsaco",
@@ -4467,7 +4467,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1032.dat",
-        6538
+        6534
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1032.hsaco",
@@ -4475,7 +4475,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1033.dat",
-        6538
+        6534
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1033.hsaco",
@@ -4483,7 +4483,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1034.dat",
-        6538
+        6534
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1034.hsaco",
@@ -4491,7 +4491,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1035.dat",
-        6538
+        6534
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1035.hsaco",
@@ -4499,7 +4499,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1036.dat",
-        6538
+        6534
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Ailk_Bljk_Cijk_Dijk_fallback_gfx1036.hsaco",
@@ -4515,7 +4515,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Ailk_Bljk_Cijk_Dijk_gfx1031.co",
-        556943
+        554320
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Ailk_Bljk_Cijk_Dijk_gfx1031.dat",
@@ -4523,7 +4523,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Ailk_Bljk_Cijk_Dijk_gfx1032.co",
-        557015
+        554383
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Ailk_Bljk_Cijk_Dijk_gfx1032.dat",
@@ -4531,7 +4531,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Ailk_Bljk_Cijk_Dijk_gfx1033.co",
-        554827
+        556920
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Ailk_Bljk_Cijk_Dijk_gfx1033.dat",
@@ -4563,7 +4563,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1030.dat",
-        6542
+        6546
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1030.hsaco",
@@ -4571,7 +4571,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1031.dat",
-        6542
+        6546
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1031.hsaco",
@@ -4579,7 +4579,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1032.dat",
-        6542
+        6546
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1032.hsaco",
@@ -4587,7 +4587,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1033.dat",
-        6542
+        6546
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1033.hsaco",
@@ -4595,7 +4595,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1034.dat",
-        6542
+        6546
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1034.hsaco",
@@ -4603,7 +4603,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1035.dat",
-        6542
+        6546
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1035.hsaco",
@@ -4611,7 +4611,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1036.dat",
-        6542
+        6546
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1036.hsaco",
@@ -4619,7 +4619,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Alik_Bjlk_Cijk_Dijk_gfx1030.co",
-        244825
+        241182
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Alik_Bjlk_Cijk_Dijk_gfx1030.dat",
@@ -4643,7 +4643,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Alik_Bjlk_Cijk_Dijk_gfx1033.co",
-        243171
+        245183
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Alik_Bjlk_Cijk_Dijk_gfx1033.dat",
@@ -4659,7 +4659,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Alik_Bjlk_Cijk_Dijk_gfx1035.co",
-        243277
+        245130
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Alik_Bjlk_Cijk_Dijk_gfx1035.dat",
@@ -4675,63 +4675,63 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1030.dat",
-        6546
+        6550
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1030.hsaco",
-        41144
+        41400
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1031.dat",
-        6546
+        6550
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1031.hsaco",
-        41144
+        41400
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1032.dat",
-        6546
+        6550
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1032.hsaco",
-        41144
+        41400
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1033.dat",
-        6546
+        6550
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1033.hsaco",
-        41144
+        41400
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1034.dat",
-        6546
+        6550
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1034.hsaco",
-        41144
+        41400
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1035.dat",
-        6546
+        6550
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1035.hsaco",
-        41144
+        41400
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1036.dat",
-        6546
+        6550
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1036.hsaco",
-        41144
+        41400
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1030.co",
-        533904
+        532781
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1030.dat",
@@ -4739,7 +4739,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1031.co",
-        533811
+        533000
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1031.dat",
@@ -4747,7 +4747,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1032.co",
-        533930
+        533047
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1032.dat",
@@ -4755,7 +4755,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1033.co",
-        532761
+        533564
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1033.dat",
@@ -4763,7 +4763,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1034.co",
-        531611
+        533834
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1034.dat",
@@ -4771,7 +4771,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1035.co",
-        533418
+        531979
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1035.dat",
@@ -4779,7 +4779,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1036.co",
-        531991
+        533730
       ],
       [
         "rocblas/library/TensileLibrary_Type_SS_Contraction_l_Alik_Bljk_Cijk_Dijk_gfx1036.dat",
@@ -4791,7 +4791,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Ailk_BjlkC_Cijk_Dijk_fallback_gfx1030.hsaco",
-        44944
+        45200
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Ailk_BjlkC_Cijk_Dijk_fallback_gfx1031.dat",
@@ -4799,7 +4799,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Ailk_BjlkC_Cijk_Dijk_fallback_gfx1031.hsaco",
-        44944
+        45200
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Ailk_BjlkC_Cijk_Dijk_fallback_gfx1032.dat",
@@ -4807,7 +4807,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Ailk_BjlkC_Cijk_Dijk_fallback_gfx1032.hsaco",
-        44944
+        45200
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Ailk_BjlkC_Cijk_Dijk_fallback_gfx1033.dat",
@@ -4815,7 +4815,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Ailk_BjlkC_Cijk_Dijk_fallback_gfx1033.hsaco",
-        44944
+        45200
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Ailk_BjlkC_Cijk_Dijk_fallback_gfx1034.dat",
@@ -4823,7 +4823,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Ailk_BjlkC_Cijk_Dijk_fallback_gfx1034.hsaco",
-        44944
+        45200
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Ailk_BjlkC_Cijk_Dijk_fallback_gfx1035.dat",
@@ -4831,7 +4831,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Ailk_BjlkC_Cijk_Dijk_fallback_gfx1035.hsaco",
-        44944
+        45200
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Ailk_BjlkC_Cijk_Dijk_fallback_gfx1036.dat",
@@ -4839,11 +4839,11 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Ailk_BjlkC_Cijk_Dijk_fallback_gfx1036.hsaco",
-        44944
+        45200
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1030.dat",
-        6770
+        6762
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1030.hsaco",
@@ -4851,7 +4851,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1031.dat",
-        6770
+        6762
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1031.hsaco",
@@ -4859,7 +4859,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1032.dat",
-        6770
+        6762
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1032.hsaco",
@@ -4867,7 +4867,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1033.dat",
-        6770
+        6762
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1033.hsaco",
@@ -4875,7 +4875,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1034.dat",
-        6770
+        6762
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1034.hsaco",
@@ -4883,7 +4883,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1035.dat",
-        6770
+        6762
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1035.hsaco",
@@ -4891,7 +4891,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1036.dat",
-        6770
+        6762
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Ailk_Bjlk_Cijk_Dijk_fallback_gfx1036.hsaco",
@@ -4955,7 +4955,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_AlikC_BjlkC_Cijk_Dijk_fallback_gfx1030.dat",
-        6794
+        6786
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_AlikC_BjlkC_Cijk_Dijk_fallback_gfx1030.hsaco",
@@ -4963,7 +4963,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_AlikC_BjlkC_Cijk_Dijk_fallback_gfx1031.dat",
-        6794
+        6786
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_AlikC_BjlkC_Cijk_Dijk_fallback_gfx1031.hsaco",
@@ -4971,7 +4971,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_AlikC_BjlkC_Cijk_Dijk_fallback_gfx1032.dat",
-        6794
+        6786
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_AlikC_BjlkC_Cijk_Dijk_fallback_gfx1032.hsaco",
@@ -4979,7 +4979,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_AlikC_BjlkC_Cijk_Dijk_fallback_gfx1033.dat",
-        6794
+        6786
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_AlikC_BjlkC_Cijk_Dijk_fallback_gfx1033.hsaco",
@@ -4987,7 +4987,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_AlikC_BjlkC_Cijk_Dijk_fallback_gfx1034.dat",
-        6794
+        6786
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_AlikC_BjlkC_Cijk_Dijk_fallback_gfx1034.hsaco",
@@ -4995,7 +4995,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_AlikC_BjlkC_Cijk_Dijk_fallback_gfx1035.dat",
-        6794
+        6786
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_AlikC_BjlkC_Cijk_Dijk_fallback_gfx1035.hsaco",
@@ -5003,7 +5003,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_AlikC_BjlkC_Cijk_Dijk_fallback_gfx1036.dat",
-        6794
+        6786
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_AlikC_BjlkC_Cijk_Dijk_fallback_gfx1036.hsaco",
@@ -5067,63 +5067,63 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_AlikC_Bljk_Cijk_Dijk_fallback_gfx1030.dat",
-        6774
+        6770
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_AlikC_Bljk_Cijk_Dijk_fallback_gfx1030.hsaco",
-        44432
+        44688
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_AlikC_Bljk_Cijk_Dijk_fallback_gfx1031.dat",
-        6774
+        6770
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_AlikC_Bljk_Cijk_Dijk_fallback_gfx1031.hsaco",
-        44432
+        44688
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_AlikC_Bljk_Cijk_Dijk_fallback_gfx1032.dat",
-        6774
+        6770
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_AlikC_Bljk_Cijk_Dijk_fallback_gfx1032.hsaco",
-        44432
+        44688
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_AlikC_Bljk_Cijk_Dijk_fallback_gfx1033.dat",
-        6774
+        6770
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_AlikC_Bljk_Cijk_Dijk_fallback_gfx1033.hsaco",
-        44432
+        44688
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_AlikC_Bljk_Cijk_Dijk_fallback_gfx1034.dat",
-        6774
+        6770
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_AlikC_Bljk_Cijk_Dijk_fallback_gfx1034.hsaco",
-        44432
+        44688
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_AlikC_Bljk_Cijk_Dijk_fallback_gfx1035.dat",
-        6774
+        6770
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_AlikC_Bljk_Cijk_Dijk_fallback_gfx1035.hsaco",
-        44432
+        44688
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_AlikC_Bljk_Cijk_Dijk_fallback_gfx1036.dat",
-        6774
+        6770
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_AlikC_Bljk_Cijk_Dijk_fallback_gfx1036.hsaco",
-        44432
+        44688
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Alik_BjlkC_Cijk_Dijk_fallback_gfx1030.dat",
-        6778
+        6782
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Alik_BjlkC_Cijk_Dijk_fallback_gfx1030.hsaco",
@@ -5131,7 +5131,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Alik_BjlkC_Cijk_Dijk_fallback_gfx1031.dat",
-        6778
+        6782
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Alik_BjlkC_Cijk_Dijk_fallback_gfx1031.hsaco",
@@ -5139,7 +5139,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Alik_BjlkC_Cijk_Dijk_fallback_gfx1032.dat",
-        6778
+        6782
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Alik_BjlkC_Cijk_Dijk_fallback_gfx1032.hsaco",
@@ -5147,7 +5147,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Alik_BjlkC_Cijk_Dijk_fallback_gfx1033.dat",
-        6778
+        6782
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Alik_BjlkC_Cijk_Dijk_fallback_gfx1033.hsaco",
@@ -5155,7 +5155,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Alik_BjlkC_Cijk_Dijk_fallback_gfx1034.dat",
-        6778
+        6782
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Alik_BjlkC_Cijk_Dijk_fallback_gfx1034.hsaco",
@@ -5163,7 +5163,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Alik_BjlkC_Cijk_Dijk_fallback_gfx1035.dat",
-        6778
+        6782
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Alik_BjlkC_Cijk_Dijk_fallback_gfx1035.hsaco",
@@ -5171,7 +5171,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Alik_BjlkC_Cijk_Dijk_fallback_gfx1036.dat",
-        6778
+        6782
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Alik_BjlkC_Cijk_Dijk_fallback_gfx1036.hsaco",
@@ -5179,7 +5179,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1030.dat",
-        6770
+        6766
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1030.hsaco",
@@ -5187,7 +5187,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1031.dat",
-        6770
+        6766
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1031.hsaco",
@@ -5195,7 +5195,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1032.dat",
-        6770
+        6766
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1032.hsaco",
@@ -5203,7 +5203,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1033.dat",
-        6770
+        6766
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1033.hsaco",
@@ -5211,7 +5211,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1034.dat",
-        6770
+        6766
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1034.hsaco",
@@ -5219,7 +5219,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1035.dat",
-        6770
+        6766
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1035.hsaco",
@@ -5227,7 +5227,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1036.dat",
-        6770
+        6766
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Alik_Bjlk_Cijk_Dijk_fallback_gfx1036.hsaco",
@@ -5235,7 +5235,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1030.dat",
-        6754
+        6762
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1030.hsaco",
@@ -5243,7 +5243,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1031.dat",
-        6754
+        6762
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1031.hsaco",
@@ -5251,7 +5251,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1032.dat",
-        6754
+        6762
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1032.hsaco",
@@ -5259,7 +5259,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1033.dat",
-        6754
+        6762
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1033.hsaco",
@@ -5267,7 +5267,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1034.dat",
-        6754
+        6762
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1034.hsaco",
@@ -5275,7 +5275,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1035.dat",
-        6754
+        6762
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1035.hsaco",
@@ -5283,7 +5283,7 @@
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1036.dat",
-        6754
+        6762
       ],
       [
         "rocblas/library/TensileLibrary_Type_ZZ_Contraction_l_Alik_Bljk_Cijk_Dijk_fallback_gfx1036.hsaco",
