@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
   "kind": "qualification_record",
-  "generated_at": "2026-11-18T14:01:31Z",
+  "generated_at": "2026-11-19T14:07:59Z",
   "build": {
-    "build_id": "llama-windows-rocm-gfx117X-x64.zip@44309761959",
-    "artifact": "llama-b1380-windows-rocm-gfx117X-x64.zip",
+    "build_id": "llama-windows-rocm-gfx117X-x64.zip@44529629180",
+    "artifact": "llama-b1381-windows-rocm-gfx117X-x64.zip",
     "os": "windows",
     "gfx_family": "gfx117X",
     "gpu_targets": [
@@ -12,11 +12,11 @@
       "gfx1171"
     ],
     "rocm_version": "10.3.0a20261118",
-    "upstream_sha": "ffc87c3a7989cb657641a6459a186f303e176af8",
-    "release_tag": "b1380",
+    "upstream_sha": "f8caa5ea30b5775512906ae3b7ee53b21a7a6e1d",
+    "release_tag": "b1381",
     "hardware_validated": false,
     "hardware_gfx_target": null,
-    "run_id": "44309761959",
+    "run_id": "44529629180",
     "run_attempt": "1",
     "runner_env": null
   },
@@ -47,12 +47,12 @@
           "tier": "tier0",
           "status": "pass",
           "gating": true,
-          "duration_ms": 47,
+          "duration_ms": 62,
           "error": null,
           "details": {
             "missing": [],
             "files": 894,
-            "bytes": 788643797
+            "bytes": 788125653
           }
         },
         {
@@ -68,7 +68,7 @@
             "exists": true,
             "targets": 2,
             "min_bytes": 33554432,
-            "bytes": 148355584
+            "bytes": 148498944
           }
         },
         {
@@ -77,11 +77,11 @@
           "tier": "tier0",
           "status": "pass",
           "gating": true,
-          "duration_ms": 2297,
+          "duration_ms": 1750,
           "error": null,
           "details": {
             "binary": "ggml-hip.dll",
-            "bytes_scanned": 148355584,
+            "bytes_scanned": 148498944,
             "bundle_magic_count": 141,
             "expected_count": 2,
             "present_count": 2,
@@ -108,7 +108,7 @@
           "tier": "tier0",
           "status": "pass",
           "gating": true,
-          "duration_ms": 109,
+          "duration_ms": 93,
           "error": null,
           "details": {
             "binaries_scanned": 73,
@@ -199,7 +199,7 @@
           "tier": "tier0",
           "status": "pass",
           "gating": true,
-          "duration_ms": 171,
+          "duration_ms": 1218,
           "error": null,
           "details": {
             "returncode": 0,
@@ -214,17 +214,17 @@
           "tier": "tier0",
           "status": "pass",
           "gating": true,
-          "duration_ms": 63,
+          "duration_ms": 46,
           "error": null,
           "details": {
-            "archive_upstream_sha": "ffc87c3a7989cb657641a6459a186f303e176af8",
-            "expected_upstream_sha": "ffc87c3a7989cb657641a6459a186f303e176af8",
+            "archive_upstream_sha": "f8caa5ea30b5775512906ae3b7ee53b21a7a6e1d",
+            "expected_upstream_sha": "f8caa5ea30b5775512906ae3b7ee53b21a7a6e1d",
             "archive_rocm_version": "10.3.0a20261118",
             "expected_rocm_version": "10.3.0a20261118",
             "version_returncode": 0,
-            "version_output": "version: 1.0.0-dev (build 12515, commit ffc87c3a7)\nbuilt with Clang 24.0.0 for Windows",
-            "binary_commit": "ffc87c3a7",
-            "binary_build_number": 12515,
+            "version_output": "version: 1.0.0-dev (build 12548, commit f8caa5ea3)\nbuilt with Clang 24.0.0 for Windows",
+            "binary_commit": "f8caa5ea3",
+            "binary_build_number": 12548,
             "compared": [
               "archive commit",
               "archive ROCm version",
@@ -238,13 +238,13 @@
           "tier": "tier0",
           "status": "pass",
           "gating": true,
-          "duration_ms": 250,
+          "duration_ms": 340,
           "error": null,
           "details": {
-            "expected_sha256": "87745d660aa7a9b8b50d86badf5fc5ba5f6e8594bf5e7c01585cfe95cf921fa2",
-            "expected_bytes": 472494268,
-            "sha256": "87745d660aa7a9b8b50d86badf5fc5ba5f6e8594bf5e7c01585cfe95cf921fa2",
-            "bytes": 472494268,
+            "expected_sha256": "b04d48377630b246f82fbc248d039081d28668fe46f603d7d572127499d8acdc",
+            "expected_bytes": 471602512,
+            "sha256": "b04d48377630b246f82fbc248d039081d28668fe46f603d7d572127499d8acdc",
+            "bytes": 471602512,
             "entries": 901,
             "missing": [],
             "not_executable": []
@@ -330,13 +330,13 @@
   },
   "versions": {
     "rocm_nightly": "10.3.0a20261118",
-    "llamacpp_commit": "ffc87c3a7989cb657641a6459a186f303e176af8",
-    "binary_reports_commit": "ffc87c3a7",
-    "binary_reports_build": 12515
+    "llamacpp_commit": "f8caa5ea30b5775512906ae3b7ee53b21a7a6e1d",
+    "binary_reports_commit": "f8caa5ea3",
+    "binary_reports_build": 12548
   },
   "bundle": {
     "files": 894,
-    "bytes": 788643797,
+    "bytes": 788125653,
     "manifest": [
       [
         "LICENSE",
@@ -352,7 +352,7 @@
       ],
       [
         "ggml-base.dll",
-        861184
+        867328
       ],
       [
         "ggml-cpu.dll",
@@ -360,7 +360,7 @@
       ],
       [
         "ggml-hip.dll",
-        148355584
+        148498944
       ],
       [
         "ggml-rpc-server.exe",
@@ -408,7 +408,7 @@
       ],
       [
         "llama-cli-impl.dll",
-        3583488
+        3603456
       ],
       [
         "llama-cli.exe",
@@ -416,7 +416,7 @@
       ],
       [
         "llama-common.dll",
-        9088512
+        9108480
       ],
       [
         "llama-completion-impl.dll",
@@ -572,7 +572,7 @@
       ],
       [
         "llama-server-impl.dll",
-        10585088
+        9739776
       ],
       [
         "llama-server.exe",
@@ -608,7 +608,7 @@
       ],
       [
         "llama.dll",
-        4127744
+        4143104
       ],
       [
         "llama.exe",
@@ -616,7 +616,7 @@
       ],
       [
         "mtmd.dll",
-        3241472
+        3363840
       ],
       [
         "origami.dll",

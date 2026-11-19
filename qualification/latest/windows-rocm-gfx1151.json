@@ -1,25 +1,25 @@
 {
   "schema_version": 1,
   "kind": "qualification_record",
-  "generated_at": "2026-11-18T14:01:31Z",
+  "generated_at": "2026-11-19T14:07:59Z",
   "build": {
-    "build_id": "llama-windows-rocm-gfx1151-x64.zip@44309761959",
-    "artifact": "llama-b1380-windows-rocm-gfx1151-x64.zip",
+    "build_id": "llama-windows-rocm-gfx1151-x64.zip@44529629180",
+    "artifact": "llama-b1381-windows-rocm-gfx1151-x64.zip",
     "os": "windows",
     "gfx_family": "gfx1151",
     "gpu_targets": [
       "gfx1151"
     ],
     "rocm_version": "10.3.0a20261118",
-    "upstream_sha": "ffc87c3a7989cb657641a6459a186f303e176af8",
-    "release_tag": "b1380",
+    "upstream_sha": "f8caa5ea30b5775512906ae3b7ee53b21a7a6e1d",
+    "release_tag": "b1381",
     "hardware_validated": true,
     "hardware_gfx_target": "gfx1151",
-    "run_id": "44309761959",
+    "run_id": "44529629180",
     "run_attempt": "1",
     "runner_env": {
       "platform": "Windows-11-10.0.26200-SP0",
-      "machine_name": "X2-LA03-S05-D03",
+      "machine_name": "X2-LA03-S02-D06",
       "python": "3.12.10",
       "foreign_rocm_env_removed": {
         "HIP_PATH": "C:\\ROCm\\10.1.0\\Lib\\site-packages\\_rocm_sdk_devel"
@@ -66,12 +66,12 @@
           "tier": "tier0",
           "status": "pass",
           "gating": true,
-          "duration_ms": 16,
+          "duration_ms": 31,
           "error": null,
           "details": {
             "missing": [],
             "files": 348,
-            "bytes": 446204790
+            "bytes": 445612918
           }
         },
         {
@@ -87,7 +87,7 @@
             "exists": true,
             "targets": 1,
             "min_bytes": 16777216,
-            "bytes": 85222912
+            "bytes": 85292544
           }
         },
         {
@@ -96,11 +96,11 @@
           "tier": "tier0",
           "status": "pass",
           "gating": true,
-          "duration_ms": 1171,
+          "duration_ms": 968,
           "error": null,
           "details": {
             "binary": "ggml-hip.dll",
-            "bytes_scanned": 85222912,
+            "bytes_scanned": 85292544,
             "bundle_magic_count": 141,
             "expected_count": 1,
             "present_count": 1,
@@ -124,7 +124,7 @@
           "tier": "tier0",
           "status": "pass",
           "gating": true,
-          "duration_ms": 155,
+          "duration_ms": 78,
           "error": null,
           "details": {
             "binaries_scanned": 73,
@@ -215,7 +215,7 @@
           "tier": "tier0",
           "status": "pass",
           "gating": true,
-          "duration_ms": 1093,
+          "duration_ms": 921,
           "error": null,
           "details": {
             "returncode": 0,
@@ -230,17 +230,17 @@
           "tier": "tier0",
           "status": "pass",
           "gating": true,
-          "duration_ms": 62,
+          "duration_ms": 46,
           "error": null,
           "details": {
-            "archive_upstream_sha": "ffc87c3a7989cb657641a6459a186f303e176af8",
-            "expected_upstream_sha": "ffc87c3a7989cb657641a6459a186f303e176af8",
+            "archive_upstream_sha": "f8caa5ea30b5775512906ae3b7ee53b21a7a6e1d",
+            "expected_upstream_sha": "f8caa5ea30b5775512906ae3b7ee53b21a7a6e1d",
             "archive_rocm_version": "10.3.0a20261118",
             "expected_rocm_version": "10.3.0a20261118",
             "version_returncode": 0,
-            "version_output": "version: 1.0.0-dev (build 12515, commit ffc87c3a7)\nbuilt with Clang 24.0.0 for Windows",
-            "binary_commit": "ffc87c3a7",
-            "binary_build_number": 12515,
+            "version_output": "version: 1.0.0-dev (build 12548, commit f8caa5ea3)\nbuilt with Clang 24.0.0 for Windows",
+            "binary_commit": "f8caa5ea3",
+            "binary_build_number": 12548,
             "compared": [
               "archive commit",
               "archive ROCm version",
@@ -254,13 +254,13 @@
           "tier": "tier0",
           "status": "pass",
           "gating": true,
-          "duration_ms": 102,
+          "duration_ms": 142,
           "error": null,
           "details": {
-            "expected_sha256": "eef7622cc250819f7111487485b497d7bca21a823499df8e82ee6ca3a46a8fad",
-            "expected_bytes": 196989630,
-            "sha256": "eef7622cc250819f7111487485b497d7bca21a823499df8e82ee6ca3a46a8fad",
-            "bytes": 196989630,
+            "expected_sha256": "ccac2040a540aea90fbc67eba700bbeab230306ec9c677fc85dd6c9bae6eb535",
+            "expected_bytes": 196135429,
+            "sha256": "ccac2040a540aea90fbc67eba700bbeab230306ec9c677fc85dd6c9bae6eb535",
+            "bytes": 196135429,
             "entries": 355,
             "missing": [],
             "not_executable": []
@@ -345,7 +345,7 @@
           "tier": "tier1",
           "status": "pass",
           "gating": true,
-          "duration_ms": 16,
+          "duration_ms": 15,
           "error": null,
           "details": {
             "devices_selected": [
@@ -371,7 +371,7 @@
           "tier": "tier1",
           "status": "pass",
           "gating": true,
-          "duration_ms": 702,
+          "duration_ms": 750,
           "error": null,
           "details": {
             "finish_reason": "stop",
@@ -388,7 +388,7 @@
           "tier": "tier1",
           "status": "pass",
           "gating": false,
-          "duration_ms": 655,
+          "duration_ms": 640,
           "error": null,
           "details": {
             "prompt": "What is 2 + 2?",
@@ -419,11 +419,11 @@
           "tier": "tier1",
           "status": "pass",
           "gating": true,
-          "duration_ms": 16,
+          "duration_ms": 0,
           "error": null,
           "details": {
-            "archive_dir": "C:\\actions-runner-01\\_work\\_temp\\tier1-vg8qs4i7\\x",
-            "modules_loaded": 62,
+            "archive_dir": "C:\\actions-runner-01\\_work\\_temp\\tier1-h6r2uh4r\\x",
+            "modules_loaded": 63,
             "rocm_libraries_loaded": [
               "amd_comgr.dll",
               "amdhip64_7.dll",
@@ -458,13 +458,13 @@
   },
   "versions": {
     "rocm_nightly": "10.3.0a20261118",
-    "llamacpp_commit": "ffc87c3a7989cb657641a6459a186f303e176af8",
-    "binary_reports_commit": "ffc87c3a7",
-    "binary_reports_build": 12515
+    "llamacpp_commit": "f8caa5ea30b5775512906ae3b7ee53b21a7a6e1d",
+    "binary_reports_commit": "f8caa5ea3",
+    "binary_reports_build": 12548
   },
   "bundle": {
     "files": 348,
-    "bytes": 446204790,
+    "bytes": 445612918,
     "manifest": [
       [
         "LICENSE",
@@ -480,7 +480,7 @@
       ],
       [
         "ggml-base.dll",
-        861184
+        867328
       ],
       [
         "ggml-cpu.dll",
@@ -488,7 +488,7 @@
       ],
       [
         "ggml-hip.dll",
-        85222912
+        85292544
       ],
       [
         "ggml-rpc-server.exe",
@@ -536,7 +536,7 @@
       ],
       [
         "llama-cli-impl.dll",
-        3583488
+        3603456
       ],
       [
         "llama-cli.exe",
@@ -544,7 +544,7 @@
       ],
       [
         "llama-common.dll",
-        9088512
+        9108480
       ],
       [
         "llama-completion-impl.dll",
@@ -700,7 +700,7 @@
       ],
       [
         "llama-server-impl.dll",
-        10585088
+        9739776
       ],
       [
         "llama-server.exe",
@@ -736,7 +736,7 @@
       ],
       [
         "llama.dll",
-        4127744
+        4143104
       ],
       [
         "llama.exe",
@@ -744,7 +744,7 @@
       ],
       [
         "mtmd.dll",
-        3241472
+        3363840
       ],
       [
         "origami.dll",
