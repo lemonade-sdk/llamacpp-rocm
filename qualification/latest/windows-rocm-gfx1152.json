@@ -1,21 +1,21 @@
 {
   "schema_version": 1,
   "kind": "qualification_record",
-  "generated_at": "2026-11-21T13:57:32Z",
+  "generated_at": "2026-11-22T14:13:42Z",
   "build": {
-    "build_id": "llama-windows-rocm-gfx1152-x64.zip@44906867398",
-    "artifact": "llama-b1384-windows-rocm-gfx1152-x64.zip",
+    "build_id": "llama-windows-rocm-gfx1152-x64.zip@45025400156",
+    "artifact": "llama-b1385-windows-rocm-gfx1152-x64.zip",
     "os": "windows",
     "gfx_family": "gfx1152",
     "gpu_targets": [
       "gfx1152"
     ],
-    "rocm_version": "10.3.0a20261121",
-    "upstream_sha": "44c20b1c0a1c77fd629fc5d032a5d7fa5843ebca",
-    "release_tag": "b1384",
+    "rocm_version": "10.3.0a20261122",
+    "upstream_sha": "8d60873dfb8619f2b5ed31adfbab07cccb40db5c",
+    "release_tag": "b1385",
     "hardware_validated": false,
     "hardware_gfx_target": null,
-    "run_id": "44906867398",
+    "run_id": "45025400156",
     "run_attempt": "1",
     "runner_env": null
   },
@@ -46,12 +46,12 @@
           "tier": "tier0",
           "status": "pass",
           "gating": true,
-          "duration_ms": 31,
+          "duration_ms": 15,
           "error": null,
           "details": {
             "missing": [],
             "files": 330,
-            "bytes": 434816822
+            "bytes": 435169617
           }
         },
         {
@@ -76,7 +76,7 @@
           "tier": "tier0",
           "status": "pass",
           "gating": true,
-          "duration_ms": 1218,
+          "duration_ms": 1187,
           "error": null,
           "details": {
             "binary": "ggml-hip.dll",
@@ -104,7 +104,7 @@
           "tier": "tier0",
           "status": "pass",
           "gating": true,
-          "duration_ms": 140,
+          "duration_ms": 93,
           "error": null,
           "details": {
             "binaries_scanned": 73,
@@ -195,7 +195,7 @@
           "tier": "tier0",
           "status": "pass",
           "gating": true,
-          "duration_ms": 296,
+          "duration_ms": 250,
           "error": null,
           "details": {
             "returncode": 0,
@@ -213,14 +213,14 @@
           "duration_ms": 62,
           "error": null,
           "details": {
-            "archive_upstream_sha": "44c20b1c0a1c77fd629fc5d032a5d7fa5843ebca",
-            "expected_upstream_sha": "44c20b1c0a1c77fd629fc5d032a5d7fa5843ebca",
-            "archive_rocm_version": "10.3.0a20261121",
-            "expected_rocm_version": "10.3.0a20261121",
+            "archive_upstream_sha": "8d60873dfb8619f2b5ed31adfbab07cccb40db5c",
+            "expected_upstream_sha": "8d60873dfb8619f2b5ed31adfbab07cccb40db5c",
+            "archive_rocm_version": "10.3.0a20261122",
+            "expected_rocm_version": "10.3.0a20261122",
             "version_returncode": 0,
-            "version_output": "version: 1.0.0-dev (build 12617, commit 44c20b1c0)\nbuilt with Clang 24.0.0 for Windows",
-            "binary_commit": "44c20b1c0",
-            "binary_build_number": 12617,
+            "version_output": "version: 1.0.0-dev (build 12636, commit 8d60873df)\nbuilt with Clang 24.0.0 for Windows",
+            "binary_commit": "8d60873df",
+            "binary_build_number": 12636,
             "compared": [
               "archive commit",
               "archive ROCm version",
@@ -234,13 +234,13 @@
           "tier": "tier0",
           "status": "pass",
           "gating": true,
-          "duration_ms": 138,
+          "duration_ms": 122,
           "error": null,
           "details": {
-            "expected_sha256": "e6c03b1a7c99b58d9551d37c7495338bc1e62dc180260b163cf0441a149f9849",
-            "expected_bytes": 191260358,
-            "sha256": "e6c03b1a7c99b58d9551d37c7495338bc1e62dc180260b163cf0441a149f9849",
-            "bytes": 191260358,
+            "expected_sha256": "940abf7c667c2f962f291b34c149c5530524612052f98abf61bb87035d94be12",
+            "expected_bytes": 191365943,
+            "sha256": "940abf7c667c2f962f291b34c149c5530524612052f98abf61bb87035d94be12",
+            "bytes": 191365943,
             "entries": 337,
             "missing": [],
             "not_executable": []
@@ -300,14 +300,14 @@
     "hardware_validated": []
   },
   "versions": {
-    "rocm_nightly": "10.3.0a20261121",
-    "llamacpp_commit": "44c20b1c0a1c77fd629fc5d032a5d7fa5843ebca",
-    "binary_reports_commit": "44c20b1c0",
-    "binary_reports_build": 12617
+    "rocm_nightly": "10.3.0a20261122",
+    "llamacpp_commit": "8d60873dfb8619f2b5ed31adfbab07cccb40db5c",
+    "binary_reports_commit": "8d60873df",
+    "binary_reports_build": 12636
   },
   "bundle": {
     "files": 330,
-    "bytes": 434816822,
+    "bytes": 435169617,
     "manifest": [
       [
         "LICENSE",
@@ -319,7 +319,7 @@
       ],
       [
         "amdhip64_7.dll",
-        17416704
+        17480192
       ],
       [
         "ggml-base.dll",
@@ -327,7 +327,7 @@
       ],
       [
         "ggml-cpu.dll",
-        943104
+        946688
       ],
       [
         "ggml-hip.dll",
@@ -351,11 +351,11 @@
       ],
       [
         "libhipblaslt.dll",
-        2925568
+        2999808
       ],
       [
         "libtensilelite-host.dll",
-        5153792
+        5201408
       ],
       [
         "llama-batched-bench-impl.dll",
@@ -387,7 +387,7 @@
       ],
       [
         "llama-common.dll",
-        9112576
+        9115136
       ],
       [
         "llama-completion-impl.dll",
@@ -543,7 +543,7 @@
       ],
       [
         "llama-server-impl.dll",
-        9973248
+        9985536
       ],
       [
         "llama-server.exe",
@@ -579,7 +579,7 @@
       ],
       [
         "llama.dll",
-        4164608
+        4171264
       ],
       [
         "llama.exe",
@@ -587,7 +587,7 @@
       ],
       [
         "mtmd.dll",
-        3382272
+        3426816
       ],
       [
         "origami.dll",
@@ -603,7 +603,7 @@
       ],
       [
         "rocsolver.dll",
-        29343232
+        29440512
       ],
       [
         ".kpack/blas_lib_gfx1152.kpack",
@@ -627,7 +627,7 @@
       ],
       [
         ".kpack/rocalution_lib_gfx1152.kpack",
-        1023283
+        1023753
       ],
       [
         ".kpack/solver_lib_gfx1152.kpack",
@@ -635,7 +635,7 @@
       ],
       [
         ".kpack/sparse_lib_gfx1152.kpack",
-        16686145
+        16686214
       ],
       [
         "hipblaslt/library/gfx1152/Kernels.so-000-gfx1152.hsaco",
