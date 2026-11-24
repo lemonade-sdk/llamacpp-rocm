@@ -1,25 +1,25 @@
 {
   "schema_version": 1,
   "kind": "qualification_record",
-  "generated_at": "2026-11-23T14:20:42Z",
+  "generated_at": "2026-11-24T14:14:14Z",
   "build": {
-    "build_id": "llama-ubuntu-rocm-gfx1151-x64.zip@45180191267",
-    "artifact": "llama-b1386-ubuntu-rocm-gfx1151-x64.zip",
+    "build_id": "llama-ubuntu-rocm-gfx1151-x64.zip@45399502938",
+    "artifact": "llama-b1387-ubuntu-rocm-gfx1151-x64.zip",
     "os": "ubuntu",
     "gfx_family": "gfx1151",
     "gpu_targets": [
       "gfx1151"
     ],
-    "rocm_version": "10.3.0a20261123",
-    "upstream_sha": "969d7333172c522d6a60fffb8dd35288ce8df236",
-    "release_tag": "b1386",
+    "rocm_version": "10.3.0a20261124",
+    "upstream_sha": "9578bd3fe48b793cf193c2e4615ec2f24a2ea92a",
+    "release_tag": "b1387",
     "hardware_validated": true,
     "hardware_gfx_target": "gfx1151",
-    "run_id": "45180191267",
+    "run_id": "45399502938",
     "run_attempt": "1",
     "runner_env": {
       "platform": "Linux-7.0.0-43-generic-x86_64-with-glibc2.39",
-      "machine_name": "X2-LA03-S04-D03",
+      "machine_name": "X2-LA03-S01-D03",
       "python": "3.12.16",
       "foreign_rocm_env_removed": {
         "LD_LIBRARY_PATH": "/mnt/scratch/actions-runner-01/_work/_tool/Python/3.12.16/x64/lib:/opt/xilinx/xrt/lib"
@@ -60,12 +60,12 @@
           "tier": "tier0",
           "status": "pass",
           "gating": true,
-          "duration_ms": 2,
+          "duration_ms": 249,
           "error": null,
           "details": {
             "missing": [],
             "files": 411,
-            "bytes": 2575338363
+            "bytes": 2576602747
           }
         },
         {
@@ -81,7 +81,7 @@
             "exists": true,
             "targets": 1,
             "min_bytes": 16777216,
-            "bytes": 81288928
+            "bytes": 81468032
           }
         },
         {
@@ -90,11 +90,11 @@
           "tier": "tier0",
           "status": "pass",
           "gating": true,
-          "duration_ms": 760,
+          "duration_ms": 1408,
           "error": null,
           "details": {
             "binary": "libggml-hip.so",
-            "bytes_scanned": 81288928,
+            "bytes_scanned": 81468032,
             "bundle_magic_count": 141,
             "expected_count": 1,
             "present_count": 1,
@@ -118,7 +118,7 @@
           "tier": "tier0",
           "status": "pass",
           "gating": true,
-          "duration_ms": 57,
+          "duration_ms": 151,
           "error": null,
           "details": {
             "binaries_scanned": 135,
@@ -197,7 +197,7 @@
           "tier": "tier0",
           "status": "pass",
           "gating": true,
-          "duration_ms": 121,
+          "duration_ms": 236,
           "error": null,
           "details": {
             "glibc_required": "2.34",
@@ -213,7 +213,7 @@
               "libamd_comgr.so.3.5.0": "2.27",
               "libamdhip64.so": "2.17",
               "libamdhip64.so.7": "2.17",
-              "libamdhip64.so.7.18.26466-0000000": "2.17",
+              "libamdhip64.so.7.18.26470-0000000": "2.17",
               "libclang-cpp.so": "2.14",
               "libclang-cpp.so.24.0git": "2.14",
               "libggml-base.so": "2.29",
@@ -349,7 +349,7 @@
           "tier": "tier0",
           "status": "pass",
           "gating": true,
-          "duration_ms": 56,
+          "duration_ms": 147,
           "error": null,
           "details": {
             "leaked": {},
@@ -362,7 +362,7 @@
           "tier": "tier0",
           "status": "pass",
           "gating": true,
-          "duration_ms": 100,
+          "duration_ms": 155,
           "error": null,
           "details": {
             "returncode": 0,
@@ -377,17 +377,17 @@
           "tier": "tier0",
           "status": "pass",
           "gating": true,
-          "duration_ms": 91,
+          "duration_ms": 140,
           "error": null,
           "details": {
-            "archive_upstream_sha": "969d7333172c522d6a60fffb8dd35288ce8df236",
-            "expected_upstream_sha": "969d7333172c522d6a60fffb8dd35288ce8df236",
-            "archive_rocm_version": "10.3.0a20261123",
-            "expected_rocm_version": "10.3.0a20261123",
+            "archive_upstream_sha": "9578bd3fe48b793cf193c2e4615ec2f24a2ea92a",
+            "expected_upstream_sha": "9578bd3fe48b793cf193c2e4615ec2f24a2ea92a",
+            "archive_rocm_version": "10.3.0a20261124",
+            "expected_rocm_version": "10.3.0a20261124",
             "version_returncode": 0,
-            "version_output": "version: 1.0.0-dev (build 12655, commit 969d73331)\nbuilt with Clang 24.0.0 for Linux",
-            "binary_commit": "969d73331",
-            "binary_build_number": 12655,
+            "version_output": "version: 1.0.0-dev (build 12697, commit 9578bd3fe)\nbuilt with Clang 24.0.0 for Linux",
+            "binary_commit": "9578bd3fe",
+            "binary_build_number": 12697,
             "compared": [
               "archive commit",
               "archive ROCm version",
@@ -401,13 +401,13 @@
           "tier": "tier0",
           "status": "pass",
           "gating": true,
-          "duration_ms": 506,
+          "duration_ms": 629,
           "error": null,
           "details": {
-            "expected_sha256": "22c2d7273d4549943bedaa0489deb7f277215413ce7f1e8fae87e990562a6326",
-            "expected_bytes": 703617786,
-            "sha256": "22c2d7273d4549943bedaa0489deb7f277215413ce7f1e8fae87e990562a6326",
-            "bytes": 703617786,
+            "expected_sha256": "8790575ab3e74aec7e6be38caa1605f502040caaa41185b4ed848e02fe60623a",
+            "expected_bytes": 703750174,
+            "sha256": "8790575ab3e74aec7e6be38caa1605f502040caaa41185b4ed848e02fe60623a",
+            "bytes": 703750174,
             "entries": 418,
             "missing": [],
             "not_executable": []
@@ -520,7 +520,7 @@
           "tier": "tier1",
           "status": "pass",
           "gating": true,
-          "duration_ms": 572,
+          "duration_ms": 587,
           "error": null,
           "details": {
             "finish_reason": "stop",
@@ -537,7 +537,7 @@
           "tier": "tier1",
           "status": "pass",
           "gating": false,
-          "duration_ms": 482,
+          "duration_ms": 497,
           "error": null,
           "details": {
             "prompt": "What is 2 + 2?",
@@ -571,7 +571,7 @@
           "duration_ms": 1,
           "error": null,
           "details": {
-            "archive_dir": "/mnt/scratch/actions-runner-01/_work/_temp/tier1-i70az4ya/x",
+            "archive_dir": "/mnt/scratch/actions-runner-01/_work/_temp/tier1-44fzce6k/x",
             "modules_loaded": 43,
             "rocm_libraries_loaded": [
               "libamd_comgr.so.3",
@@ -618,14 +618,14 @@
     ]
   },
   "versions": {
-    "rocm_nightly": "10.3.0a20261123",
-    "llamacpp_commit": "969d7333172c522d6a60fffb8dd35288ce8df236",
-    "binary_reports_commit": "969d73331",
-    "binary_reports_build": 12655
+    "rocm_nightly": "10.3.0a20261124",
+    "llamacpp_commit": "9578bd3fe48b793cf193c2e4615ec2f24a2ea92a",
+    "binary_reports_commit": "9578bd3fe",
+    "binary_reports_build": 12697
   },
   "bundle": {
     "files": 411,
-    "bytes": 2575338363,
+    "bytes": 2576602747,
     "manifest": [
       [
         "LICENSE",
@@ -657,15 +657,15 @@
       ],
       [
         "libamdhip64.so",
-        6971280
+        6971344
       ],
       [
         "libamdhip64.so.7",
-        6971280
+        6971344
       ],
       [
-        "libamdhip64.so.7.18.26466-0000000",
-        6971280
+        "libamdhip64.so.7.18.26470-0000000",
+        6971344
       ],
       [
         "libclang-cpp.so",
@@ -677,51 +677,51 @@
       ],
       [
         "libggml-base.so",
-        932464
+        936512
       ],
       [
         "libggml-base.so.1",
-        932464
+        936512
       ],
       [
         "libggml-base.so.1.0.0",
-        932464
+        936512
       ],
       [
         "libggml-cpu.so",
-        1123760
+        1126792
       ],
       [
         "libggml-cpu.so.1",
-        1123760
+        1126792
       ],
       [
         "libggml-cpu.so.1.0.0",
-        1123760
+        1126792
       ],
       [
         "libggml-hip.so",
-        81288928
+        81468032
       ],
       [
         "libggml-hip.so.1",
-        81288928
+        81468032
       ],
       [
         "libggml-hip.so.1.0.0",
-        81288928
+        81468032
       ],
       [
         "libggml-rpc.so",
-        318688
+        332016
       ],
       [
         "libggml-rpc.so.1",
-        318688
+        332016
       ],
       [
         "libggml-rpc.so.1.0.0",
-        318688
+        332016
       ],
       [
         "libggml.so",
@@ -785,15 +785,15 @@
       ],
       [
         "libllama-common.so",
-        20962744
+        20967448
       ],
       [
         "libllama-common.so.1",
-        20962744
+        20967448
       ],
       [
         "libllama-common.so.1.0.0",
-        20962744
+        20967448
       ],
       [
         "libllama-completion-impl.so",
@@ -809,23 +809,23 @@
       ],
       [
         "libllama-quantize-impl.so",
-        80752
+        98048
       ],
       [
         "libllama-server-impl.so",
-        22189416
+        22199352
       ],
       [
         "libllama.so",
-        5375176
+        5582752
       ],
       [
         "libllama.so.1",
-        5375176
+        5582752
       ],
       [
         "libllama.so.1.0.0",
-        5375176
+        5582752
       ],
       [
         "libmtmd.so",
@@ -1069,7 +1069,7 @@
       ],
       [
         "llama-imatrix",
-        216064
+        217648
       ],
       [
         "llama-llava-cli",
