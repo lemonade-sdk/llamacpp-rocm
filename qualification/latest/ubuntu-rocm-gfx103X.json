@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
   "kind": "qualification_record",
-  "generated_at": "2026-11-27T14:05:27Z",
+  "generated_at": "2026-11-28T14:22:34Z",
   "build": {
-    "build_id": "llama-ubuntu-rocm-gfx103X-x64.zip@46003743615",
-    "artifact": "llama-b1390-ubuntu-rocm-gfx103X-x64.zip",
+    "build_id": "llama-ubuntu-rocm-gfx103X-x64.zip@46147619483",
+    "artifact": "llama-b1391-ubuntu-rocm-gfx103X-x64.zip",
     "os": "ubuntu",
     "gfx_family": "gfx103X",
     "gpu_targets": [
@@ -13,12 +13,12 @@
       "gfx1032",
       "gfx1034"
     ],
-    "rocm_version": "10.3.0a20261127",
-    "upstream_sha": "15fcfc7357f8de73671d39e7d8c594e1beb3052d",
-    "release_tag": "b1390",
+    "rocm_version": "10.3.0a20261128",
+    "upstream_sha": "3cadf644b73227331a55bd80b0959ca6a13fc775",
+    "release_tag": "b1391",
     "hardware_validated": false,
     "hardware_gfx_target": null,
-    "run_id": "46003743615",
+    "run_id": "46147619483",
     "run_attempt": "1",
     "runner_env": null
   },
@@ -54,7 +54,7 @@
           "details": {
             "missing": [],
             "files": 1186,
-            "bytes": 3552332733
+            "bytes": 3553777121
           }
         },
         {
@@ -70,7 +70,7 @@
             "exists": true,
             "targets": 4,
             "min_bytes": 67108864,
-            "bytes": 226055032
+            "bytes": 226841272
           }
         },
         {
@@ -79,12 +79,12 @@
           "tier": "tier0",
           "status": "pass",
           "gating": true,
-          "duration_ms": 3309,
+          "duration_ms": 3305,
           "error": null,
           "details": {
             "binary": "libggml-hip.so",
-            "bytes_scanned": 226055032,
-            "bundle_magic_count": 142,
+            "bytes_scanned": 226841272,
+            "bundle_magic_count": 143,
             "expected_count": 4,
             "present_count": 4,
             "expected": [
@@ -102,10 +102,10 @@
             "missing": [],
             "extra": [],
             "entries_per_target": {
-              "gfx1030": 142,
-              "gfx1031": 142,
-              "gfx1032": 142,
-              "gfx1034": 142
+              "gfx1030": 143,
+              "gfx1031": 143,
+              "gfx1032": 143,
+              "gfx1034": 143
             },
             "entry_count_uniform": true
           }
@@ -347,7 +347,7 @@
           "tier": "tier0",
           "status": "pass",
           "gating": true,
-          "duration_ms": 113,
+          "duration_ms": 112,
           "error": null,
           "details": {
             "leaked": {},
@@ -378,14 +378,14 @@
           "duration_ms": 124,
           "error": null,
           "details": {
-            "archive_upstream_sha": "15fcfc7357f8de73671d39e7d8c594e1beb3052d",
-            "expected_upstream_sha": "15fcfc7357f8de73671d39e7d8c594e1beb3052d",
-            "archive_rocm_version": "10.3.0a20261127",
-            "expected_rocm_version": "10.3.0a20261127",
+            "archive_upstream_sha": "3cadf644b73227331a55bd80b0959ca6a13fc775",
+            "expected_upstream_sha": "3cadf644b73227331a55bd80b0959ca6a13fc775",
+            "archive_rocm_version": "10.3.0a20261128",
+            "expected_rocm_version": "10.3.0a20261128",
             "version_returncode": 0,
-            "version_output": "version: 1.1.0-dev (build 12817, commit 15fcfc735)\nbuilt with Clang 24.0.0 for Linux",
-            "binary_commit": "15fcfc735",
-            "binary_build_number": 12817,
+            "version_output": "version: 1.1.0-dev (build 12837, commit 3cadf644b)\nbuilt with Clang 24.0.0 for Linux",
+            "binary_commit": "3cadf644b",
+            "binary_build_number": 12837,
             "compared": [
               "archive commit",
               "archive ROCm version",
@@ -399,13 +399,13 @@
           "tier": "tier0",
           "status": "pass",
           "gating": true,
-          "duration_ms": 962,
+          "duration_ms": 845,
           "error": null,
           "details": {
-            "expected_sha256": "9d75d6486b82d2b78988948a1414e026ffdc340f408988d96448302eeb6ca406",
-            "expected_bytes": 1202745406,
-            "sha256": "9d75d6486b82d2b78988948a1414e026ffdc340f408988d96448302eeb6ca406",
-            "bytes": 1202745406,
+            "expected_sha256": "476bbbe0adfad8ad179327544b235129214470e38786458ca29d3d8e959834d7",
+            "expected_bytes": 1202927210,
+            "sha256": "476bbbe0adfad8ad179327544b235129214470e38786458ca29d3d8e959834d7",
+            "bytes": 1202927210,
             "entries": 1189,
             "missing": [],
             "not_executable": []
@@ -417,7 +417,7 @@
           "tier": "tier0",
           "status": "pass",
           "gating": true,
-          "duration_ms": 0,
+          "duration_ms": 1,
           "error": null,
           "details": {
             "per_target": {
@@ -564,14 +564,14 @@
     "hardware_validated": []
   },
   "versions": {
-    "rocm_nightly": "10.3.0a20261127",
-    "llamacpp_commit": "15fcfc7357f8de73671d39e7d8c594e1beb3052d",
-    "binary_reports_commit": "15fcfc735",
-    "binary_reports_build": 12817
+    "rocm_nightly": "10.3.0a20261128",
+    "llamacpp_commit": "3cadf644b73227331a55bd80b0959ca6a13fc775",
+    "binary_reports_commit": "3cadf644b",
+    "binary_reports_build": 12837
   },
   "bundle": {
     "files": 1186,
-    "bytes": 3552332733,
+    "bytes": 3553777121,
     "manifest": [
       [
         "LICENSE",
@@ -623,39 +623,39 @@
       ],
       [
         "libggml-base.so",
-        944376
+        949200
       ],
       [
         "libggml-base.so.1",
-        944376
+        949200
       ],
       [
         "libggml-base.so.1.1.1",
-        944376
+        949200
       ],
       [
         "libggml-cpu.so",
-        1130312
+        1132952
       ],
       [
         "libggml-cpu.so.1",
-        1130312
+        1132952
       ],
       [
         "libggml-cpu.so.1.1.1",
-        1130312
+        1132952
       ],
       [
         "libggml-hip.so",
-        226055032
+        226841272
       ],
       [
         "libggml-hip.so.1",
-        226055032
+        226841272
       ],
       [
         "libggml-hip.so.1.1.1",
-        226055032
+        226841272
       ],
       [
         "libggml-rpc.so",
@@ -695,15 +695,15 @@
       ],
       [
         "libhipblaslt.so",
-        3879808
+        3654528
       ],
       [
         "libhipblaslt.so.1",
-        3879808
+        3654528
       ],
       [
         "libhipblaslt.so.1.5",
-        3879808
+        3654528
       ],
       [
         "libhsa-runtime64.so",
@@ -731,15 +731,15 @@
       ],
       [
         "libllama-common.so",
-        20987408
+        20987832
       ],
       [
         "libllama-common.so.1",
-        20987408
+        20987832
       ],
       [
         "libllama-common.so.1.1.0",
-        20987408
+        20987832
       ],
       [
         "libllama-completion-impl.so",
@@ -759,19 +759,19 @@
       ],
       [
         "libllama-server-impl.so",
-        22256656
+        22256912
       ],
       [
         "libllama.so",
-        5694144
+        5679848
       ],
       [
         "libllama.so.1",
-        5694144
+        5679848
       ],
       [
         "libllama.so.1.1.0",
-        5694144
+        5679848
       ],
       [
         "libmtmd.so",
@@ -919,15 +919,15 @@
       ],
       [
         "libtensilelite-host.so",
-        7852760
+        7779592
       ],
       [
         "libtensilelite-host.so.1",
-        7852760
+        7779592
       ],
       [
         "libtensilelite-host.so.1.0",
-        7852760
+        7779592
       ],
       [
         "llama",
@@ -1231,19 +1231,19 @@
       ],
       [
         ".kpack/rccl_lib_gfx1030.kpack",
-        18711329
+        18711332
       ],
       [
         ".kpack/rccl_lib_gfx1031.kpack",
-        18711358
+        18711347
       ],
       [
         ".kpack/rccl_lib_gfx1032.kpack",
-        18711356
+        18711353
       ],
       [
         ".kpack/rccl_lib_gfx1033.kpack",
-        18711354
+        18711351
       ],
       [
         ".kpack/rccl_lib_gfx1034.kpack",
@@ -1251,11 +1251,11 @@
       ],
       [
         ".kpack/rccl_lib_gfx1035.kpack",
-        18711378
+        18711379
       ],
       [
         ".kpack/rccl_lib_gfx1036.kpack",
-        18711364
+        18711357
       ],
       [
         ".kpack/rocalution_lib_gfx1030.kpack",
